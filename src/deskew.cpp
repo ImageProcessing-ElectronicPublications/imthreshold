@@ -25,6 +25,11 @@ void ImthresholdFilterDeskewUsage()
 {
     printf("Usage : imthreshold-deskew [options] <input_image> <output_image>\n\n");
     printf("options:\n");
+    printf("          -f str  name filter:\n");
+    printf("                    'bimod' (default)\n");
+    printf("                    'grad'\n");
+    printf("                    'niblack'\n");
+    printf("                    'sauvola'\n");
     printf("          -h      this help\n");
 }
 
@@ -37,12 +42,16 @@ int main(int argc, char *argv[])
     FreeImage_Initialise();
 #endif // FREEIMAGE_LIB
 
+    char *namefilter = "bimod";
     int opt;
     bool fhelp = false;
-    while ((opt = getopt(argc, argv, ":h")) != -1)
+    while ((opt = getopt(argc, argv, ":f:h")) != -1)
     {
         switch(opt)
         {
+            case 'f':
+                namefilter = optarg;
+                break;
             case 'h':
                 fhelp = true;
                 break;
@@ -79,16 +88,38 @@ int main(int argc, char *argv[])
             float fskew;
 
             IMTpixel** p_im = IMTalloc(height, width);
-            IMTpixel** s_im = IMTalloc(height, width);
+            BYTE** s_im = BWalloc(height, width);
             IMTpixel** d_im = IMTalloc(height, width);
 
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
-            IMTFilterSobel(p_im, s_im, height, width);
+            if (strcmp(namefilter, "grad") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                (void)IMTFilterTGrad(p_im, s_im, height, width);
+            }
+            else if (strcmp(namefilter, "niblack") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                (void)IMTFilterTNiblack(p_im, s_im, height, width, 7, 0.2, 0, 255, -5.0f);
+            }
+            else if (strcmp(namefilter, "sauvola") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                (void)IMTFilterTSauvola(p_im, s_im, height, width, 7, 0.2, 128, 0, 255, -5.0f);
+            }
+            else
+            {
+                printf("Filter= %s\n", "bimod");
+                (void)IMTFilterTBiMod(p_im, s_im, height, width, 0);
+            }
             fskew = IMTFilterFindSkew(s_im, height, width);
-            IMTfree(s_im, height);
+            BWfree(s_im, height);
             printf("Angle= %f\n", fskew);
-            IMTFilterRotate(p_im, d_im, height, width, fskew);
+            if (fskew > 0.0f || fskew < 0.0f)
+                IMTFilterRotate(p_im, d_im, height, width, fskew);
+            else
+                IMTFilterCopy(p_im, d_im, height, width);
             IMTfree(p_im, height);
 
             dst_dib = FreeImage_Allocate(width, height, 24);

@@ -10,92 +10,129 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-float IMTFilterFindSkew (IMTpixel** p_im, unsigned height, unsigned width)
+unsigned int PageTools_Next_Pow2(unsigned int n)
 {
-    unsigned y, x;
-    int t, u;
-    int h = (int)height;
-    float kmin, kmax, kt, dkp, dkt, yt, smin, smax, st, s;
-    float fskew;
+    unsigned int retval = 1;
+    while(retval < n)
+        retval <<= 1;
+    return retval;
+}
 
-    dkp = 1.0 / sqrt((float)(height * height + width * width));
-    kmin = -0.5;
-    kt = kmin;
-    st = 0;
-    for (y = 0; y < height; y++)
+// ----------------------------------------------------------
+
+void PageTools_Radon(BYTE** p_im, unsigned h, unsigned w, int sign, unsigned int sharpness[])
+{
+    unsigned char *bitcount = (unsigned char*)malloc(sizeof(unsigned char) * 256);
+    unsigned short int *p1, *p2; // Stored columnwise
+    unsigned int w2 = PageTools_Next_Pow2(w);
+    unsigned int s = h * w2;
+    p1 = (unsigned short int*)malloc(sizeof(unsigned short int) * s);
+    p2 = (unsigned short int*)malloc(sizeof(unsigned short int) * s);
+    // Fill in the first table
+    memset(p1, 0, sizeof(unsigned short int) * s);
+    unsigned int ir, ic, i, j, cnt;
+
+    for(i = 0; i < 256; i++)
     {
-        s = 0;
-        yt = (float)y;
-        for (x = 0; x < width; x++)
-        {
-            t = (int)yt;
-            if (t >= 0 && t < h)
-            {
-                u = (int)p_im[t][x].s;
-                u = 765 - u;
-                s += u;
-            }
-            yt += kt;
-        }
-        if (s > st) {st = s;}
+        j = i, cnt = 0;
+        do cnt += j & 1; while(j >>= 1);
+        bitcount[i] = cnt;
     }
-    smin = st;
-    kmax = 0.5;
-    kt = kmax;
-    st = 0;
-    for (y = 0; y < height; y++)
+
+    for(ir = 0; ir < h; ir++)
     {
-        s = 0;
-        yt = (float)y;
-        for (x = 0; x < width; x++)
+        unsigned char val;
+
+        for(ic = 0; ic < w; ic++)
         {
-            t = (int)yt;
-            if (t >= 0 && t < h)
-            {
-                u = (int)p_im[t][x].s;
-                u = 765 - u;
-                s += u;
-            }
-            yt += kt;
+            if(sign > 0)
+                val = p_im[ir][w - 1 - ic];
+            else
+                val = p_im[ir][ic];
+            p1[h * ic + ir] = bitcount[val];
         }
-        if (s > st) {st = s;}
     }
-    smax = st;
-    dkt = kmax - kmin;
-    while (dkt > dkp)
+
+    // Iterate
+    unsigned short int *x1 = p1, *x2 = p2;
+    unsigned int step = 1;
+    while(step < w2)
     {
-        kt = (kmax + kmin) / 2.0;
-        st = 0;
-        for (y = 0; y < height; y++)
+        for(i = 0; i < w2; i += 2 * step)
         {
-            s = 0;
-            yt = (float)y;
-            for (x = 0; x < width; x++)
+            for(j = 0; j < step; j++)
             {
-                t = (int)yt;
-                if (t >= 0 && t < h)
+                // Columns-sources:
+                unsigned short int *s1 = x1 + h * (i + j), *s2 = x1 + h * (i + j + step);
+
+                // Columns-targets:
+                unsigned short int *t1 = x2 + h * (i + 2 * j), *t2 = x2 + h * (i + 2 * j + 1);
+                unsigned int m;
+                for(m = 0; m < h; m++)
                 {
-                    u = (int)p_im[t][x].s;
-                    u = 765 - u;
-                    s += u;
+                    t1[m] = s1[m];
+                    t2[m] = s1[m];
+                    if(m + j < h)
+                        t1[m] += s2[m+j];
+                    if(m + j + 1 < h)
+                        t2[m] += s2[m + j + 1];
                 }
-                yt += kt;
             }
-            if (s > st) {st = s;}
         }
-        if (smax > smin)
-        {
-            smin = st;
-            kmin = kt;
-        } else {
-            smax = st;
-            kmax = kt;
-        }
-        dkt = kmax - kmin;
+        // Swap the tables:
+        unsigned short int *aux = x1;
+        x1 = x2;
+        x2 = aux;
+        // Increase the step:
+        step += step;
     }
-    if (smin < smax) {fskew = kmax;} else {fskew = kmin;}
-    fskew = -atan(fskew) * RADGRD;
-    return fskew;
+    // Now, compute the sum of squared finite differences:
+    for(ic = 0; ic < w2; ic++)
+    {
+        unsigned int acc = 0;
+        unsigned short int *col = x1 + h * ic;
+        for(ir = 0; ir + 1 < h; ir++)
+        {
+            int diff = (int)(col[ir])-(int)(col[ir + 1]);
+            acc += diff * diff;
+        }
+        sharpness[w2 - 1 + sign * ic] = acc;
+
+    }
+    free(p1);
+    free(p2);
+    free(bitcount);
+}
+
+// ----------------------------------------------------------
+
+float IMTFilterFindSkew(BYTE** p_im, unsigned h, unsigned w)
+{
+    unsigned int w2 = PageTools_Next_Pow2(w);
+
+    unsigned int ssize = 2 * w2 - 1; // Size of sharpness table
+    unsigned int *sharpness = malloc(sizeof(unsigned int) * ssize);
+    PageTools_Radon(p_im, h, w, 1, sharpness);
+    PageTools_Radon(p_im, h, w, -1, sharpness);
+    unsigned int i, imax = 0, vmax=0;
+    double sum = 0.;
+    for(i = 0; i < ssize; i++)
+    {
+        unsigned int s = sharpness[i];
+
+        if(s > vmax)
+        {
+            imax = i;
+            vmax = s;
+        }
+        sum += s;
+    }
+
+    if (vmax <= 3 * sum / h)
+        return 0; // Heuristics !!!
+    int iskew = (int)imax - (int)w2 + 1;
+    free(sharpness);
+    return atan((float)iskew / w2) * RADGRD;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
