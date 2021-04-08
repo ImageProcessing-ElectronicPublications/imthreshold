@@ -5,12 +5,13 @@ CPP           = g++
 CFLAGS        = -DUNIX -O2 -Wall -s
 LIBS          = -lfreeimage
 VER           = 0
-VERB          = 20201128
+VERB          = 20210408
 ifeq ($(OS),Windows_NT)
 PLIBF         = $(PNAME).$(VER).dll
 PLIBFI        = $(PNAME)freeimage.$(VER).dll
 RM            = del /Q
 else
+VERB          = 20210408
 PLIBF         = lib$(PNAME).so.$(VER)
 PLIBFI        = lib$(PNAME)freeimage.so.$(VER)
 RM            = rm -f
@@ -29,7 +30,7 @@ LN            = ln -fs
 all: $(PROGNAME)
 
 clean:
-	$(RM) $(PROGNAME) $(PLIBF) $(PLIBFI) *.exe
+	$(RM) $(PROGNAME) $(PLIB) *.exe
 
 $(PLIBF): src/lib/color.c src/lib/commom.c src/lib/denoise.c src/lib/despeckle.c src/lib/filter.c src/lib/math.c src/lib/pmean.c src/lib/rotate.c src/lib/separate.c src/lib/size.c src/lib/threshold.c
 	$(CC) $(CFLAGS) -shared -Wl,-soname,$@ $^ -o $@

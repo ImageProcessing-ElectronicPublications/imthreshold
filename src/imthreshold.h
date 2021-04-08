@@ -115,7 +115,7 @@ float IMTFilterDeNoiseDiff (IMTpixel**, unsigned, unsigned, unsigned, float);
 void IMTBlurMask (IMTpixel**, BYTE**, unsigned, unsigned, int);
 void IMTReduceBW (BYTE**, BYTE**, unsigned, unsigned, unsigned, unsigned, unsigned, BYTE, BYTE);
 IMTpixel IMTFilterIllumCorr (IMTpixel**, IMTpixel**, IMTpixel**, unsigned, unsigned);
-float IMTFilterFindSkew (IMTpixel**, unsigned, unsigned);
+float IMTFilterFindSkew (BYTE**, unsigned, unsigned);
 void IMTFilterRotate (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
 IMTinfo IMTFilterInfo (IMTpixel**, unsigned, unsigned, unsigned);
 void IMTFilterInvert (IMTpixel**, unsigned, unsigned);
