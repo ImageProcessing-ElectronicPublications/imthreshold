@@ -19,6 +19,19 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+int filecheck(const char *filename)
+{
+    FILE *file;
+
+    if ((file = fopen(filename, "r")) != NULL)
+        fclose(file);
+    else
+        return 0;
+    return 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 BYTE ImthresholdGet1BitPixel(BYTE *bits, unsigned x)
 {
     return (bits[x >> 3] & (0x80 >> (x & 0x07))) != 0 ? 1 : 0;
@@ -192,32 +205,29 @@ FIBITMAP* ImthresholdGenericLoader(const char* lpszPathName, int flag)
     // check the file signature and deduce its format
     // (the second argument is currently not used by FreeImage)
 
-    fif = FreeImage_GetFileType(lpszPathName, 0);
-
-    FIBITMAP* dib;
-
-    if(fif == FIF_UNKNOWN)
+    if (filecheck(lpszPathName))
     {
-        // no signature ?
-        // try to guess the file format from the file extension
-        fif = FreeImage_GetFIFFromFilename(lpszPathName);
-    }
+        fif = FreeImage_GetFileType(lpszPathName, 0);
 
-    // check that the plugin has reading capabilities ...
-    if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif))
-    {
-        // ok, let's load the file
-        dib = FreeImage_Load(fif, lpszPathName, flag);
+        FIBITMAP* dib;
 
-        // unless a bad file format, we are done !
-        if (!dib)
+        if(fif == FIF_UNKNOWN)
+            fif = FreeImage_GetFIFFromFilename(lpszPathName);
+
+        if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif))
         {
-            printf("%s%s%s\n","File \"", lpszPathName, "\" not found.");
-            return NULL;
+            dib = FreeImage_Load(fif, lpszPathName, flag);
+            if (dib)
+                return dib;
+            printf("%s%s%s\n","ERROR: File \"", lpszPathName, "\" not read.");
         }
-    }
+        else
+            printf("%s%s%s\n","ERROR: File \"", lpszPathName, "\" unknow format.");
 
-    return dib;
+    }
+    else
+        printf("%s%s%s\n","ERROR: File \"", lpszPathName, "\" not found.");
+    return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
