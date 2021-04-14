@@ -1,3 +1,7 @@
+0.20210414
+
+    FreeImage: fix ImthresholdGenericLoader
+
 0.20210408
 
     Filter: Deskew: PageTools_Radon
