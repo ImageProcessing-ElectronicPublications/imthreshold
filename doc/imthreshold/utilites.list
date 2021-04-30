@@ -29,7 +29,6 @@ It's a set of command line tools to create color images of djvu.
  Scale:
 
   imthreshold-sbwmag2
-  imthreshold-scris
   imthreshold-shris
   imthreshold-size
 
@@ -42,7 +41,7 @@ It's a set of command line tools to create color images of djvu.
   imthreshold-math
   imthreshold-bash-scripts
 
-2019-02-12
+2021-04-30
 
  2017 zvezdochiot.
  Website: https://sourceforge.net/projects/imthreshold/
