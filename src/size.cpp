@@ -29,6 +29,7 @@ void ImthresholdFilterSizeUsage()
     printf("                    'bicont'\n");
     printf("                    'gsample' (default)\n");
     printf("                    'nearest'\n");
+    printf("          -p N.N  part prefilter RIS (float, optional, default = 0.0[off])\n");
     printf("          -r N.N  ratio (float, optional, default = 1.0)\n");
     printf("          -w N    new width (int, optional, default = [auto])\n");
     printf("          -z N    new height (int, optional, default = [auto])\n");
@@ -45,18 +46,20 @@ int main(int argc, char *argv[])
 #endif // FREEIMAGE_LIB
 
     int opt;
-    float ratio = 1.0;
-    int newh = 0;
-    int neww = 0;
+    float ratio = 1.0f, ppart = 1.0f;
+    int newh = 0, neww = 0;
     bool fhelp = false;
     char *namefilter;
     namefilter="gsample";
-    while ((opt = getopt(argc, argv, ":f:r:w:z:h")) != -1)
+    while ((opt = getopt(argc, argv, ":f:p:r:w:z:h")) != -1)
     {
         switch(opt)
         {
             case 'f':
                 namefilter = optarg;
+                break;
+            case 'p':
+                ppart = atof(optarg);
                 break;
             case 'r':
                 ratio = atof(optarg);
@@ -127,16 +130,57 @@ int main(int argc, char *argv[])
             {
                 printf("Filter= %s\n", namefilter);
                 IMTFilterSBicub(p_im, d_im, height, width, new_height, new_width);
-            } else if (strcmp(namefilter, "biline") == 0) {
+                if (ppart < 0.0f || ppart > 0.0f)
+                {
+                    float ims = 0.0f;
+                    IMTpixel** c_im = IMTalloc(height, width);
+                    IMTFilterSBicub(d_im, c_im, new_height, new_width, height, width);
+                    printf("Prefilter= %f\n", ppart);
+                    ims = IMTFilterMirrorPart(p_im, c_im, height, width, ppart);
+                    printf("RIS= %f\n", ims);
+                    IMTFilterSBicub(c_im, d_im, height, width, new_height, new_width);
+                    IMTfree(c_im, height);
+                }
+            }
+            else if (strcmp(namefilter, "biline") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTFilterSBilin(p_im, d_im, height, width, new_height, new_width);
-            } else if (strcmp(namefilter, "bicont") == 0) {
+                if (ppart < 0.0f || ppart > 0.0f)
+                {
+                    float ims = 0.0f;
+                    IMTpixel** c_im = IMTalloc(height, width);
+                    IMTFilterSBilin(d_im, c_im, new_height, new_width, height, width);
+                    printf("Prefilter= %f\n", ppart);
+                    ims = IMTFilterMirrorPart(p_im, c_im, height, width, ppart);
+                    printf("RIS= %f\n", ims);
+                    IMTFilterSBilin(c_im, d_im, height, width, new_height, new_width);
+                    IMTfree(c_im, height);
+                }
+            }
+            else if (strcmp(namefilter, "bicont") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTFilterSBicont(p_im, d_im, height, width, new_height, new_width);
-            } else if (strcmp(namefilter, "nearest") == 0) {
+                if (ppart < 0.0f || ppart > 0.0f)
+                {
+                    float ims = 0.0f;
+                    IMTpixel** c_im = IMTalloc(height, width);
+                    IMTFilterSBicont(d_im, c_im, new_height, new_width, height, width);
+                    printf("Prefilter= %f\n", ppart);
+                    ims = IMTFilterMirrorPart(p_im, c_im, height, width, ppart);
+                    printf("RIS= %f\n", ims);
+                    IMTFilterSBicont(c_im, d_im, height, width, new_height, new_width);
+                    IMTfree(c_im, height);
+                }
+            }
+            else if (strcmp(namefilter, "nearest") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTFilterSNearest(p_im, d_im, height, width, new_height, new_width);
-            } else {
+            }
+            else
+            {
                 printf("Filter= gsample\n");
                 IMTFilterSGsample(p_im, d_im, height, width, new_height, new_width);
             }

@@ -10,78 +10,126 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float BiCubicKernel (float x)
+IMTpixel IMTInterpolateBiCubic (IMTpixel** p_im, int height, int width, float y, float x)
 {
-    float a, b, c, d, xm1, xp1, xp2;
+    int i, d, xi, yi, xf, yf;
+    float d0, d2, d3, a0, a1, a2, a3;
+    float dx, dy;
+    float Cc, C[4];
+    IMTpixel dim;
+    
+    yi = (int)y;
+    yi = (yi < 0) ? 0 : (yi < height) ? yi : (height - 1);
+    xi = (int)x;
+    xi = (xi < 0) ? 0 : (xi < width) ? xi : (width - 1);
+    dy = y - yi;
+    dx = x - xi;
+    for(d = 0; d < 3; d++)
+    {
+        for(i = -1; i < 3; i++)
+        {
+            yf = (int)y + i;
+            yf = (yf < 0) ? 0 : (yf < height) ? yf : (height - 1);
+            xf = (int)x;
+            xf = (xf < 0) ? 0 : (xf < width) ? xf : (width - 1);
+            a0 = p_im[yf][xf].c[d];
+            xf = (int)x - 1;
+            xf = (xf < 0) ? 0 : (xf < width) ? xf : (width - 1);
+            d0 = p_im[yf][xf].c[d];
+            d0 -= a0;
+            xf = (int)x + 1;
+            xf = (xf < 0) ? 0 : (xf < width) ? xf : (width - 1);
+            d2 = p_im[yf][xf].c[d];
+            d2 -= a0;
+            xf = (int)x + 2;
+            xf = (xf < 0) ? 0 : (xf < width) ? xf : (width - 1);
+            d3 = p_im[yf][xf].c[d];
+            d3 -= a0;
+            a1 =  -1.0f / 3.0f * d0 + d2 - 1.0f / 6.0f * d3;
+            a2 = 1.0f / 2.0f * d0 + 1.0f / 2.0f * d2;
+            a3 = -1.0f / 6.0 * d0 - 1.0f / 2.0f * d2 + 1.0f / 6.0f * d3;
+            C[i + 1] = a0 + (a1 + (a2 + a3 * dx) * dx) * dx;
+        }
+        d0 = C[0] - C[1];
+        d2 = C[2] - C[1];
+        d3 = C[3] - C[1];
+        a0 = C[1];
+        a1 =  -1.0f / 3.0f * d0 + d2 - 1.0f / 6.0f * d3;
+        a2 = 1.0f / 2.0f * d0 + 1.0f / 2.0f * d2;
+        a3 = -1.0f / 6.0f * d0 - 1.0f / 2.0f * d2 + 1.0f / 6.0f * d3;
+        Cc = a0 + (a1 + (a2 + a3 * dy) * dy) * dy;
+        dim.c[d] = ByteClamp((int)(Cc + 0.5f));
+    }
+    dim = IMTcalcS (dim);
 
-    if ( x > 2.0 )
-        return 0.0;
+    return dim;
+}
 
-    xm1 = x - 1.0;
-    xp1 = x + 1.0;
-    xp2 = x + 2.0;
+////////////////////////////////////////////////////////////////////////////////
 
-    a = ( xp2 <= 0.0 ) ? 0.0 : xp2 * xp2 * xp2;
-    b = ( xp1 <= 0.0 ) ? 0.0 : xp1 * xp1 * xp1;
-    c = ( x   <= 0.0 ) ? 0.0 : x * x * x;
-    d = ( xm1 <= 0.0 ) ? 0.0 : xm1 * xm1 * xm1;
+IMTpixel IMTInterpolateBiLine (IMTpixel** p_im, int height, int width, float y, float x)
+{
+    int d, xi, yi, xf, yf;
+    float dx1, dy1, dx2, dy2;
+    IMTpixel dim;
+    
+    yi = (int)y;
+    yi = (yi < 0) ? 0 : (yi < height) ? yi : (height - 1);
+    xi = (int)x;
+    xi = (xi < 0) ? 0 : (xi < width) ? xi : (width - 1);
+    dy1 = y - yi;
+    dx1 = x - xi;
+    dy2 = 1.0 - dy1;
+    dx2 = 1.0 - dx1;
+    yf = (int)y + 1;
+    yf = (yf < 0) ? 0 : (yf < height) ? yf : (height - 1);
+    xf = (int)x + 1;
+    xf = (xf < 0) ? 0 : (xf < width) ? xf : (width - 1);
+    for (d = 0; d < 3; d++)
+    {
+        dim.c[d] = ByteClamp((int) (dy2 * (dx2 * p_im[yi][xi].c[d] + dx1 * p_im[yi][xf].c[d]) + dy1 * (dx2 * p_im[yf][xi].c[d] + dx1 * p_im[yf][xf].c[d]) + 0.5));
+    }
+    dim = IMTcalcS (dim);
 
-    return ( 0.16666666666666666667 * ( a - ( 4.0 * b ) + ( 6.0 * c ) - ( 4.0 * d ) ) );
+    return dim;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void IMTFilterSBicub (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, unsigned new_height, unsigned new_width)
 {
-
-    unsigned d;
+    unsigned y, x;
     float xFactor = (float)width / new_width;
     float yFactor = (float)height / new_height;
-    float ox, oy, dx, dy, k1, k2;
-    int y, x, ox1, oy1, ox2, oy2, m, n;
-    float p_g[3] = {0};
-    int h = new_height;
-    int w = new_width;
-    int ymax = height - 1;
-    int xmax = width - 1;
+    float ox, oy;
 
-    for (y = 0; y < h; y++ )
+    for (y = 0; y < new_height; y++ )
     {
-        oy  = (float)y * yFactor - 0.5;
-        oy1 = (int)oy;
-        dy  = oy - (float)oy1;
-        for (x = 0; x < w; x++ )
+        oy  = ((float)y + 0.5f) * yFactor - 0.5;
+        for (x = 0; x < new_width; x++ )
         {
-            ox  = (float)x * xFactor - 0.5f;
-            ox1 = (int)ox;
-            dx  = ox - (float)ox1;
-            for (d = 0; d < 3; d++)
-            {
-                p_g[d] = 0;
-            }
-            for (n = -1; n < 3; n++)
-            {
-                k1 = BiCubicKernel(dy - (float)n);
-                oy2 = oy1 + n;
-                if ( oy2 < 0 ) {oy2 = 0;}
-                if ( oy2 > ymax ) {oy2 = ymax;}
-                for (m = -1; m < 3; m++)
-                {
-                    k2 = k1 * BiCubicKernel((float)m - dx);
-                    ox2 = ox1 + m;
-                    if ( ox2 < 0 ) {ox2 = 0;}
-                    if ( ox2 > xmax ) {ox2 = xmax;}
-                    for (d = 0; d < 3; d++)
-                    {
-                        p_g[d] += (k2 * (float)p_im[oy2][ox2].c[d]);
-                    }
-                }
-            }
-            for (d = 0; d < 3; d++)
-            {
-                d_im[y][x].c[d] = ByteClamp((int)(p_g[d] + 0.5));
-            }
-            d_im[y][x] = IMTcalcS (d_im[y][x]);
+            ox  = ((float)x  + 0.5f) * xFactor - 0.5f;
+            d_im[y][x] = IMTInterpolateBiCubic (p_im, height, width, oy, ox);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void IMTFilterSBilin (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, unsigned new_height, unsigned new_width)
+{
+    unsigned y, x;
+    float xFactor = (float)width / new_width;
+    float yFactor = (float)height / new_height;
+    float ox, oy;
+
+    for (y = 0; y < new_height; y++)
+    {
+        oy  = ((float)y + 0.5f) * yFactor - 0.5;
+        for (x = 0; x < new_width; x++ )
+        {
+            ox  = ((float)x  + 0.5f) * xFactor - 0.5f;
+            d_im[y][x] = IMTInterpolateBiLine (p_im, height, width, oy, ox);
         }
     }
 }
@@ -94,74 +142,42 @@ void IMTFilterSBicont (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
     unsigned d;
     float xFactor = (float)width / new_width;
     float yFactor = (float)height / new_height;
-    float ox, oy, dx, dy, k1, k2;
-    int y, x, k, ox1, oy1, ox2, oy2, m, n;
-    float p_g[3] = {0};
-    int h = new_height;
-    int w = new_width;
-    int ymax = height - 1;
-    int xmax = width - 1;
-    IMTpixel mim, pim[16];
-    float sdist, zdist, pdist[16];
+    float ox, oy, dx, dy;
+    int y, x, i, j, k, ox1, oy1, ox2, oy2;
+    int h = new_height, w = new_width;
+    int ymax = height - 1, xmax = width - 1;
+    IMTpixel mim, **pim;
+    float sdist, pdist[16];
 
+    pim = IMTalloc (4, 4);
     for (y = 0; y < h; y++ )
     {
-        oy  = (float)y * yFactor - 0.5;
+        oy  = ((float)y + 0.5f) * yFactor - 0.5;
         oy1 = (int)oy;
         dy  = oy - (float)oy1;
         for (x = 0; x < w; x++ )
         {
-            ox  = (float)x * xFactor - 0.5f;
+            ox  = ((float)x  + 0.5f) * xFactor - 0.5f;
             ox1 = (int)ox;
             dx  = ox - (float)ox1;
-            for (d = 0; d < 3; d++)
-            {
-                p_g[d] = 0;
-            }
-            k = 0;
-            for (n = -1; n < 3; n++)
-            {
-                oy2 = oy1 + n;
-                if ( oy2 < 0 ) {oy2 = 0;}
-                if ( oy2 > ymax ) {oy2 = ymax;}
-                for (m = -1; m < 3; m++)
-                {
-                    ox2 = ox1 + m;
-                    if ( ox2 < 0 ) {ox2 = 0;}
-                    if ( ox2 > xmax ) {ox2 = xmax;}
-                    pim[k] = p_im[oy2][ox2];
-                    k++;
-                }
-            }
-            k = 0;
-            for (n = -1; n < 3; n++)
-            {
-                k1 = BiCubicKernel(dy - (float)n);
-                oy2 = oy1 + n;
-                if ( oy2 < 0 ) {oy2 = 0;}
-                if ( oy2 > ymax ) {oy2 = ymax;}
-                for (m = -1; m < 3; m++)
-                {
-                    k2 = k1 * BiCubicKernel((float)m - dx);
-                    ox2 = ox1 + m;
-                    if ( ox2 < 0 ) {ox2 = 0;}
-                    if ( ox2 > xmax ) {ox2 = xmax;}
-                    for (d = 0; d < 3; d++)
-                    {
-                        p_g[d] += (k2 * (float)pim[k].c[d]);
-                    }
-                    k++;
-                }
-            }
-            for (d = 0; d < 3; d++)
-            {
-                mim.c[d] = (BYTE)p_g[d];
-            }
+            mim = IMTInterpolateBiCubic (p_im, height, width, oy, ox);
             sdist = 0;
-            for (k = 0; k < 16; k++)
+            k = 0;
+            for (i = 0; i < 4; i++)
             {
-                pdist[k] = IMTdist(mim, pim[k]);
-                sdist += pdist[k];
+                oy2 = oy1 + i - 1;
+                if ( oy2 < 0 ) {oy2 = 0;}
+                if ( oy2 > ymax ) {oy2 = ymax;}
+                for (j = 0; j < 4; j++)
+                {
+                    ox2 = ox1 + j - 1;
+                    if ( ox2 < 0 ) {ox2 = 0;}
+                    if ( ox2 > xmax ) {ox2 = xmax;}
+                    pim[i][j] = p_im[oy2][ox2];
+                    pdist[k] = IMTdist(mim, pim[i][j]);
+                    sdist += pdist[k];
+                    k++;
+                }
             }
             sdist /= 16.0;
             if (sdist == 0)
@@ -170,97 +186,44 @@ void IMTFilterSBicont (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
                 {
                     pdist[k] = 1.0;
                 }
-            } else {
+            }
+            else
+            {
                 for (k = 0; k < 16; k++)
                 {
                     pdist[k] += sdist;
                     pdist[k] = sdist / pdist[k];
-
-                    pdist[k] -= 0.5;
-                    zdist = (pdist[k] < 0.0) ? -1.0 : 1.0;
-                    pdist[k] *= zdist;
-                    pdist[k] *= 2.0;
-                    pdist[k] = sqrt(pdist[k]);
-                    pdist[k] *= 0.5;
-                    pdist[k] *= zdist;
-                    pdist[k] += 0.5;
                 }
-            }
-            for (k = 0; k < 16; k++)
-            {
-                for (d = 0; d < 3; d++)
+                sdist = 0;
+                for (k = 0; k < 16; k++)
                 {
-                    pim[k].c[d] = ByteClamp((int) ((float)pim[k].c[d] * pdist[k] + (float)mim.c[d] * (1 - pdist[k]) + 0.5));
+                    sdist += pdist[k];
+                }
+                sdist /= 16.0f;
+                if (sdist > 0.0f)
+                {
+                    for (k = 0; k < 16; k++)
+                    {
+                        pdist[k] /= sdist;
+                    }
                 }
             }
             k = 0;
-            for (d = 0; d < 3; d++)
+            for (i = 0; i < 4; i++)
             {
-                p_g[d] = 0;
-            }
-            for (n = -1; n < 3; n++)
-            {
-                k1 = BiCubicKernel(dy - (float)n);
-                oy2 = oy1 + n;
-                if ( oy2 < 0 ) {oy2 = 0;}
-                if ( oy2 > ymax ) {oy2 = ymax;}
-                for (m = -1; m < 3; m++)
+                for (j = 0; j < 4; j++)
                 {
-                    k2 = k1 * BiCubicKernel((float)m - dx);
-                    ox2 = ox1 + m;
-                    if ( ox2 < 0 ) {ox2 = 0;}
-                    if ( ox2 > xmax ) {ox2 = xmax;}
                     for (d = 0; d < 3; d++)
                     {
-                        p_g[d] += (k2 * (float)pim[k].c[d]);
+                        pim[i][j].c[d] = ByteClamp((int) ((float)pim[i][j].c[d] * pdist[k] + (float)mim.c[d] * (1.0f - pdist[k]) + 0.5f));
                     }
                     k++;
                 }
             }
-            for (d = 0; d < 3; d++)
-            {
-                d_im[y][x].c[d] = ByteClamp((int)(p_g[d] + 0.5));
-            }
-            d_im[y][x] = IMTcalcS (d_im[y][x]);
+            d_im[y][x] = IMTInterpolateBiCubic (pim, 4, 4, (1.0f + dy), (1.0f + dx));
         }
     }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void IMTFilterSBilin (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, unsigned new_height, unsigned new_width)
-{
-    unsigned d;
-    float xFactor = (float)width / new_width;
-    float yFactor = (float)height / new_height;
-    float ox, oy, dx1, dy1, dx2, dy2;
-    int y, x, ox1, oy1, ox2, oy2;
-    int h = new_height;
-    int w = new_width;
-    int ymax = height - 1;
-    int xmax = width - 1;
-
-    for (y = 0; y < h; y++)
-    {
-        oy  = (float)y * yFactor;
-        oy1 = (int)oy;
-        oy2 = (oy1 == ymax) ? oy1 : oy1 + 1;
-        dy1 = oy - (float)oy1;
-        dy2 = 1.0 - dy1;
-        for (x = 0; x < w; x++)
-        {
-            ox  = (float)x * xFactor;
-            ox1 = (int)ox;
-            ox2 = (ox1 == xmax) ? ox1 : ox1 + 1;
-            dx1 = ox - (float)ox1;
-            dx2 = 1.0 - dx1;
-            for (d = 0; d < 3; d++)
-            {
-                d_im[y][x].c[d] = ByteClamp((int) (dy2 * (dx2 * p_im[oy1][ox1].c[d] + dx1 * p_im[oy1][ox2].c[d]) + dy1 * (dx2 * p_im[oy2][ox1].c[d] + dx1 * p_im[oy2][ox2].c[d]) + 0.5));
-            }
-            d_im[y][x] = IMTcalcS (d_im[y][x]);
-        }
-    }
+    IMTfree (pim, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -177,7 +177,8 @@ void IMTFilterUnsharpMask (IMTpixel**, IMTpixel**, unsigned, unsigned, float, in
 float IMTFilterNoiseVariance (IMTpixel**, unsigned, unsigned, int);
 void IMTFilterWiener (IMTpixel**, IMTpixel**, unsigned, unsigned, int, float);
 int IMTFilterWhiteFill (IMTpixel**, unsigned, unsigned);
-float BiCubicKernel (float);
+IMTpixel IMTInterpolateBiCubic (IMTpixel**, int, int, float, float);
+IMTpixel IMTInterpolateBiLine (IMTpixel**, int, int, float, float);
 void IMTFilterSBicub (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSBicont (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSBilin (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
