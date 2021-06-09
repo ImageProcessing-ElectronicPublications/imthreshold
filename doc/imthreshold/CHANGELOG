@@ -1,3 +1,7 @@
+0.20210609
+
+    Threshold: rewrite local blur threshold method
+
 0.20210430
 
     Size: fix BiCubic

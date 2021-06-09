@@ -192,7 +192,8 @@ int main(int argc, char *argv[])
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** b_im = IMTalloc(height, width);
                 IMTFilterGaussBlur (p_im, b_im, height, width, radius);
-                IMTFilterSCompare (p_im, b_im, height, width);
+                IMTFilterMathDivide (b_im, p_im, height, width, 0);
+                IMTFilterMathMinus (p_im, b_im, height, width, 255);
                 IMTfree(b_im, height);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTBiMod (p_im, d_im, height, width, delta);
