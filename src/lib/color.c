@@ -106,27 +106,27 @@ int IMTFilterSNorm (IMTpixel** p_im, unsigned height, unsigned width)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void IMTFilterSCompare (IMTpixel** p_im, IMTpixel** b_im, unsigned height, unsigned width)
+void IMTFilterSCScale (IMTpixel** p_im, unsigned height, unsigned width, float sensitivity, IMTpixel center)
 {
-    unsigned y, x;
-    int ims, imsd;
-    IMTpixel pim, bim;
+    unsigned y, x, d;
+    int im;
+    float imx;
 
+    sensitivity += 1.0f;
     for (y = 0; y < height; y++)
     {
         for (x = 0; x < width; x++)
         {
-            pim = p_im[y][x];
-            bim = b_im[y][x];
-            ims = (int)pim.s;
-            ims -= 384;
-            imsd = 765 + (int)IMTdist(pim, bim);
-            ims *= imsd;
-            ims /= 765;
-            ims *= imsd;
-            ims /= 765;
-            ims += 384;
-            p_im[y][x].s = Byte3Clamp(ims);
+            for (d = 0; d < 3; d++)
+            {
+                im = p_im[y][x].c[d];
+                imx = im - center.c[d];
+                imx *= sensitivity;
+                im = (int)(imx + 0.5f);
+                im += center.c[d];
+                p_im[y][x].c[d] = ByteClamp(im);
+            }
+            p_im[y][x] = IMTcalcS(p_im[y][x]);
         }
     }
 }
@@ -205,7 +205,7 @@ IMTpixel IMTFilterIllumCorr (IMTpixel** p_im, IMTpixel** b_im, IMTpixel** d_im, 
             if (palette[k] > max)
             {
                 max = palette[k];
-                max_pos[d] = k;
+                max_pos[d] = i;
             }
             k++;
         }

@@ -94,7 +94,7 @@ void IMTFilterRGBtoRYB4 (IMTpixel**, unsigned, unsigned, int);
 void IMTFilterSCCor (IMTpixel**, unsigned, unsigned);
 void IMTFilterSMirror (IMTpixel**, unsigned, unsigned);
 int IMTFilterSNorm (IMTpixel**, unsigned, unsigned);
-void IMTFilterSCompare (IMTpixel**, IMTpixel**, unsigned, unsigned);
+void IMTFilterSCScale (IMTpixel**, unsigned, unsigned, float, IMTpixel);
 void IMTFilterSEdge (IMTpixel**, IMTpixel**, unsigned, unsigned);
 void IMTFilterSSelect (IMTpixel**, unsigned, unsigned, unsigned);
 void IMTFilterInvertBW (BYTE**, unsigned, unsigned);
