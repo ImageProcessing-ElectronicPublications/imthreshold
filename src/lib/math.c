@@ -35,6 +35,68 @@ void IMTFilterMathAverage (IMTpixel** p_im, IMTpixel** m_im, unsigned height, un
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterMathBlur (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsigned width, unsigned radius, int delta)
+{
+    unsigned y, x, y0, x0, y1, x1, yf, xf;
+    unsigned d, sum, n;
+    int res;
+    IMTpixel** d_im = IMTalloc(height, width);
+
+    if (radius < 0)
+    {
+        radius = -radius;
+    }
+
+    if (radius > 1)
+    {
+        for (d = 0; d < 3; d++)
+        {
+            for (y = 0; y < height; y++)
+            {
+                y0 = (y > radius) ? (y - radius) : 0;
+                y1 = ((y + radius) < height) ? (y + radius) : height;
+                for (x = 0; x < width; x++)
+                {
+                    x0 = (x > radius) ? (x - radius) : 0;
+                    x1 = ((x + radius) < width) ? (x + radius) : width;
+                    sum = 0;
+                    n = 0;
+                    for (yf = y0; yf < y1; yf++)
+                    {
+                        for (xf = x0; xf < x1; xf++)
+                        {
+                            if (m_im[y][x].c[d] == m_im[yf][xf].c[d])
+                            {
+                                sum += p_im[yf][xf].c[d];
+                                n++;
+                            }
+                        }
+                    }
+                    res = (n > 0) ? (sum / n) : p_im[y][x].c[d];
+                    d_im[y][x].c[d] = ByteClamp(res + delta);
+                }
+            }
+        }
+        for (y = 0; y < height; y++ )
+        {
+            for (x = 0; x < width; x++ )
+            {
+                d_im[y][x] = IMTcalcS (d_im[y][x]);
+            }
+        }
+        for (y = 0; y < height; y++ )
+        {
+            for (x = 0; x < width; x++ )
+            {
+                p_im[y][x] = d_im[y][x];
+            }
+        }
+    }
+    IMTfree(d_im, height);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterMathDistance (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsigned width, int delta)
 {
     unsigned y, x, d;
@@ -49,7 +111,10 @@ void IMTFilterMathDistance (IMTpixel** p_im, IMTpixel** m_im, unsigned height, u
                 im = (int)p_im[y][x].c[d];
                 imm = (int)m_im[y][x].c[d];
                 im -= imm;
-                if (im < 0) {im = -im;}
+                if (im < 0)
+                {
+                    im = -im;
+                }
                 im += delta;
                 p_im[y][x].c[d] = ByteClamp(im);
             }
@@ -156,7 +221,10 @@ void IMTFilterMathMax (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsign
             {
                 im = (int)p_im[y][x].c[d];
                 imm = (int)m_im[y][x].c[d];
-                if (imm > im) {im = imm;}
+                if (imm > im)
+                {
+                    im = imm;
+                }
                 im += delta;
                 p_im[y][x].c[d] = ByteClamp(im);
             }
@@ -180,7 +248,10 @@ void IMTFilterMathMin (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsign
             {
                 im = (int)p_im[y][x].c[d];
                 imm = (int)m_im[y][x].c[d];
-                if (imm < im) {im = imm;}
+                if (imm < im)
+                {
+                    im = imm;
+                }
                 im += delta;
                 p_im[y][x].c[d] = ByteClamp(im);
             }
@@ -401,12 +472,17 @@ float IMTFilterMathSharpenBadMetric (IMTpixel** p_im, IMTpixel** m_im, unsigned 
         imsd /= imsd2;
         imsd *= imsdc;
         imsd *= 2.0;
-    } else {
+    }
+    else
+    {
         imsd /= (float)height;
         imsd /= (float)width;
         imsd /= 3.0;
     }
-    if (imsd < 0) {imsd = -imsd;}
+    if (imsd < 0)
+    {
+        imsd = -imsd;
+    }
     imsd = sqrt(imsd);
     imsd = -imsd;
     imsd *= exp(-1);

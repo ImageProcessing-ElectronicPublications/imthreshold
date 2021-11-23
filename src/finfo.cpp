@@ -31,7 +31,8 @@ void ImthresholdFilterInfoUsage()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     // call this ONLY when linking with FreeImage as a static library
 #ifdef FREEIMAGE_LIB
     FreeImage_Initialise();
@@ -44,18 +45,18 @@ int main(int argc, char *argv[]) {
     {
         switch(opt)
         {
-            case 'q':
-                fcpo = true;
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'q':
+            fcpo = true;
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -118,7 +119,9 @@ int main(int argc, char *argv[]) {
                     FreeImage_Unload(dst_dib);
                 }
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

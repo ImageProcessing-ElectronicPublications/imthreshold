@@ -62,39 +62,39 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'm':
-                namefilter = optarg;
-                break;
-            case 'b':
-                bgs = atof(optarg);
-                break;
-            case 'f':
-                fgs = atof(optarg);
-                break;
-            case 'k':
-                kdelta = atof(optarg);
-                break;
-            case 'l':
-                level = atof(optarg);
-                break;
-            case 'o':
-                doverlay = atof(optarg);
-                break;
-            case 'c':
-                fclean = atof(optarg);
-                break;
-            case 'r':
-                frewrite = true;
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'm':
+            namefilter = optarg;
+            break;
+        case 'b':
+            bgs = atof(optarg);
+            break;
+        case 'f':
+            fgs = atof(optarg);
+            break;
+        case 'k':
+            kdelta = atof(optarg);
+            break;
+        case 'l':
+            level = atof(optarg);
+            break;
+        case 'o':
+            doverlay = atof(optarg);
+            break;
+        case 'c':
+            fclean = atof(optarg);
+            break;
+        case 'r':
+            frewrite = true;
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -110,9 +110,18 @@ int main(int argc, char *argv[])
     const char *fg_filename = argv[optind + 2];
     const char *bg_filename = argv[optind + 3];
 
-    if (bgs < 1) {bgs = 1;}
-    if (fgs < 1) {fgs = 1;}
-    if (level < 0) {level = 0;}
+    if (bgs < 1)
+    {
+        bgs = 1;
+    }
+    if (fgs < 1)
+    {
+        fgs = 1;
+    }
+    if (level < 0)
+    {
+        level = 0;
+    }
     FreeImage_SetOutputMessage (FreeImageErrorHandler);
 
     printf ("Input= %s\n", src_filename);
@@ -213,7 +222,9 @@ int main(int argc, char *argv[])
                                 bg_dib = FreeImage_Allocate (widthbg, heightbg, 24);
                                 ImthresholdSetData (bg_dib, bg_im);
                                 IMTfree(bg_im, heightbg);
-                            } else {
+                            }
+                            else
+                            {
                                 printf("Filter= simple\n");
 
                                 IMTpixel** g_im = IMTalloc(height, width);
@@ -231,7 +242,7 @@ int main(int argc, char *argv[])
                                 ImthresholdSetDataBW (dib, m_im);
                                 FREE_IMAGE_FORMAT out_fif = FreeImage_GetFIFFromFilename (mask_filename);
                                 FreeImage_Save (out_fif, dib, mask_filename, 0);
-                                printf("Output= %s\n", mask_filename);                              
+                                printf("Output= %s\n", mask_filename);
                             }
                             FreeImage_Unload(dib);
                             BWfree(m_im, height);
@@ -256,15 +267,21 @@ int main(int argc, char *argv[])
                                 }
                                 FreeImage_Unload (bg_dib);
                             }
-                        } else {
+                        }
+                        else
+                        {
                             printf("%s\n", "Size mask uncorect.");
                             FreeImage_Unload (dib);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         printf("%s\n", "Unsupported color mode.");
                         FreeImage_Unload (dib);
                     }
-                } else {
+                }
+                else
+                {
                     printf("%s\n", "Unsupported color mode.");
                     FreeImage_Unload (dib);
                 }
@@ -272,7 +289,9 @@ int main(int argc, char *argv[])
             IMTfree(p_im, height);
 
             printf("\n");
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload (dib);
         }

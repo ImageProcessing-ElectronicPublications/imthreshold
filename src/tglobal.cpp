@@ -82,45 +82,45 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'f':
-                namefilter = optarg;
-                break;
-            case 'd':
-                delta = atof(optarg);
-                break;
-            case 'b':
-                fccor = true;
-                break;
-            case 'i':
-                finv = true;
-                break;
-            case 'k':
-                knum = atof(optarg);
-                break;
-            case 'm':
-                iters = atof(optarg);
-                break;
-            case 'n':
-                fnorm = true;
-                break;
-            case 's':
-                shift = atof(optarg);
-                break;
-            case 'w':
-                weight = true;
-                break;
-            case 'z':
-                fmirror = true;
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'f':
+            namefilter = optarg;
+            break;
+        case 'd':
+            delta = atof(optarg);
+            break;
+        case 'b':
+            fccor = true;
+            break;
+        case 'i':
+            finv = true;
+            break;
+        case 'k':
+            knum = atof(optarg);
+            break;
+        case 'm':
+            iters = atof(optarg);
+            break;
+        case 'n':
+            fnorm = true;
+            break;
+        case 's':
+            shift = atof(optarg);
+            break;
+        case 'w':
+            weight = true;
+            break;
+        case 'z':
+            fmirror = true;
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -170,71 +170,107 @@ int main(int argc, char *argv[])
             {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTBHT(p_im, d_im, height, width);
-            } else if (strcmp(namefilter, "bimodc") == 0) {
+            }
+            else if (strcmp(namefilter, "bimodc") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Delta= %d\n", delta);
                 threshold = IMTFilterTBiModC(p_im, d_im, height, width, delta);
-            } else if (strcmp(namefilter, "color") == 0) {
+            }
+            else if (strcmp(namefilter, "color") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Delta= %d\n", delta);
                 threshold = IMTFilterTColor(p_im, d_im, height, width, delta);
-            } else if (strcmp(namefilter, "dither") == 0) {
+            }
+            else if (strcmp(namefilter, "dither") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTDither(p_im, d_im, height, width);
-            } else if (strcmp(namefilter, "dithh") == 0) {
+            }
+            else if (strcmp(namefilter, "dithh") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Coeff= %d\n", knum);
                 printf("Delta= %d\n", delta);
                 threshold = IMTFilterTDithH(p_im, d_im, height, width, knum, delta, 4);
-            } else if (strcmp(namefilter, "ditho") == 0) {
+            }
+            else if (strcmp(namefilter, "ditho") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Coeff= %d\n", knum);
                 printf("Delta= %d\n", delta);
                 threshold = IMTFilterTDithO(p_im, d_im, height, width, knum, delta);
-            } else if (strcmp(namefilter, "dithq") == 0) {
+            }
+            else if (strcmp(namefilter, "dithq") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Coeff= %d\n", knum);
                 printf("Delta= %d\n", delta);
                 threshold = IMTFilterTDithH(p_im, d_im, height, width, knum, delta, 2);
-            } else if (strcmp(namefilter, "ditht") == 0) {
+            }
+            else if (strcmp(namefilter, "ditht") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Coeff= %d\n", knum);
                 printf("Delta= %d\n", delta);
                 threshold = IMTFilterTDithH(p_im, d_im, height, width, knum, delta, 3);
-            } else if (strcmp(namefilter, "entropy") == 0) {
+            }
+            else if (strcmp(namefilter, "entropy") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTEnt(p_im, d_im, height, width);
-            } else if (strcmp(namefilter, "eqbright") == 0) {
+            }
+            else if (strcmp(namefilter, "eqbright") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTEqBright(p_im, d_im, height, width);
-            } else if (strcmp(namefilter, "grad") == 0) {
+            }
+            else if (strcmp(namefilter, "grad") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTGrad(p_im, d_im, height, width);
-            } else if (strcmp(namefilter, "janni") == 0) {
+            }
+            else if (strcmp(namefilter, "janni") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTJanni(p_im, d_im, height, width);
-            } else if (strcmp(namefilter, "kmeans") == 0) {
+            }
+            else if (strcmp(namefilter, "kmeans") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Cluster= %d\n", knum);
-               threshold = IMTFilterTKMeans(p_im, d_im, height, width, knum, iters);
-            } else if (strcmp(namefilter, "otsu") == 0) {
+                threshold = IMTFilterTKMeans(p_im, d_im, height, width, knum, iters);
+            }
+            else if (strcmp(namefilter, "otsu") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTOtsu(p_im, d_im, height, width);
-            } else if (strcmp(namefilter, "quadmod") == 0) {
+            }
+            else if (strcmp(namefilter, "quadmod") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Delta= %d\n", delta);
                 threshold = IMTFilterTQuadMod(p_im, d_im, height, width, delta);
-            } else if (strcmp(namefilter, "rot") == 0) {
+            }
+            else if (strcmp(namefilter, "rot") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTRot(p_im, d_im, height, width, weight);
-            } else if (strcmp(namefilter, "tsai") == 0) {
+            }
+            else if (strcmp(namefilter, "tsai") == 0)
+            {
                 threshold = IMTFilterTTsai(p_im, d_im, height, width, shift);
                 printf("Filter= %s\n", namefilter);
-            } else if (strcmp(namefilter, "use") == 0) {
+            }
+            else if (strcmp(namefilter, "use") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Delta= %d\n", delta);
                 threshold = IMTFilterThreshold(p_im, d_im, height, width, 382 + delta);
-            } else {
+            }
+            else
+            {
                 printf("Filter= bimod\n");
                 printf("Delta= %d\n", delta);
                 threshold = IMTFilterTBiMod(p_im, d_im, height, width, delta);
@@ -260,7 +296,9 @@ int main(int argc, char *argv[])
                 }
                 FreeImage_Unload(dst_dib);
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

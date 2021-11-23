@@ -81,54 +81,54 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'f':
-                namefilter = optarg;
-                break;
-            case 'b':
-                fccor = true;
-                break;
-            case 'c':
-                contrast_limit = atof(optarg);
-                break;
-            case 'd':
-                delta = atof(optarg);
-                break;
-            case 'i':
-                finv = true;
-                break;
-            case 'g':
-                dynamic_range = atof(optarg);
-                break;
-            case 'l':
-                lower_bound = atof(optarg);
-                break;
-            case 'n':
-                fnorm = true;
-                break;
-            case 'o':
-                doverlay = atof(optarg);
-                break;
-            case 'r':
-                radius = atof(optarg);
-                break;
-            case 's':
-                sensitivity = atof(optarg);
-                break;
-            case 'u':
-                upper_bound = atof(optarg);
-                break;
-            case 'z':
-                fmirror = true;
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'f':
+            namefilter = optarg;
+            break;
+        case 'b':
+            fccor = true;
+            break;
+        case 'c':
+            contrast_limit = atof(optarg);
+            break;
+        case 'd':
+            delta = atof(optarg);
+            break;
+        case 'i':
+            finv = true;
+            break;
+        case 'g':
+            dynamic_range = atof(optarg);
+            break;
+        case 'l':
+            lower_bound = atof(optarg);
+            break;
+        case 'n':
+            fnorm = true;
+            break;
+        case 'o':
+            doverlay = atof(optarg);
+            break;
+        case 'r':
+            radius = atof(optarg);
+            break;
+        case 's':
+            sensitivity = atof(optarg);
+            break;
+        case 'u':
+            upper_bound = atof(optarg);
+            break;
+        case 'z':
+            fmirror = true;
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -179,16 +179,22 @@ int main(int argc, char *argv[])
             {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTAbutaleb(p_im, d_im, height, width, radius);
-            } else if (strcmp(namefilter, "bernsen") == 0) {
+            }
+            else if (strcmp(namefilter, "bernsen") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Contrast= %d\n", contrast_limit);
                 threshold = IMTFilterTBernsen(p_im, d_im, height, width, radius, contrast_limit);
-            } else if (strcmp(namefilter, "bimod") == 0) {
+            }
+            else if (strcmp(namefilter, "bimod") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Sensitivity= %f\n", sensitivity);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTBiModRegion ( p_im, d_im, height, width, radius, sensitivity, delta);
-            } else if (strcmp(namefilter, "blur") == 0) {
+            }
+            else if (strcmp(namefilter, "blur") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** b_im = IMTalloc(height, width);
                 IMTFilterGaussBlur (p_im, b_im, height, width, radius);
@@ -199,20 +205,26 @@ int main(int argc, char *argv[])
                 IMTfree(b_im, height);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTBiMod (p_im, d_im, height, width, delta);
-            } else if (strcmp(namefilter, "chistian") == 0) {
+            }
+            else if (strcmp(namefilter, "chistian") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Sensitivity= %f\n", sensitivity);
                 printf("Lower= %d\n", lower_bound);
                 printf("Upper= %d\n", upper_bound);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTChistian(p_im, d_im, height, width, radius, sensitivity, lower_bound, upper_bound, delta);
-            } else if (strcmp(namefilter, "dalg") == 0) {
+            }
+            else if (strcmp(namefilter, "dalg") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Lower= %d\n", lower_bound);
                 printf("Upper= %d\n", upper_bound);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTDalg(p_im, d_im, height, width, radius, lower_bound, upper_bound, delta);
-            } else if (strcmp(namefilter, "edge") == 0) {
+            }
+            else if (strcmp(namefilter, "edge") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** b_im = IMTalloc(height, width);
                 IMTFilterGaussBlur (p_im, b_im, height, width, radius);
@@ -220,33 +232,43 @@ int main(int argc, char *argv[])
                 IMTfree(b_im, height);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTBiMod (p_im, d_im, height, width, delta);
-            } else if (strcmp(namefilter, "gravure") == 0) {
+            }
+            else if (strcmp(namefilter, "gravure") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Sensitivity= %f\n", sensitivity);
                 printf("Lower= %d\n", lower_bound);
                 printf("Upper= %d\n", upper_bound);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTGravure(p_im, d_im, height, width, radius, sensitivity, lower_bound, upper_bound, delta);
-            } else if (strcmp(namefilter, "mscale") == 0) {
+            }
+            else if (strcmp(namefilter, "mscale") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Sensitivity= %f\n", sensitivity);
                 printf("Overlay= %f\n", doverlay);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTMscale (p_im, d_im, height, width, radius, sensitivity, doverlay, delta);
-            } else if (strcmp(namefilter, "niblack") == 0) {
+            }
+            else if (strcmp(namefilter, "niblack") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Sensitivity= %f\n", sensitivity);
                 printf("Lower= %d\n", lower_bound);
                 printf("Upper= %d\n", upper_bound);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTNiblack(p_im, d_im, height, width, radius, sensitivity, lower_bound, upper_bound, delta);
-            } else if (strcmp(namefilter, "size") == 0) {
+            }
+            else if (strcmp(namefilter, "size") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 printf("Lower= %d\n", lower_bound);
                 printf("Upper= %d\n", upper_bound);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTSize(p_im, d_im, height, width, radius, lower_bound, upper_bound, (int)(delta + 0.5));
-            } else {
+            }
+            else
+            {
                 printf("Filter= sauvola\n");
                 printf("Sensitivity= %f\n", sensitivity);
                 printf("Lower= %d\n", lower_bound);
@@ -276,7 +298,9 @@ int main(int argc, char *argv[])
                 }
                 FreeImage_Unload(dst_dib);
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

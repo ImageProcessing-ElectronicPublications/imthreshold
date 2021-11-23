@@ -63,48 +63,48 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case '4':
-                fryb4 = true;
-                break;
-            case 'b':
-                bgs = atof(optarg);
-                break;
-            case 'f':
-                fgs = atof(optarg);
-                break;
-            case 'l':
-                level = atof(optarg);
-                break;
-            case 'i':
-                finvs = true;
-                break;
-            case 'w':
-                wbmode = atof(optarg);
-                break;
-            case 'a':
-                anisotropic = atof(optarg);
-                break;
-            case 'o':
-                doverlay = atof(optarg);
-                break;
-            case 'c':
-                fclean = atof(optarg);
-                break;
-            case 'd':
-                fdespeckle = atof(optarg);
-                break;
-            case 'p':
-                fposter = atof(optarg);
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case '4':
+            fryb4 = true;
+            break;
+        case 'b':
+            bgs = atof(optarg);
+            break;
+        case 'f':
+            fgs = atof(optarg);
+            break;
+        case 'l':
+            level = atof(optarg);
+            break;
+        case 'i':
+            finvs = true;
+            break;
+        case 'w':
+            wbmode = atof(optarg);
+            break;
+        case 'a':
+            anisotropic = atof(optarg);
+            break;
+        case 'o':
+            doverlay = atof(optarg);
+            break;
+        case 'c':
+            fclean = atof(optarg);
+            break;
+        case 'd':
+            fdespeckle = atof(optarg);
+            break;
+        case 'p':
+            fposter = atof(optarg);
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -140,7 +140,10 @@ int main(int argc, char *argv[])
 
     FreeImage_SetOutputMessage(FreeImageErrorHandler);
 
-    if (fclean < 0) {fclean = -fclean;}
+    if (fclean < 0)
+    {
+        fclean = -fclean;
+    }
     printf("Input= %s\n", src_filename);
     FIBITMAP *dib = ImthresholdGenericLoader(src_filename, 0);
     if (dib)
@@ -190,7 +193,9 @@ int main(int argc, char *argv[])
                 if (wbmode > 0)
                 {
                     printf("Mode= white\n");
-                } else {
+                }
+                else
+                {
                     printf("Mode= black\n");
                 }
                 IMTfree(p_im, height);
@@ -231,7 +236,9 @@ int main(int argc, char *argv[])
                     ImthresholdSetData(fg_dib, bg_im);
                     bg_dib = FreeImage_Allocate(widthfg, heightfg, 24);
                     ImthresholdSetData(bg_dib, fg_im);
-                } else {
+                }
+                else
+                {
                     fg_dib = FreeImage_Allocate(widthfg, heightfg, 24);
                     ImthresholdSetData(fg_dib, fg_im);
                     bg_dib = FreeImage_Allocate(widthbg, heightbg, 24);
@@ -245,7 +252,9 @@ int main(int argc, char *argv[])
                     ImthresholdSetDataBW(fgm_dib, bgm_im);
                     bgm_dib = FreeImage_Allocate(widthfg, heightfg, 1);
                     ImthresholdSetDataBW(bgm_dib, fgm_im);
-                } else {
+                }
+                else
+                {
                     fgm_dib = FreeImage_Allocate(widthfg, heightfg, 1);
                     ImthresholdSetDataBW(fgm_dib, fgm_im);
                     bgm_dib = FreeImage_Allocate(widthbg, heightbg, 1);
@@ -318,7 +327,9 @@ int main(int argc, char *argv[])
                 FreeImage_Unload(bgm_dib);
             }
             printf("\n");
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

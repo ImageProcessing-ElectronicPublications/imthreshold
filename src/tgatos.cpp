@@ -62,49 +62,64 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'm':
-                if (strcmp(optarg, "niblack") == 0) {fmode = 0;}
-                if (strcmp(optarg, "sauvola") == 0) {fmode = 1;}
-                if (strcmp(optarg, "chistian") == 0) {fmode = 2;}
-                if (strcmp(optarg, "bimod") == 0) {fmode = 3;}
-                if (strcmp(optarg, "dalg") == 0) {fmode = 4;}
-                break;
-            case 'r':
-                radius = atof(optarg);
-                break;
-            case 's':
-                sensitivity = atof(optarg);
-                break;
-            case 'f':
-                dynamic_range = atof(optarg);
-                break;
-            case 'l':
-                lower_bound = atof(optarg);
-                break;
-            case 'u':
-                upper_bound = atof(optarg);
-                break;
-            case 'd':
-                delta = atof(optarg);
-                break;
-            case 'q':
-                q = atof(optarg);
-                break;
-            case '1':
-                p1 = atof(optarg);
-                break;
-            case '2':
-                p2 = atof(optarg);
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'm':
+            if (strcmp(optarg, "niblack") == 0)
+            {
+                fmode = 0;
+            }
+            if (strcmp(optarg, "sauvola") == 0)
+            {
+                fmode = 1;
+            }
+            if (strcmp(optarg, "chistian") == 0)
+            {
+                fmode = 2;
+            }
+            if (strcmp(optarg, "bimod") == 0)
+            {
+                fmode = 3;
+            }
+            if (strcmp(optarg, "dalg") == 0)
+            {
+                fmode = 4;
+            }
+            break;
+        case 'r':
+            radius = atof(optarg);
+            break;
+        case 's':
+            sensitivity = atof(optarg);
+            break;
+        case 'f':
+            dynamic_range = atof(optarg);
+            break;
+        case 'l':
+            lower_bound = atof(optarg);
+            break;
+        case 'u':
+            upper_bound = atof(optarg);
+            break;
+        case 'd':
+            delta = atof(optarg);
+            break;
+        case 'q':
+            q = atof(optarg);
+            break;
+        case '1':
+            p1 = atof(optarg);
+            break;
+        case '2':
+            p2 = atof(optarg);
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -131,11 +146,26 @@ int main(int argc, char *argv[])
     FreeImage_SetOutputMessage(FreeImageErrorHandler);
 
     printf("Input= %s\n", src_filename);
-    if (fmode == 0) {printf("Mode= Niblack\n");}
-    if (fmode == 1) {printf("Mode= Sauvola\n");}
-    if (fmode == 2) {printf("Mode= Chistian\n");}
-    if (fmode == 3) {printf("Mode= BiMod\n");}
-    if (fmode == 4) {printf("Mode= D-alg\n");}
+    if (fmode == 0)
+    {
+        printf("Mode= Niblack\n");
+    }
+    if (fmode == 1)
+    {
+        printf("Mode= Sauvola\n");
+    }
+    if (fmode == 2)
+    {
+        printf("Mode= Chistian\n");
+    }
+    if (fmode == 3)
+    {
+        printf("Mode= BiMod\n");
+    }
+    if (fmode == 4)
+    {
+        printf("Mode= D-alg\n");
+    }
     FIBITMAP *dib = ImthresholdGenericLoader(src_filename, 0);
     if (dib)
     {
@@ -154,38 +184,38 @@ int main(int argc, char *argv[])
 
             switch(fmode)
             {
-                case 1:
-                    printf("Dynamic= %d\n", dynamic_range);
-                case 0:
-                case 2:
-                    printf("Sensitivity= %f\n", sensitivity);
-                    printf("Lower= %d\n", lower_bound);
-                    printf("Upper= %d\n", upper_bound);
-                case 4:
-                    printf("Radius= %d\n", radius);
-                case 3:
-                    printf("Delta= %f\n", delta);
+            case 1:
+                printf("Dynamic= %d\n", dynamic_range);
+            case 0:
+            case 2:
+                printf("Sensitivity= %f\n", sensitivity);
+                printf("Lower= %d\n", lower_bound);
+                printf("Upper= %d\n", upper_bound);
+            case 4:
+                printf("Radius= %d\n", radius);
+            case 3:
+                printf("Delta= %f\n", delta);
             }
 
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
             switch(fmode)
             {
-                case 0:
-                    threshold = IMTFilterTNiblack(p_im, d_im, height, width, radius, sensitivity, lower_bound, upper_bound, delta);
-                    break;
-                case 1:
-                    threshold = IMTFilterTSauvola(p_im, d_im, height, width, radius, sensitivity, dynamic_range, lower_bound, upper_bound, delta);
-                    break;
-                case 2:
-                    threshold = IMTFilterTChistian(p_im, d_im, height, width, radius, sensitivity, lower_bound, upper_bound, delta);
-                    break;
-                case 3:
-                    threshold = IMTFilterTBiMod(p_im, d_im, height, width, delta);
-                    break;
-                case 4:
-                    threshold = IMTFilterTDalg(p_im, d_im, height, width, radius, lower_bound, upper_bound, delta);
-                    break;
+            case 0:
+                threshold = IMTFilterTNiblack(p_im, d_im, height, width, radius, sensitivity, lower_bound, upper_bound, delta);
+                break;
+            case 1:
+                threshold = IMTFilterTSauvola(p_im, d_im, height, width, radius, sensitivity, dynamic_range, lower_bound, upper_bound, delta);
+                break;
+            case 2:
+                threshold = IMTFilterTChistian(p_im, d_im, height, width, radius, sensitivity, lower_bound, upper_bound, delta);
+                break;
+            case 3:
+                threshold = IMTFilterTBiMod(p_im, d_im, height, width, delta);
+                break;
+            case 4:
+                threshold = IMTFilterTDalg(p_im, d_im, height, width, radius, lower_bound, upper_bound, delta);
+                break;
             }
             threshold = IMTFilterGatosBG(p_im, d_im, bg_im, height, width, radius);
             printf("q= %f\n", q);
@@ -241,7 +271,9 @@ int main(int argc, char *argv[])
                 }
                 FreeImage_Unload(bin_dib);
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

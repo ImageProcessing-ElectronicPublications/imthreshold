@@ -44,18 +44,18 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'r':
-                freduce = true;
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'r':
+            freduce = true;
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -87,7 +87,9 @@ int main(int argc, char *argv[])
                 {
                     width2 = (width + 1) / 2;
                     height2 = (height + 1) / 2;
-                } else {
+                }
+                else
+                {
                     width2 = width * 2;
                     height2 = height * 2;
                 }
@@ -102,7 +104,9 @@ int main(int argc, char *argv[])
                 {
                     threshold = IMTFilterSBWReduce2(d_im, r_im, height, width, height2, width2);
                     printf("Reduce= %d\n", threshold);
-                } else {
+                }
+                else
+                {
                     threshold = IMTFilterSBWMag2(d_im, r_im, height, width, height2, width2);
                     printf("Mag= %d\n", threshold);
                 }
@@ -122,11 +126,15 @@ int main(int argc, char *argv[])
                     }
                     FreeImage_Unload(dst_dib);
                 }
-            } else {
+            }
+            else
+            {
                 printf("%s\n", "Unsupported color mode.");
                 FreeImage_Unload(dib);
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

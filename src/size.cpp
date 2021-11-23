@@ -55,30 +55,30 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'f':
-                namefilter = optarg;
-                break;
-            case 'p':
-                ppart = atof(optarg);
-                break;
-            case 'r':
-                ratio = atof(optarg);
-                break;
-            case 'w':
-                neww = atof(optarg);
-                break;
-            case 'z':
-                newh = atof(optarg);
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'f':
+            namefilter = optarg;
+            break;
+        case 'p':
+            ppart = atof(optarg);
+            break;
+        case 'r':
+            ratio = atof(optarg);
+            break;
+        case 'w':
+            neww = atof(optarg);
+            break;
+        case 'z':
+            newh = atof(optarg);
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -108,13 +108,19 @@ int main(int argc, char *argv[])
             {
                 new_width = width * ratio;
                 new_height = height * ratio;
-            } else if (newh > 0 && neww > 0) {
+            }
+            else if (newh > 0 && neww > 0)
+            {
                 new_width = neww;
                 new_height = newh;
-            } else if (newh > 0) {
+            }
+            else if (newh > 0)
+            {
                 new_width = (width * newh) / height;
                 new_height = newh;
-            } else {
+            }
+            else
+            {
                 new_width = neww;
                 new_height = (height * neww) / width;
             }
@@ -199,7 +205,9 @@ int main(int argc, char *argv[])
                 }
                 FreeImage_Unload(dst_dib);
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

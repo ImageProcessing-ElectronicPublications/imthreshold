@@ -105,57 +105,57 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'f':
-                namefilter = optarg;
-                break;
-            case '4':
-                fryb4 = true;
-                break;
-            case 'a':
-                amount = atof(optarg);
-                break;
-            case 'c':
-                contour = atof(optarg);
-                break;
-            case 'd':
-                maxdelta = atof(optarg);
-                break;
-            case 'i':
-                ndiv = atof(optarg);
-                break;
-            case 'k':
-                knum = atof(optarg);
-                break;
-            case 'l':
-                lower_bound = atof(optarg);
-                break;
-            case 'n':
-                noise = atof(optarg);
-                break;
-            case 'p':
-                posterdiv = atof(optarg);
-                break;
-            case 'r':
-                radius = atof(optarg);
-                break;
-            case 's':
-                sigma = atof(optarg);
-                break;
-            case 't':
-                threshold = atof(optarg);
-                break;
-            case 'u':
-                upper_bound = atof(optarg);
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'f':
+            namefilter = optarg;
+            break;
+        case '4':
+            fryb4 = true;
+            break;
+        case 'a':
+            amount = atof(optarg);
+            break;
+        case 'c':
+            contour = atof(optarg);
+            break;
+        case 'd':
+            maxdelta = atof(optarg);
+            break;
+        case 'i':
+            ndiv = atof(optarg);
+            break;
+        case 'k':
+            knum = atof(optarg);
+            break;
+        case 'l':
+            lower_bound = atof(optarg);
+            break;
+        case 'n':
+            noise = atof(optarg);
+            break;
+        case 'p':
+            posterdiv = atof(optarg);
+            break;
+        case 'r':
+            radius = atof(optarg);
+            break;
+        case 's':
+            sigma = atof(optarg);
+            break;
+        case 't':
+            threshold = atof(optarg);
+            break;
+        case 'u':
+            upper_bound = atof(optarg);
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -195,15 +195,23 @@ int main(int argc, char *argv[])
                 int radiusint;
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 radiusint = int(radius + 0.5);
-                if (radiusint == 0) {radiusint = 1;}
+                if (radiusint == 0)
+                {
+                    radiusint = 1;
+                }
                 printf("Radius= %d\n", radiusint);
 
                 IMTFilterAdSmooth(p_im, d_im, height, width, radiusint);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "bimod") == 0) {
+            }
+            else if (strcmp(namefilter, "bimod") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 int thres = 0;
                 IMTpixel** d_im = IMTalloc(height, width);
@@ -216,13 +224,18 @@ int main(int argc, char *argv[])
                 printf("Threshold= %d\n", thres);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-             } else if (strcmp(namefilter, "bwc") == 0) {
+            }
+            else if (strcmp(namefilter, "bwc") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 unsigned radiusint;
                 float kwb = 0.5;
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 radiusint = unsigned(radius + 0.5);
                 printf("Radius= %d\n", radiusint);
 
@@ -230,61 +243,91 @@ int main(int argc, char *argv[])
                 printf("W/b= %f\n", kwb);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "blur") == 0) {
+            }
+            else if (strcmp(namefilter, "blur") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
-                if (radius == 0) {radius = 1.0;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
+                if (radius == 0)
+                {
+                    radius = 1.0;
+                }
                 printf("Radius= %f\n", radius);
 
                 IMTFilterGaussBlur(p_im, d_im, height, width, radius);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-           } else if (strcmp(namefilter, "cluster") == 0) {
+            }
+            else if (strcmp(namefilter, "cluster") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 int imdm;
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (knum < 2) {knum = 2;}
+                if (knum < 2)
+                {
+                    knum = 2;
+                }
                 printf("K= %d\n", knum);
 
                 imdm = IMTFilterClusterBiModC (p_im, d_im, height, width, knum);
                 printf("Dmax= %d\n", imdm);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "denoise") == 0) {
+            }
+            else if (strcmp(namefilter, "denoise") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 float kdenoises;
                 unsigned radiusint;
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 radiusint = int(radius + 0.5);
                 printf("Radius= %d\n", radiusint);
                 printf("KUse= %f\n", threshold);
 
                 kdenoises = IMTFilterDeNoiseDiff (p_im, height, width, radiusint, threshold);
                 printf("KDeNoise= %f\n", kdenoises);
-            } else if (strcmp(namefilter, "greyworld") == 0) {
+            }
+            else if (strcmp(namefilter, "greyworld") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel dim;
 
                 dim = IMTFilterGreyWorld(p_im, height, width);
                 printf("Normalize= %d,%d,%d\n", dim.c[0], dim.c[1], dim.c[2]);
-            } else if (strcmp(namefilter, "greynorm") == 0) {
+            }
+            else if (strcmp(namefilter, "greynorm") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel dim;
 
                 dim = IMTFilterGreyNorm(p_im, height, width);
                 printf("Normalize= %d,%d,%d: %d\n", dim.c[0], dim.c[1], dim.c[2], dim.s);
-            } else if (strcmp(namefilter, "illumc") == 0) {
+            }
+            else if (strcmp(namefilter, "illumc") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel domin;
                 IMTpixel** b_im = IMTalloc(height, width);
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
-                if (radius == 0) {radius = 1.0;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
+                if (radius == 0)
+                {
+                    radius = 1.0;
+                }
                 printf("Radius= %f\n", radius);
                 printf("Threshold= %f\n", threshold);
 
@@ -294,26 +337,41 @@ int main(int argc, char *argv[])
                 IMTfree(b_im, height);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "invert") == 0) {
+            }
+            else if (strcmp(namefilter, "invert") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
 
                 IMTFilterInvert(p_im, height, width);
-            } else if (strcmp(namefilter, "kmeans") == 0) {
+            }
+            else if (strcmp(namefilter, "kmeans") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
 
-                if (knum < 2) {knum = 2;}
+                if (knum < 2)
+                {
+                    knum = 2;
+                }
                 printf("K= %d\n", knum);
 
                 threshold = IMTFilterKMeans(p_im, height, width, knum, threshold);
                 printf("Iters= %d\n", (int)threshold);
-            } else if (strcmp(namefilter, "levelmean") == 0) {
+            }
+            else if (strcmp(namefilter, "levelmean") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 int radiusint;
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 radiusint = int(radius + 0.5);
-                if (radiusint == 0) {radiusint = 1;}
+                if (radiusint == 0)
+                {
+                    radiusint = 1;
+                }
                 printf("Radius= %d\n", radiusint);
                 printf("Threshold= %f\n", threshold);
                 printf("Lower= %d\n", lower_bound);
@@ -323,7 +381,9 @@ int main(int argc, char *argv[])
                 printf("Contour= %f\n", contour);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "levelsigma") == 0) {
+            }
+            else if (strcmp(namefilter, "levelsigma") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 float ks = 0;
                 IMTpixel** d_im = IMTalloc(height, width);
@@ -335,15 +395,23 @@ int main(int argc, char *argv[])
                 printf("Multy= %f\n", ks);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "levelsize") == 0) {
+            }
+            else if (strcmp(namefilter, "levelsize") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 int radiusint;
                 float ks = 0;
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 radiusint = int(radius + 0.5);
-                if (radiusint == 0) {radiusint = 1;}
+                if (radiusint == 0)
+                {
+                    radiusint = 1;
+                }
                 printf("Radius= %d\n", radiusint);
                 printf("Delta= %f\n", threshold);
 
@@ -351,65 +419,97 @@ int main(int argc, char *argv[])
                 printf("Distance= %f\n", ks);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "mirror") == 0) {
+            }
+            else if (strcmp(namefilter, "mirror") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
 
                 IMTFilterMirrorMean(p_im, height, width);
                 dst_dib = FreeImage_Allocate(width, height, 24);
                 ImthresholdSetData(dst_dib, p_im);
-            } else if (strcmp(namefilter, "monocolor") == 0) {
+            }
+            else if (strcmp(namefilter, "monocolor") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
 
                 IMTFilterMonoColor(p_im, height, width);
-            } else if (strcmp(namefilter, "mclose") == 0) {
+            }
+            else if (strcmp(namefilter, "mclose") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 printf("Radius= %f\n", radius);
 
                 IMTFilterMorph(p_im, d_im, height, width, radius, true);
                 IMTFilterMorph(d_im, p_im, height, width, radius, false);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "mdilate") == 0) {
+            }
+            else if (strcmp(namefilter, "mdilate") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 printf("Radius= %f\n", radius);
 
                 IMTFilterMorph(p_im, d_im, height, width, radius, true);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "merose") == 0) {
+            }
+            else if (strcmp(namefilter, "merose") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 printf("Radius= %f\n", radius);
 
                 IMTFilterMorph(p_im, d_im, height, width, radius, false);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "mopen") == 0) {
+            }
+            else if (strcmp(namefilter, "mopen") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 printf("Radius= %f\n", radius);
 
                 IMTFilterMorph(p_im, d_im, height, width, radius, false);
                 IMTFilterMorph(d_im, p_im, height, width, radius, true);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "peron") == 0) {
+            }
+            else if (strcmp(namefilter, "peron") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 int radiusint;
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 radiusint = int(radius + 0.5);
                 printf("Radius= %f\n", radius);
-                if (radiusint == 0) {radiusint = 1;}
+                if (radiusint == 0)
+                {
+                    radiusint = 1;
+                }
                 if (noise <= 0)
                 {
                     noise = IMTFilterNoiseVariance (p_im, height, width, radiusint);
@@ -419,84 +519,133 @@ int main(int argc, char *argv[])
                 IMTFilterPeron(p_im, d_im, height, width, radius, noise);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "posterize") == 0) {
+            }
+            else if (strcmp(namefilter, "posterize") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 float imsh = 0;
 
-                if (posterdiv < 1) {posterdiv = 1;}
+                if (posterdiv < 1)
+                {
+                    posterdiv = 1;
+                }
                 printf("Posterize= %d\n", posterdiv);
                 imsh = IMTFilterPosterize(p_im, height, width, posterdiv);
                 printf("Delta= %f\n", imsh);
-            } else if (strcmp(namefilter, "quant") == 0) {
+            }
+            else if (strcmp(namefilter, "quant") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 float imsh = 0;
 
-                if (posterdiv < 1) {posterdiv = 1;}
+                if (posterdiv < 1)
+                {
+                    posterdiv = 1;
+                }
                 printf("Quant= %d\n", posterdiv);
                 imsh = IMTFilterQuant(p_im, height, width, posterdiv);
                 printf("Delta= %f\n", imsh);
-            } else if (strcmp(namefilter, "retinex") == 0) {
+            }
+            else if (strcmp(namefilter, "retinex") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 int radiusint;
                 int kimi = 0;
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 radiusint = int(radius + 0.5);
-                if (radiusint == 0) {radiusint = 1;}
+                if (radiusint == 0)
+                {
+                    radiusint = 1;
+                }
                 printf("Radius= %d\n", radiusint);
                 printf("Sigma= %f\n", sigma);
                 kimi = IMTFilterRetinex(p_im, d_im, height, width, radiusint, sigma);
                 printf("K= %d\n", kimi);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "rs") == 0) {
+            }
+            else if (strcmp(namefilter, "rs") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 float imd = 0;
 
                 imd = IMTFilterRS(p_im, height, width);
                 printf("Stdev= %f\n", imd);
-            } else if (strcmp(namefilter, "selgauss") == 0) {
+            }
+            else if (strcmp(namefilter, "selgauss") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
-                if (radius == 0) {radius = 1.0;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
+                if (radius == 0)
+                {
+                    radius = 1.0;
+                }
                 printf("Radius= %f\n", radius);
                 printf("MaxDelta= %d\n", maxdelta);
 
                 IMTFilterSelGauss(p_im, d_im, height, width, radius, maxdelta);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "shrink") == 0) {
+            }
+            else if (strcmp(namefilter, "shrink") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 float imsh = 0;
 
-                if (threshold <= 0) {threshold = 4;}
+                if (threshold <= 0)
+                {
+                    threshold = 4;
+                }
                 printf("Threshold= %f\n", threshold);
 
                 imsh = IMTFilterShrink(p_im, height, width, threshold);
                 printf("Shrink= %f\n", imsh);
-            } else if (strcmp(namefilter, "unripple") == 0) {
+            }
+            else if (strcmp(namefilter, "unripple") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 int radiusint;
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 radiusint = int(radius + 0.5);
-                if (radiusint == 0) {radiusint = 1;}
+                if (radiusint == 0)
+                {
+                    radiusint = 1;
+                }
                 printf("Radius= %d\n", radiusint);
                 printf("MaxDelta= %d\n", maxdelta);
 
                 IMTFilterUnRipple(p_im, d_im, height, width, radiusint, maxdelta);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else if (strcmp(namefilter, "unsharp") == 0) {
+            }
+            else if (strcmp(namefilter, "unsharp") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** b_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
-                if (radius == 0) {radius = 1.0;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
+                if (radius == 0)
+                {
+                    radius = 1.0;
+                }
                 printf("Radius= %f\n", radius);
                 printf("Amount= %f\n", amount);
                 printf("Threshold= %f\n", threshold);
@@ -504,20 +653,30 @@ int main(int argc, char *argv[])
                 IMTFilterGaussBlur(p_im, b_im, height, width, radius);
                 IMTFilterUnsharpMask(p_im, b_im, height, width, amount, threshold);
                 IMTfree(b_im, height);
-            } else if (strcmp(namefilter, "whitefill") == 0) {
+            }
+            else if (strcmp(namefilter, "whitefill") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 int niter;
 
                 niter = IMTFilterWhiteFill(p_im, height, width);
                 printf("Iteration= %d\n", niter);
-            } else if (strcmp(namefilter, "wiener") == 0) {
+            }
+            else if (strcmp(namefilter, "wiener") == 0)
+            {
                 printf("Filter= %s\n", namefilter);
                 int radiusint;
                 IMTpixel** d_im = IMTalloc(height, width);
 
-                if (radius < 0) {radius = -radius;}
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
                 radiusint = int(radius + 0.5);
-                if (radiusint == 0) {radiusint = 1;}
+                if (radiusint == 0)
+                {
+                    radiusint = 1;
+                }
                 printf("Radius= %d\n", radiusint);
 
                 if (noise < 0)
@@ -528,7 +687,9 @@ int main(int argc, char *argv[])
                 IMTFilterWiener(p_im, d_im, height, width, radiusint, noise);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
-            } else {
+            }
+            else
+            {
                 printf("Filter= none\n");
             }
             if (fryb4)
@@ -550,7 +711,9 @@ int main(int argc, char *argv[])
                 }
                 FreeImage_Unload(dst_dib);
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

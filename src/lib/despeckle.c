@@ -46,16 +46,23 @@ void IMTFilterDespeck2 (BYTE** p_im, unsigned height, unsigned width, unsigned K
                 for(x1 = x0; x1 < x2; x1++)
                 {
                     n++;
-                    if (p_im[y1][x1] > 0) {val++;}
+                    if (p_im[y1][x1] > 0)
+                    {
+                        val++;
+                    }
                 }
             }
             val *= 2;
             if (val == n)
             {
                 val = (unsigned)p_im[y][x];
-            } else if (val > n) {
+            }
+            else if (val > n)
+            {
                 val = 255;
-            } else {
+            }
+            else
+            {
                 val = 0;
             }
             d_im[y][x] = (BYTE)val;
@@ -109,11 +116,17 @@ void IMTFilterDNeuro2 (BYTE** p_im, unsigned height, unsigned width, unsigned Ks
     BYTE** d_im;
 
     weight = (float**)malloc(Ksize * sizeof(float*));
-    for (y = 0; y < k; y++) {weight[y] = (float*)malloc(Ksize * sizeof(float));}
+    for (y = 0; y < k; y++)
+    {
+        weight[y] = (float*)malloc(Ksize * sizeof(float));
+    }
 
     d_im = BWalloc(height, width);
 
-    if (lnum < 1) {lnum = 1;}
+    if (lnum < 1)
+    {
+        lnum = 1;
+    }
     n = 0;
     for (i = 0; i < k; i++)
     {
@@ -149,14 +162,23 @@ void IMTFilterDNeuro2 (BYTE** p_im, unsigned height, unsigned width, unsigned Ks
                             if (p_im[y1][x1] > 0)
                             {
                                 s += weight[i][j];
-                            } else {
+                            }
+                            else
+                            {
                                 s -= weight[i][j];
                             }
                         }
                     }
                 }
                 z = 2.0 / (1.0 + exp(-s)) - 1;
-                if (p_im[y][x] > 0) {er = 1.0;} else {er = -1.0;}
+                if (p_im[y][x] > 0)
+                {
+                    er = 1.0;
+                }
+                else
+                {
+                    er = -1.0;
+                }
                 er -= z;
                 sigma = er * z * (1 - z);
                 dw = lambda * sigma;
@@ -191,7 +213,9 @@ void IMTFilterDNeuro2 (BYTE** p_im, unsigned height, unsigned width, unsigned Ks
                         if (p_im[y1][x1] > 0)
                         {
                             s += weight[i][j];
-                        } else {
+                        }
+                        else
+                        {
                             s -= weight[i][j];
                         }
                     }
@@ -201,7 +225,9 @@ void IMTFilterDNeuro2 (BYTE** p_im, unsigned height, unsigned width, unsigned Ks
             if (z > 0)
             {
                 val = 0;
-            } else {
+            }
+            else
+            {
                 val = 255;
             }
             d_im[y][x] = (BYTE)val;
@@ -215,7 +241,10 @@ void IMTFilterDNeuro2 (BYTE** p_im, unsigned height, unsigned width, unsigned Ks
         }
     }
 
-    for (y = 0; y < k; y++) {free(weight[y]);}
+    for (y = 0; y < k; y++)
+    {
+        free(weight[y]);
+    }
     free(weight);
     BWfree(d_im, height);
 }
@@ -230,7 +259,10 @@ float IMTFilterDphist (BYTE** p_im, unsigned height, unsigned width, unsigned Ks
 
     int** d_im;
     d_im = (int**)malloc(height * sizeof(int*));
-    for (y = 0; y < height; y++) {d_im[y] = (int*)malloc(width * sizeof(int));}
+    for (y = 0; y < height; y++)
+    {
+        d_im[y] = (int*)malloc(width * sizeof(int));
+    }
 
     n = width * height;
     for (k = 0; k < 512; k++)
@@ -371,7 +403,10 @@ float IMTFilterDphist (BYTE** p_im, unsigned height, unsigned width, unsigned Ks
     kdp = (float)nreps;
     kdp /= (float)n;
 
-    for (y = 0; y < height; y++) {free(d_im[y]);}
+    for (y = 0; y < height; y++)
+    {
+        free(d_im[y]);
+    }
     free(d_im);
 
     return kdp;

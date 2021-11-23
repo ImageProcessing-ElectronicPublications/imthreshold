@@ -51,24 +51,24 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'f':
-                namefilter = optarg;
-                break;
-            case 'm':
-                smode = atof(optarg);
-                break;
-            case 'r':
-                reduce = true;
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'f':
+            namefilter = optarg;
+            break;
+        case 'm':
+            smode = atof(optarg);
+            break;
+        case 'r':
+            reduce = true;
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -82,10 +82,16 @@ int main(int argc, char *argv[])
     const char *src_filename = argv[optind];
     const char *output_filename = argv[optind + 1];
 
-    if (smode < 2) {smode = 2;}
+    if (smode < 2)
+    {
+        smode = 2;
+    }
     if ((strcmp(namefilter, "gsample") > 0) && (strcmp(namefilter, "frp") > 0) && !(reduce))
     {
-        if (smode > 3) {smode = 3;}
+        if (smode > 3)
+        {
+            smode = 3;
+        }
     }
 
     FreeImage_SetOutputMessage(FreeImageErrorHandler);
@@ -106,7 +112,9 @@ int main(int argc, char *argv[])
             {
                 width2 = (width + smode - 1) / smode;
                 height2 = (height + smode - 1) / smode;
-            } else {
+            }
+            else
+            {
                 width2 = width * smode;
                 height2 = height * smode;
             }
@@ -121,15 +129,21 @@ int main(int argc, char *argv[])
             {
                 printf("Scale= Reduce.\n");
                 IMTFilterSReduce(p_im, d_im, height, width, smode);
-            } else {
+            }
+            else
+            {
                 if (strcmp(namefilter, "gsample") == 0)
                 {
                     printf("Scale= Up GSample.\n");
                     IMTFilterSGSampleUp(p_im, d_im, height, width, smode);
-                } else if (strcmp(namefilter, "frp") == 0) {
+                }
+                else if (strcmp(namefilter, "frp") == 0)
+                {
                     printf("Scale= Up FRP.\n");
                     IMTFilterSFRP(p_im, d_im, height, width, smode);
-                } else {
+                }
+                else
+                {
                     printf("Scale= Up HRIS.\n");
                     IMTFilterSHRIS(p_im, d_im, height, width, smode);
                 }
@@ -150,7 +164,9 @@ int main(int argc, char *argv[])
                 }
                 FreeImage_Unload(dst_dib);
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

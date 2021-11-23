@@ -52,33 +52,33 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'x':
-                x_lookahead = atof(optarg);
-                break;
-            case 'y':
-                y_lookahead = atof(optarg);
-                break;
-            case 'm':
-                bias_mode = atof(optarg);
-                break;
-            case 'b':
-                bias_factor = atof(optarg);
-                break;
-            case 'f':
-                f_factor = atof(optarg);
-                break;
-            case 'g':
-                g_factor = atof(optarg);
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'x':
+            x_lookahead = atof(optarg);
+            break;
+        case 'y':
+            y_lookahead = atof(optarg);
+            break;
+        case 'm':
+            bias_mode = atof(optarg);
+            break;
+        case 'b':
+            bias_factor = atof(optarg);
+            break;
+        case 'f':
+            f_factor = atof(optarg);
+            break;
+        case 'g':
+            g_factor = atof(optarg);
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -129,11 +129,13 @@ int main(int argc, char *argv[])
                 if(out_fif != FIF_UNKNOWN)
                 {
                     FreeImage_Save(out_fif, dst_dib, output_filename, 0);
-                printf("Output= %s\n\n", output_filename);
+                    printf("Output= %s\n\n", output_filename);
                 }
                 FreeImage_Unload(dst_dib);
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

@@ -46,21 +46,21 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-            case 'n':
-                fnorm = true;
-                break;
-            case 'r':
-                freduce = true;
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'n':
+            fnorm = true;
+            break;
+        case 'r':
+            freduce = true;
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -108,7 +108,9 @@ int main(int argc, char *argv[])
                 printf("Reduce= %d\n", threshold);
                 dst_dib = FreeImage_Allocate(width, height, 1);
                 ImthresholdSetDataBW(dst_dib, r_im);
-            } else {
+            }
+            else
+            {
                 dst_dib = FreeImage_Allocate(width2, height2, 1);
                 ImthresholdSetDataBW(dst_dib, d_im);
             }
@@ -125,7 +127,9 @@ int main(int argc, char *argv[])
                 }
                 FreeImage_Unload(dst_dib);
             }
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload(dib);
         }

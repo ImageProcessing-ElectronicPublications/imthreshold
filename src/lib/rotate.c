@@ -35,7 +35,8 @@ void PageTools_Radon(BYTE** p_im, unsigned h, unsigned w, int sign, unsigned int
     for(i = 0; i < 256; i++)
     {
         j = i, cnt = 0;
-        do cnt += j & 1; while(j >>= 1);
+        do cnt += j & 1;
+        while(j >>= 1);
         bitcount[i] = cnt;
     }
 
@@ -160,7 +161,9 @@ void IMTFilterRotate (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigne
             if (yr >= 0.0 && yr < height && xr >= 0.0 && xr < width)
             {
                 d_im[y][x] = IMTinterpolation(p_im, height, width, yr, xr);
-            } else {
+            }
+            else
+            {
                 d_im[y][x] = IMTset(255,255,255);
             }
         }

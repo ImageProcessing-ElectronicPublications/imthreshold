@@ -88,6 +88,13 @@ IMTpixel IMTccorS (IMTpixel im)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+bool IMTequal (IMTpixel im, IMTpixel imc)
+{
+    return ((im.c[0] == imc.c[0]) & (im.c[1] == imc.c[1]) & (im.c[2] == imc.c[2]));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 IMTpixel IMTRGBtoRYB4 (IMTpixel pim, int direct)
 {
     int R, G, B, r, y, b;
@@ -128,7 +135,10 @@ IMTpixel** IMTalloc (unsigned height, unsigned width)
     unsigned y;
 
     im = (IMTpixel**)malloc (height * sizeof(IMTpixel*));
-    for (y = 0; y < height; y++) {im[y] = (IMTpixel*)malloc (width * sizeof(IMTpixel));}
+    for (y = 0; y < height; y++)
+    {
+        im[y] = (IMTpixel*)malloc (width * sizeof(IMTpixel));
+    }
 
     return im;
 }
@@ -139,7 +149,10 @@ void IMTfree (IMTpixel** im, unsigned height)
 {
     unsigned y;
 
-    for (y = 0; y < height; y++) {free(im[y]);}
+    for (y = 0; y < height; y++)
+    {
+        free(im[y]);
+    }
     free(im);
 }
 
@@ -151,7 +164,10 @@ BYTE** BWalloc (unsigned height, unsigned width)
     unsigned y;
 
     im = (BYTE**)malloc(height * sizeof(BYTE*));
-    for (y = 0; y < height; y++) {im[y] = (BYTE*)malloc(width * sizeof(BYTE));}
+    for (y = 0; y < height; y++)
+    {
+        im[y] = (BYTE*)malloc(width * sizeof(BYTE));
+    }
 
     return im;
 }
@@ -162,7 +178,10 @@ void BWfree (BYTE** im, unsigned height)
 {
     unsigned y;
 
-    for (y = 0; y < height; y++) {free(im[y]);}
+    for (y = 0; y < height; y++)
+    {
+        free(im[y]);
+    }
     free(im);
 }
 
@@ -174,7 +193,10 @@ WORD** TLalloc (unsigned height, unsigned width)
     unsigned y;
 
     im = (WORD**)malloc(height * sizeof(WORD*));
-    for (y = 0; y < height; y++) {im[y] = (WORD*)malloc(width * sizeof(WORD));}
+    for (y = 0; y < height; y++)
+    {
+        im[y] = (WORD*)malloc(width * sizeof(WORD));
+    }
 
     return im;
 }
@@ -185,7 +207,10 @@ void TLfree (WORD** im, unsigned height)
 {
     unsigned y;
 
-    for (y = 0; y < height; y++) {free(im[y]);}
+    for (y = 0; y < height; y++)
+    {
+        free(im[y]);
+    }
     free(im);
 }
 
@@ -200,8 +225,14 @@ IMTpixel IMTdiffS (IMTpixel im)
     immin = im.c[0];
     for (d = 1; d < 3; d++)
     {
-        if (im.c[d] > immax) {immax = im.c[d];}
-        if (im.c[d] < immin) {immin = im.c[d];}
+        if (im.c[d] > immax)
+        {
+            immax = im.c[d];
+        }
+        if (im.c[d] < immin)
+        {
+            immin = im.c[d];
+        }
     }
     im.s = (WORD)(immax - immin) * 3;
 
@@ -241,11 +272,23 @@ IMTpixel IMTinterpolation (IMTpixel** p_im, unsigned height, unsigned width, flo
     y2 = IndexClamp((int)(y1 + 1), (height - 1));
     x2 = IndexClamp((int)(x1 + 1), (width - 1));
     ky = y - y1;
-    if (ky < 0) {ky = 0.0;}
-    if (ky > 1) {ky = 1.0;}
+    if (ky < 0)
+    {
+        ky = 0.0;
+    }
+    if (ky > 1)
+    {
+        ky = 1.0;
+    }
     kx = x - x1;
-    if (kx < 0) {kx = 0.0;}
-    if (kx > 1) {kx = 1.0;}
+    if (kx < 0)
+    {
+        kx = 0.0;
+    }
+    if (kx > 1)
+    {
+        kx = 1.0;
+    }
     k11 = (1.0 - ky) * (1.0 - kx);
     k21 = ky * (1.0 - kx);
     k12 = (1.0 - ky) * kx;
@@ -278,7 +321,10 @@ BYTE IMTmax (IMTpixel** IMTim, unsigned height, unsigned width)
             for (d = 0; d < 3; d++)
             {
                 im = IMTim[y][x].c[d];
-                if (im > immax) {immax = im;}
+                if (im > immax)
+                {
+                    immax = im;
+                }
             }
         }
     }
@@ -300,7 +346,10 @@ BYTE IMTmin (IMTpixel** IMTim, unsigned height, unsigned width)
             for (d = 0; d < 3; d++)
             {
                 im = IMTim[y][x].c[d];
-                if (im < immin) {immin = im;}
+                if (im < immin)
+                {
+                    immin = im;
+                }
             }
         }
     }
@@ -348,7 +397,10 @@ float IMTdev (IMTpixel** IMTim, float immean, unsigned height, unsigned width)
     }
     imdev /= height;
     imdev /= width;
-    if (imdev < 0) {imdev = -imdev;}
+    if (imdev < 0)
+    {
+        imdev = -imdev;
+    }
     imdev = sqrt(imdev);
 
     return imdev;
@@ -368,7 +420,10 @@ float IMTwb (IMTpixel** IMTim, float immean, unsigned height, unsigned width)
         for (x = 0; x < width; x++)
         {
             imx = (float)IMTim[y][x].s / 3.0;
-            if (imx > immean) {imwn++;}
+            if (imx > immean)
+            {
+                imwn++;
+            }
         }
     }
     imwb = (float)imwn;
@@ -389,7 +444,10 @@ unsigned IMTdist (IMTpixel IMTim0, IMTpixel IMTim1)
     {
         imd = (int)IMTim0.c[d];
         imd -= (int)IMTim1.c[d];
-        if (imd < 0) {imd = -imd;}
+        if (imd < 0)
+        {
+            imd = -imd;
+        }
         imds += imd;
     }
 
@@ -438,7 +496,10 @@ IMTpixel IMTmeanIc (IMTpixel** IMTim, unsigned y0, unsigned x0, unsigned y1, uns
     if (n > 0)
     {
         ims /= n;
-        if (ims > 765) {ims = 765;}
+        if (ims > 765)
+        {
+            ims = 765;
+        }
     }
     immean.s = (WORD)ims;
     for (d = 0; d < 3; d++)
@@ -455,7 +516,10 @@ IMTpixel IMTmeanIc (IMTpixel** IMTim, unsigned y0, unsigned x0, unsigned y1, uns
         if (n > 0)
         {
             ims /= n;
-            if (ims > 255) {ims = 255;}
+            if (ims > 255)
+            {
+                ims = 255;
+            }
         }
         immean.c[d] = ByteClamp((int)(ims + 0.5));
     }
@@ -548,7 +612,10 @@ IMTpixel IMTaverageIc (IMTpixel** IMTim, IMTpixel IMTima, unsigned y0, unsigned 
             n++;
         }
     }
-    if (n > 0) {ims /= n;}
+    if (n > 0)
+    {
+        ims /= n;
+    }
     immean.s = (WORD)ims;
     for (d = 0; d < 3; d++)
     {
@@ -566,7 +633,10 @@ IMTpixel IMTaverageIc (IMTpixel** IMTim, IMTpixel IMTima, unsigned y0, unsigned 
                 ims += imm;
             }
         }
-        if (n > 0) {ims /= n;}
+        if (n > 0)
+        {
+            ims /= n;
+        }
         immean.c[d] = ByteClamp((int)(ims + 0.5));
     }
     immean = IMTcalcS (immean);

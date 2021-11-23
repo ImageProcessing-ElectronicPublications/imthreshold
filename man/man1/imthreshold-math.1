@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20210430 "30 Apr 2021" "User Manual"
+.TH "ImThreshold" 1 0.20211123 "23 Nov 2021" "User Manual"
 
 .SH NAME
  imthreshold-math
@@ -15,6 +15,7 @@ imthreshold-math [options] <input_file> <input_file> <output_file>
 name method
 (string, optional, default = similar):
     'average'
+    'blur'
     'distance'
     'divide'
     'geometric'
@@ -31,6 +32,9 @@ name method
 .TP
 -d N
 delta (int, optional, default = 0)
+.TP
+-r N
+radius (int, optional, default = 5)
 .TP
 -h
 help

@@ -17,7 +17,7 @@ IMTpixel IMTInterpolateBiCubic (IMTpixel** p_im, int height, int width, float y,
     float dx, dy;
     float Cc, C[4];
     IMTpixel dim;
-    
+
     yi = (int)y;
     yi = (yi < 0) ? 0 : (yi < height) ? yi : (height - 1);
     xi = (int)x;
@@ -72,7 +72,7 @@ IMTpixel IMTInterpolateBiLine (IMTpixel** p_im, int height, int width, float y, 
     int d, xi, yi, xf, yf;
     float dx1, dy1, dx2, dy2;
     IMTpixel dim;
-    
+
     yi = (int)y;
     yi = (yi < 0) ? 0 : (yi < height) ? yi : (height - 1);
     xi = (int)x;
@@ -166,13 +166,25 @@ void IMTFilterSBicont (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
             for (i = 0; i < 4; i++)
             {
                 oy2 = oy1 + i - 1;
-                if ( oy2 < 0 ) {oy2 = 0;}
-                if ( oy2 > ymax ) {oy2 = ymax;}
+                if ( oy2 < 0 )
+                {
+                    oy2 = 0;
+                }
+                if ( oy2 > ymax )
+                {
+                    oy2 = ymax;
+                }
                 for (j = 0; j < 4; j++)
                 {
                     ox2 = ox1 + j - 1;
-                    if ( ox2 < 0 ) {ox2 = 0;}
-                    if ( ox2 > xmax ) {ox2 = xmax;}
+                    if ( ox2 < 0 )
+                    {
+                        ox2 = 0;
+                    }
+                    if ( ox2 > xmax )
+                    {
+                        ox2 = xmax;
+                    }
                     pim[i][j] = p_im[oy2][ox2];
                     pdist[k] = IMTdist(mim, pim[i][j]);
                     sdist += pdist[k];
@@ -242,26 +254,50 @@ int IMTFilterSBWMag2 (BYTE** d_im, BYTE** r_im, unsigned height, unsigned width,
     {
         ym = (int)y;
         ym--;
-        if (ym < 0) {ym = 0;}
+        if (ym < 0)
+        {
+            ym = 0;
+        }
         yp = (int)y;
         yp++;
-        if (yp >= h) {yp = h - 1;}
+        if (yp >= h)
+        {
+            yp = h - 1;
+        }
         y1 = y * 2;
-        if (y1 >= height2) {y1 = height2 -1;}
+        if (y1 >= height2)
+        {
+            y1 = height2 -1;
+        }
         y2 = y1 + 1;
-        if (y2 >= height2) {y2 = height2 -1;}
+        if (y2 >= height2)
+        {
+            y2 = height2 -1;
+        }
         for (x = 0; x < width; x++)
         {
             xm = (int)x;
             xm--;
-            if (xm < 0) {xm = 0;}
+            if (xm < 0)
+            {
+                xm = 0;
+            }
             xp = (int)x;
             xp++;
-            if (xp >= w) {xp = w - 1;}
+            if (xp >= w)
+            {
+                xp = w - 1;
+            }
             x1 = 2 * x;
-            if (x1 >= width2) {x1 = width2 -1;}
+            if (x1 >= width2)
+            {
+                x1 = width2 -1;
+            }
             x2 = x1 + 1;
-            if (x2 >= width2) {x2 = width2 -1;}
+            if (x2 >= width2)
+            {
+                x2 = width2 -1;
+            }
             im = (int)d_im[y][x];
             er = (16 * im);
             im = (int)d_im[ym][x];
@@ -294,12 +330,18 @@ int IMTFilterSBWMag2 (BYTE** d_im, BYTE** r_im, unsigned height, unsigned width,
                 {
                     r_im[y1][x1] = (BYTE)255;
                     s++;
-                } else {
+                }
+                else
+                {
                     r_im[y1][x1] = (BYTE)0;
                 }
-            } else if (im < 127) {
+            }
+            else if (im < 127)
+            {
                 r_im[y1][x1] = (BYTE)0;
-            } else {
+            }
+            else
+            {
                 r_im[y1][x1] = (BYTE)255;
                 s++;
             }
@@ -316,12 +358,18 @@ int IMTFilterSBWMag2 (BYTE** d_im, BYTE** r_im, unsigned height, unsigned width,
                 {
                     r_im[y2][x1] = (BYTE)255;
                     s++;
-                } else {
+                }
+                else
+                {
                     r_im[y2][x1] = (BYTE)0;
                 }
-            } else if (im < 127) {
+            }
+            else if (im < 127)
+            {
                 r_im[y2][x1] = (BYTE)0;
-            } else {
+            }
+            else
+            {
                 r_im[y2][x1] = (BYTE)255;
                 s++;
             }
@@ -338,12 +386,18 @@ int IMTFilterSBWMag2 (BYTE** d_im, BYTE** r_im, unsigned height, unsigned width,
                 {
                     r_im[y1][x2] = (BYTE)255;
                     s++;
-                } else {
+                }
+                else
+                {
                     r_im[y1][x2] = (BYTE)0;
                 }
-            } else if (im < 127) {
+            }
+            else if (im < 127)
+            {
                 r_im[y1][x2] = (BYTE)0;
-            } else {
+            }
+            else
+            {
                 r_im[y1][x2] = (BYTE)255;
                 s++;
             }
@@ -360,12 +414,18 @@ int IMTFilterSBWMag2 (BYTE** d_im, BYTE** r_im, unsigned height, unsigned width,
                 {
                     r_im[y2][x2] = (BYTE)255;
                     s++;
-                } else {
+                }
+                else
+                {
                     r_im[y2][x2] = (BYTE)0;
                 }
-            } else if (im < 127) {
+            }
+            else if (im < 127)
+            {
                 r_im[y2][x2] = (BYTE)0;
-            } else {
+            }
+            else
+            {
                 r_im[y2][x2] = (BYTE)255;
                 s++;
             }
@@ -390,15 +450,27 @@ int IMTFilterSBWReduce2 (BYTE** d_im, BYTE** r_im, unsigned height, unsigned wid
     for (y = 0; y < height2; y++ )
     {
         y1 = 2 * y;
-        if (y1 >= height) {y1 = height -1;}
+        if (y1 >= height)
+        {
+            y1 = height -1;
+        }
         y2 = y1 + 1;
-        if (y2 >= height) {y2 = height -1;}
+        if (y2 >= height)
+        {
+            y2 = height -1;
+        }
         for (x = 0; x < width2; x++)
         {
             x1 = 2 * x;
-            if (x1 >= width) {x1 = width -1;}
+            if (x1 >= width)
+            {
+                x1 = width -1;
+            }
             x2 = x1 + 1;
-            if (x2 >= width) {x2 = width -1;}
+            if (x2 >= width)
+            {
+                x2 = width -1;
+            }
             im = d_im[y1][x1];
             im += d_im[y2][x1];
             im += d_im[y1][x2];
@@ -407,22 +479,29 @@ int IMTFilterSBWReduce2 (BYTE** d_im, BYTE** r_im, unsigned height, unsigned wid
             n++;
             if (im == 2)
             {
-                if ((im + er) < 3) {
+                if ((im + er) < 3)
+                {
                     r_im[y][x] = 0;
                     s++;
                     era = (int)im;
                     er = era;
-                } else {
+                }
+                else
+                {
                     r_im[y][x] = 255;
                     s++;
                     era = (int)im;
                     er = -era;
                 }
-            } else if (im < 2) {
+            }
+            else if (im < 2)
+            {
                 r_im[y][x] = 0;
                 era = (int)im;
                 er = era;
-            } else {
+            }
+            else
+            {
                 r_im[y][x] = 255;
                 s++;
                 era = (int)im;
@@ -456,7 +535,10 @@ void IMTFilterSGsample (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsig
         y0i = (int)y0;
         yn = y0 + yFactor;
         yni = (int)yn;
-        if ((float)yni < yn) {yni++;}
+        if ((float)yni < yn)
+        {
+            yni++;
+        }
         for (x = 0; x < w2; x++)
         {
             x0 = (float)x;
@@ -464,7 +546,10 @@ void IMTFilterSGsample (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsig
             x0i = (int)x0;
             xn = x0 + xFactor;
             xni = (int)xn;
-            if ((float)xni < xn) {xni++;}
+            if ((float)xni < xn)
+            {
+                xni++;
+            }
             for (d = 0; d < 3; d++)
             {
                 sim = 0;
@@ -472,33 +557,63 @@ void IMTFilterSGsample (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsig
                 for (i = y0i; i < yni; i++)
                 {
                     y0t = (float)i;
-                    if (y0t < y0) {y0t = y0;}
+                    if (y0t < y0)
+                    {
+                        y0t = y0;
+                    }
                     ynt = (float)(i + 1);
-                    if (ynt > yn) {ynt = yn;}
+                    if (ynt > yn)
+                    {
+                        ynt = yn;
+                    }
                     yt = (y0t + ynt) / 2;
                     yti = (int)yt;
-                    if (yti >= h) {yti = h - 1;}
+                    if (yti >= h)
+                    {
+                        yti = h - 1;
+                    }
                     dyt = ynt - y0t;
                     fyt = yt - yti - 0.5;
                     ypr = yti - 1;
-                    if (ypr < 0) {ypr = 0;}
+                    if (ypr < 0)
+                    {
+                        ypr = 0;
+                    }
                     ynx = yti + 1;
-                    if (ynx >= h) {ynx = h - 1;}
+                    if (ynx >= h)
+                    {
+                        ynx = h - 1;
+                    }
                     for (j = x0i; j < xni; j++)
                     {
                         x0t = (float)j;
-                        if (x0t < x0) {x0t = x0;}
+                        if (x0t < x0)
+                        {
+                            x0t = x0;
+                        }
                         xnt = (float)(j + 1);
-                        if (xnt > xn) {xnt = xn;}
+                        if (xnt > xn)
+                        {
+                            xnt = xn;
+                        }
                         xt = (x0t + xnt) / 2;
                         xti = (int)xt;
-                        if (xti >= w) {xti = w - 1;}
+                        if (xti >= w)
+                        {
+                            xti = w - 1;
+                        }
                         dxt = xnt - x0t;
                         fxt = xt - xti - 0.5;
                         xpr = xti - 1;
-                        if (xpr < 0) {xpr = 0;}
+                        if (xpr < 0)
+                        {
+                            xpr = 0;
+                        }
                         xnx = xti + 1;
-                        if (xnx >= w) {xnx = w - 1;}
+                        if (xnx >= w)
+                        {
+                            xnx = w - 1;
+                        }
                         gy = (float)p_im[ynx][xti].c[d];
                         gy += (float)p_im[ynx][xti].c[d];
                         gy += (float)p_im[ynx][xnx].c[d];
@@ -525,7 +640,10 @@ void IMTFilterSGsample (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsig
                         sim += (gc * s);
                     }
                 }
-                if (ss < 0.0 || ss > 0.0) {sim /= ss;}
+                if (ss < 0.0 || ss > 0.0)
+                {
+                    sim /= ss;
+                }
                 d_im[y][x].c[d] = ByteClamp((int)(sim + 0.5));
             }
             d_im[y][x] = IMTcalcS (d_im[y][x]);
@@ -552,8 +670,14 @@ void IMTFilterSHRIS (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned
     float k1[3];
     float k2[3];
 
-    if (smode < 2) {smode = 2;}
-    if (smode > 3) {smode = 3;}
+    if (smode < 2)
+    {
+        smode = 2;
+    }
+    if (smode > 3)
+    {
+        smode = 3;
+    }
 
     if (smode == 2)
     {
@@ -565,7 +689,9 @@ void IMTFilterSHRIS (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned
         k2[0] = k1[0];
         k2[1] = k1[1] / 2;
         k2[2] = k1[2] / 4;
-    } else {
+    }
+    else
+    {
         k0[0] = 2.0 / 3.0;
         k0[1] = 1.0 / 3.0;
         k1[0] = k0[0] * k0[0];
@@ -578,16 +704,48 @@ void IMTFilterSHRIS (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned
 
     for (y = 0; y < h; y++)
     {
-        yp1 = y - 1; if (yp1 < 0) {yp1 = 0;}
-        yp2 = y - 2; if (yp2 < 0) {yp2 = 0;}
-        yn1 = y + 1; if (yn1 > h - 1) {yn1 = h - 1;}
-        yn2 = y + 2; if (yn2 > h - 1) {yn2 = h - 1;}
+        yp1 = y - 1;
+        if (yp1 < 0)
+        {
+            yp1 = 0;
+        }
+        yp2 = y - 2;
+        if (yp2 < 0)
+        {
+            yp2 = 0;
+        }
+        yn1 = y + 1;
+        if (yn1 > h - 1)
+        {
+            yn1 = h - 1;
+        }
+        yn2 = y + 2;
+        if (yn2 > h - 1)
+        {
+            yn2 = h - 1;
+        }
         for (x = 0; x < w; x++)
         {
-            xp1 = x - 1; if (xp1 < 0) {xp1 = 0;}
-            xp2 = x - 2; if (xp2 < 0) {xp2 = 0;}
-            xn1 = x + 1; if (xn1 > w - 1) {xn1 = w - 1;}
-            xn2 = x + 2; if (xn2 > w - 1) {xn2 = w - 1;}
+            xp1 = x - 1;
+            if (xp1 < 0)
+            {
+                xp1 = 0;
+            }
+            xp2 = x - 2;
+            if (xp2 < 0)
+            {
+                xp2 = 0;
+            }
+            xn1 = x + 1;
+            if (xn1 > w - 1)
+            {
+                xn1 = w - 1;
+            }
+            xn2 = x + 2;
+            if (xn2 > w - 1)
+            {
+                xn2 = w - 1;
+            }
             for (d = 0; d < 3; d++)
             {
                 imx = (float)p_im[yp2][xp2].c[d];
@@ -711,7 +869,9 @@ void IMTFilterSHRIS (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned
                     d_im[y2][x2 + 1].c[d] = ByteClamp((int)(r12 + 0.5));
                     d_im[y2 + 1][x2].c[d] = ByteClamp((int)(r21 + 0.5));
                     d_im[y2 + 1][x2 + 1].c[d] = ByteClamp((int)(r22 + 0.5));
-                } else {
+                }
+                else
+                {
                     r11 = (k1[0] * b22 + k1[1] * (b12 + b21) + k1[2] * b11);
                     r12 = (k0[0] * b22 + k0[1] * b12);
                     r13 = (k1[0] * b22 + k1[1] * (b12 + b23) + k1[2] * b13);
@@ -756,7 +916,10 @@ void IMTFilterSGSampleUp (IMTpixel** p_im, IMTpixel** d_im, unsigned height, uns
     IMTpixel wm, wr;
     float imx, k0, kx, ky, kz, dd;
 
-    if (smode < 2) {smode = 2;}
+    if (smode < 2)
+    {
+        smode = 2;
+    }
     ir = 2 * smode;
     isz = ir * ir;
     dd = 1.0 / (float)isz;
@@ -838,16 +1001,24 @@ void IMTFilterSReduce (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
         {
             y0 = y * reduce;
             y1 = y0 + reduce;
-            if (y1 > height) {y1 = height;}
+            if (y1 > height)
+            {
+                y1 = height;
+            }
             for (x = 0; x < widthr; x++)
             {
                 x0 = x * reduce;
                 x1 = x0 + reduce;
-                if (x1 > width) {x1 = width;}
+                if (x1 > width)
+                {
+                    x1 = width;
+                }
                 d_im[y][x] = IMTmeanIc(p_im, y0, x0, y1, x1);
             }
         }
-    } else {
+    }
+    else
+    {
         for (y = 0; y < height; y++)
         {
             for (x = 0; x < width; x++)
@@ -888,7 +1059,10 @@ void IMTFilterSFRP (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned 
     int im, ims, imd;
     IMTpixel **s_im, **r_im;
 
-    if (smode < 2) {smode = 2;}
+    if (smode < 2)
+    {
+        smode = 2;
+    }
     heights = (height + smode - 1) / smode;
     widths = (width + smode - 1) / smode;
     s_im = IMTalloc(heights, widths);
@@ -998,7 +1172,10 @@ void IMTReduceBW (BYTE** m_im, BYTE** g_im, unsigned height, unsigned width, uns
             {
                 for (j = x0; j < x1; j++)
                 {
-                    if (m_im[i][j] == 0) {val = result;}
+                    if (m_im[i][j] == 0)
+                    {
+                        val = result;
+                    }
                 }
             }
             g_im[y][x] = val;

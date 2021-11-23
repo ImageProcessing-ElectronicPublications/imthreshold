@@ -57,7 +57,9 @@ void IMTFilterSeparateBGFGL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMT
             level++;
             blsz *= 2;
         }
-    } else {
+    }
+    else
+    {
         for (l = 0; l < level; l++)
         {
             blsz *= 2;
@@ -73,7 +75,10 @@ void IMTFilterSeparateBGFGL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMT
             bg_im[y][x] = IMTset(bgbase, bgbase, bgbase);
         }
     }
-    if (doverlay < 0) {doverlay = 0;}
+    if (doverlay < 0)
+    {
+        doverlay = 0;
+    }
     kover = doverlay + 1.0;
     for (l = 0; l < level; l++)
     {
@@ -115,7 +120,9 @@ void IMTFilterSeparateBGFGL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMT
                                 fgsum[d] += (int)pim.c[d];
                             }
                             fgnum++;
-                        } else {
+                        }
+                        else
+                        {
                             for (d = 0; d < 3; d++)
                             {
                                 bgsum[d] += (int)pim.c[d];
@@ -208,7 +215,10 @@ void IMTFilterSeparateDelta (IMTpixel** p_im, BYTE** m_im, IMTpixel** g_im, unsi
             {
                 img = (int)p_im[y][x].c[d];
                 imd = im - img;
-                if (imd < 0) {imd = -imd;}
+                if (imd < 0)
+                {
+                    imd = -imd;
+                }
                 simd += imd;
             }
         }
@@ -228,7 +238,10 @@ void IMTFilterSeparateDelta (IMTpixel** p_im, BYTE** m_im, IMTpixel** g_im, unsi
             {
                 img = (int)p_im[y][x].c[d];
                 imd = im - img;
-                if (imd < 0) {imd = -imd;}
+                if (imd < 0)
+                {
+                    imd = -imd;
+                }
                 simp += imd;
             }
             simp /= 3;
@@ -236,7 +249,7 @@ void IMTFilterSeparateDelta (IMTpixel** p_im, BYTE** m_im, IMTpixel** g_im, unsi
             gim = p_im[y][x];
             if (simp > simd)
             {
-				val = ByteClamp(im);
+                val = ByteClamp(im);
                 gim = IMTset(val, val, val);
             }
             g_im[y][x] = gim;

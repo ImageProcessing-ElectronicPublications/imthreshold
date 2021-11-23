@@ -73,6 +73,7 @@ unsigned IndexClamp(int, unsigned);
 IMTpixel IMTset (BYTE, BYTE, BYTE);
 IMTpixel IMTcalcS (IMTpixel);
 IMTpixel IMTccorS (IMTpixel);
+bool IMTequal (IMTpixel, IMTpixel);
 IMTpixel** IMTalloc (unsigned, unsigned);
 void IMTfree (IMTpixel**, unsigned);
 BYTE** BWalloc (unsigned, unsigned);
@@ -131,6 +132,7 @@ float IMTFilterLevelMean (IMTpixel**, IMTpixel**, unsigned, unsigned, int, float
 float IMTFilterLevelSigma (IMTpixel**, IMTpixel**, unsigned, unsigned, float, float);
 float IMTFilterLevelSize (IMTpixel**, IMTpixel**, unsigned, unsigned, int, int);
 void IMTFilterMathAverage (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
+void IMTFilterMathBlur (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, int);
 void IMTFilterMathDistance (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
 void IMTFilterMathDivide (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
 void IMTFilterMathGeometric (IMTpixel**, IMTpixel**, unsigned, unsigned, int);

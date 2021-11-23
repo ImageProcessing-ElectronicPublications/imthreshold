@@ -25,6 +25,7 @@ void ImthresholdFilterMathUsage()
     printf("options:\n");
     printf("          -m str  name metod:\n");
     printf("                    'average'\n");
+    printf("                    'blur'\n");
     printf("                    'distance'\n");
     printf("                    'divide'\n");
     printf("                    'sbmetric'\n");
@@ -39,6 +40,7 @@ void ImthresholdFilterMathUsage()
     printf("                    'plus'\n");
     printf("                    'threshold (default)'\n");
     printf("          -d N    delta (int, optional, default = 0)\n");
+    printf("          -r N    radius (int, optional, default = 5)\n");
     printf("          -h      this help\n");
 }
 
@@ -53,28 +55,32 @@ int main(int argc, char *argv[])
 
     int opt;
     int delta = 0;
+    unsigned radius = 5;
     bool fhelp = false;
     char *namefilter;
     namefilter="threshold";
-    while ((opt = getopt(argc, argv, ":m:d:h")) != -1)
+    while ((opt = getopt(argc, argv, ":m:d:r:h")) != -1)
     {
         switch(opt)
         {
-            case 'm':
-                namefilter = optarg;
-                break;
-            case 'd':
-                delta = atof(optarg);
-                break;
-            case 'h':
-                fhelp = true;
-                break;
-            case ':':
-                printf("option needs a value\n");
-                break;
-            case '?':
-                printf("unknown option: %c\n", optopt);
-                break;
+        case 'm':
+            namefilter = optarg;
+            break;
+        case 'd':
+            delta = atof(optarg);
+            break;
+        case 'r':
+            radius = atoi(optarg);
+            break;
+        case 'h':
+            fhelp = true;
+            break;
+        case ':':
+            printf("option needs a value\n");
+            break;
+        case '?':
+            printf("unknown option: %c\n", optopt);
+            break;
         }
     }
 
@@ -121,13 +127,28 @@ int main(int argc, char *argv[])
                         IMTpixel** m_im = IMTalloc(height, width);
 
                         ImthresholdGetData(dib, m_im);
-                        
+
                         if (strcmp(namefilter, "average") == 0)
                         {
                             printf("Filter= %s\n", namefilter);
                             printf("Delta= %d\n", delta);
 
                             IMTFilterMathAverage (p_im, m_im, height, width, delta);
+                            dst_dib = FreeImage_Allocate (width, height, 24);
+                            ImthresholdSetData (dst_dib, p_im);
+                        }
+                        else if (strcmp(namefilter, "blur") == 0)
+                        {
+                            printf("Filter= %s\n", namefilter);
+                            printf("Delta= %d\n", delta);
+
+                            if (radius < 0)
+                            {
+                                radius = -radius;
+                            }
+                            printf("Radius= %d\n", radius);
+
+                            IMTFilterMathBlur (p_im, m_im, height, width, radius, delta);
                             dst_dib = FreeImage_Allocate (width, height, 24);
                             ImthresholdSetData (dst_dib, p_im);
                         }
@@ -250,7 +271,7 @@ int main(int argc, char *argv[])
                             IMTFilterMathThreshold (p_im, m_im, d_im, height, width, delta);
                             dst_dib = FreeImage_Allocate (width, height, 1);
                             ImthresholdSetDataBW (dst_dib, d_im);
-                            
+
                             BWfree(d_im, height);
                         }
                         FreeImage_Unload(dib);
@@ -266,11 +287,15 @@ int main(int argc, char *argv[])
                             }
                             FreeImage_Unload(dst_dib);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         printf("%s\n", "Size math uncorect.");
                         FreeImage_Unload (dib);
                     }
-                } else {
+                }
+                else
+                {
                     printf("%s\n", "Unsupported color mode.");
                     FreeImage_Unload (dib);
                 }
@@ -278,7 +303,9 @@ int main(int argc, char *argv[])
             IMTfree(p_im, height);
 
             printf("\n");
-        } else {
+        }
+        else
+        {
             printf("%s\n", "Unsupported format type.");
             FreeImage_Unload (dib);
         }

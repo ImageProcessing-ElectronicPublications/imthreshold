@@ -55,19 +55,23 @@ void FreeImage_Aligned_Free(void* mem);
 #pragma pack(1)
 #endif // _WIN32
 
-typedef struct tagFILE_RGBA {
+typedef struct tagFILE_RGBA
+{
     unsigned char r,g,b,a;
 } FILE_RGBA;
 
-typedef struct tagFILE_BGRA {
+typedef struct tagFILE_BGRA
+{
     unsigned char b,g,r,a;
 } FILE_BGRA;
 
-typedef struct tagFILE_RGB {
+typedef struct tagFILE_RGB
+{
     unsigned char r,g,b;
 } FILE_RGB;
 
-typedef struct tagFILE_BGR {
+typedef struct tagFILE_BGR
+{
     unsigned char b,g,r;
 } FILE_BGR;
 
@@ -83,7 +87,8 @@ typedef struct tagFILE_BGR {
 
 #ifndef _WIN32
 inline char*
-i2a(unsigned i, char *a, unsigned r) {
+i2a(unsigned i, char *a, unsigned r)
+{
     if (i/r > 0) a = i2a(i/r,a,r);
     *a = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i%r];
     return a+1;
@@ -98,9 +103,11 @@ i2a(unsigned i, char *a, unsigned r) {
    @return Returns a
  */
 inline char *
-_itoa(int i, char *a, int r) {
+_itoa(int i, char *a, int r)
+{
     r = ((r < 2) || (r > 36)) ? 10 : r;
-    if(i < 0) {
+    if(i < 0)
+    {
         *a = '-';
         *i2a(-i, a+1, r) = 0;
     }
@@ -111,22 +118,27 @@ _itoa(int i, char *a, int r) {
 #endif // !_WIN32
 
 inline unsigned char
-HINIBBLE (unsigned char byte) {
+HINIBBLE (unsigned char byte)
+{
     return byte & 0xF0;
 }
 
 inline unsigned char
-LOWNIBBLE (unsigned char byte) {
+LOWNIBBLE (unsigned char byte)
+{
     return byte & 0x0F;
 }
 
 inline int
-CalculateUsedBits(int bits) {
+CalculateUsedBits(int bits)
+{
     int bit_count = 0;
     unsigned bit = 1;
 
-    for (unsigned i = 0; i < 32; i++) {
-        if ((bits & bit) == bit) {
+    for (unsigned i = 0; i < 32; i++)
+    {
+        if ((bits & bit) == bit)
+        {
             bit_count++;
         }
 
@@ -137,17 +149,20 @@ CalculateUsedBits(int bits) {
 }
 
 inline int
-CalculateLine(int width, int bitdepth) {
+CalculateLine(int width, int bitdepth)
+{
     return ((width * bitdepth) + 7) / 8;
 }
 
 inline int
-CalculatePitch(int line) {
+CalculatePitch(int line)
+{
     return ((line + 3) & ~3);
 }
 
 inline int
-CalculateUsedPaletteEntries(int bit_count) {
+CalculateUsedPaletteEntries(int bit_count)
+{
     if ((bit_count >= 1) && (bit_count <= 8))
         return 1 << bit_count;
 
@@ -155,14 +170,18 @@ CalculateUsedPaletteEntries(int bit_count) {
 }
 
 inline unsigned char *
-CalculateScanLine(unsigned char *bits, unsigned pitch, int scanline) {
+CalculateScanLine(unsigned char *bits, unsigned pitch, int scanline)
+{
     return (bits + (pitch * scanline));
 }
 
 inline void
-ReplaceExtension(char *result, const char *filename, const char *extension) {
-    for (int i = strlen(filename) - 1; i > 0; --i) {
-        if (filename[i] == '.') {
+ReplaceExtension(char *result, const char *filename, const char *extension)
+{
+    for (int i = strlen(filename) - 1; i > 0; --i)
+    {
+        if (filename[i] == '.')
+        {
             memcpy(result, filename, i);
             result[i] = '.';
             memcpy(result + i + 1, extension, strlen(extension) + 1);
@@ -180,14 +199,22 @@ ReplaceExtension(char *result, const char *filename, const char *extension) {
 // ==========================================================
 
 inline void
-SwapShort(WORD *sp) {
-    BYTE *cp = (BYTE *)sp, t = cp[0]; cp[0] = cp[1]; cp[1] = t;
+SwapShort(WORD *sp)
+{
+    BYTE *cp = (BYTE *)sp, t = cp[0];
+    cp[0] = cp[1];
+    cp[1] = t;
 }
 
 inline void
-SwapLong(DWORD *lp) {
-    BYTE *cp = (BYTE *)lp, t = cp[0]; cp[0] = cp[3]; cp[3] = t;
-    t = cp[1]; cp[1] = cp[2]; cp[2] = t;
+SwapLong(DWORD *lp)
+{
+    BYTE *cp = (BYTE *)lp, t = cp[0];
+    cp[0] = cp[3];
+    cp[3] = t;
+    t = cp[1];
+    cp[1] = cp[2];
+    cp[2] = t;
 }
 
 // ==========================================================
@@ -204,8 +231,11 @@ SwapLong(DWORD *lp) {
 // ==========================================================
 
 /// INPLACESWAP adopted from codeguru.com
-template <class T> void INPLACESWAP(T& a, T& b) {
-    a ^= b; b ^= a; a ^= b;
+template <class T> void INPLACESWAP(T& a, T& b)
+{
+    a ^= b;
+    b ^= a;
+    a ^= b;
 }
 
 

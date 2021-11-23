@@ -61,7 +61,9 @@ void ImthresholdGetData(FIBITMAP* dib, IMTpixel** p_im)
     {
         pitch = FreeImage_GetPitch(dib);
         bits = (BYTE*)FreeImage_GetBits(dib);
-    } else {
+    }
+    else
+    {
         tdib = FreeImage_ConvertTo24Bits(dib);
         pitch = FreeImage_GetPitch(tdib);
         bits = (BYTE*)FreeImage_GetBits(tdib);
@@ -78,7 +80,10 @@ void ImthresholdGetData(FIBITMAP* dib, IMTpixel** p_im)
             }
         }
     }
-    if (bpp != 24) {FreeImage_Unload(tdib);}
+    if (bpp != 24)
+    {
+        FreeImage_Unload(tdib);
+    }
     for (y = 0; y < height; y++)
     {
         for (x = 0; x < width; x++)
