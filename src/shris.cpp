@@ -26,6 +26,7 @@ void ImthresholdFilterSHRISUsage()
     printf("          -f str  name filter:\n");
     printf("                    'hris' (default)\n");
     printf("                    'gsample'\n");
+    printf("                    'iris'\n");
     printf("                    'frp' (long!)\n");
     printf("          -m      mode (int, optional, default = 2, {2,3})\n");
     printf("          -r      reduce scale (bool, optional)\n");
@@ -132,19 +133,42 @@ int main(int argc, char *argv[])
             }
             else
             {
-                if (strcmp(namefilter, "gsample") == 0)
+                if (strcmp(namefilter, "iris") == 0)
                 {
-                    printf("Scale= Up GSample.\n");
+                    printf("Scale= Up %s\n", namefilter);
+                    int hr, wr, hr2, wr2;
+                    wr = (width + smode - 1) / smode;
+                    hr = (height + smode - 1) / smode;
+                    wr2 = wr * smode;
+                    hr2 = hr * smode;
+                    IMTpixel** s_im = IMTalloc(hr, wr);
+                    IMTpixel** m_im = IMTalloc(hr2, wr2);
+                    IMTpixel** x_im = IMTalloc(height2, width2);
+                    IMTFilterSReduce(p_im, s_im, height, width, smode);
+                    IMTFilterSHRIS(s_im, m_im, hr, wr, smode);
+                    IMTfree(s_im, hr);
+                    IMTFilterMathMinus (m_im, p_im, height, width, 127);
+                    IMTFilterInvert(m_im, hr2, wr2);
+                    IMTFilterSHRIS(m_im, x_im, height, width, smode);
+                    IMTfree(m_im, hr2);
+                    IMTFilterSHRIS(p_im, d_im, height, width, smode);
+                    IMTFilterMathPlus (x_im, d_im, height2, width2, -127);
+                    IMTFilterMathAverage (d_im, x_im, height2, width2, 0);
+                    IMTfree(x_im, height2);
+                }
+                else if (strcmp(namefilter, "gsample") == 0)
+                {
+                    printf("Scale= Up %s\n", namefilter);
                     IMTFilterSGSampleUp(p_im, d_im, height, width, smode);
                 }
                 else if (strcmp(namefilter, "frp") == 0)
                 {
-                    printf("Scale= Up FRP.\n");
+                    printf("Scale= Up %s\n", namefilter);
                     IMTFilterSFRP(p_im, d_im, height, width, smode);
                 }
                 else
                 {
-                    printf("Scale= Up HRIS.\n");
+                    printf("Scale= Up hris\n");
                     IMTFilterSHRIS(p_im, d_im, height, width, smode);
                 }
             }

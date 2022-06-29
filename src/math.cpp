@@ -38,6 +38,8 @@ void ImthresholdFilterMathUsage()
     printf("                    'multiply'\n");
     printf("                    'norm'\n");
     printf("                    'plus'\n");
+    printf("                    'diff'\n");
+    printf("                    'patch'\n");
     printf("                    'threshold (default)'\n");
     printf("          -d N    delta (int, optional, default = 0)\n");
     printf("          -r N    radius (int, optional, default = 5)\n");
@@ -258,6 +260,24 @@ int main(int argc, char *argv[])
 
                             emetric = IMTFilterMathSharpenBadMetric (p_im, m_im, height, width);
                             printf("SharpenBad= %f\n", emetric);
+                            dst_dib = FreeImage_Allocate (width, height, 24);
+                            ImthresholdSetData (dst_dib, p_im);
+                        }
+                        else if (strcmp(namefilter, "diff") == 0)
+                        {
+                            printf("Filter= %s\n", namefilter);
+                            printf("Delta= %d\n", delta);
+
+                            IMTFilterMathMinus (p_im, m_im, height, width, (delta + 127));
+                            dst_dib = FreeImage_Allocate (width, height, 24);
+                            ImthresholdSetData (dst_dib, p_im);
+                        }
+                        else if (strcmp(namefilter, "patch") == 0)
+                        {
+                            printf("Filter= %s\n", namefilter);
+                            printf("Delta= %d\n", delta);
+
+                            IMTFilterMathPlus (p_im, m_im, height, width, (delta - 127));
                             dst_dib = FreeImage_Allocate (width, height, 24);
                             ImthresholdSetData (dst_dib, p_im);
                         }
