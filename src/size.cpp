@@ -29,7 +29,7 @@ void ImthresholdFilterSizeUsage()
     printf("                    'bicont'\n");
     printf("                    'gsample' (default)\n");
     printf("                    'nearest'\n");
-    printf("          -p N.N  part prefilter RIS (float, optional, default = 0.0[off])\n");
+    printf("          -p N.N  part prefilter RIS (float, optional, default = 1.0[off])\n");
     printf("          -r N.N  ratio (float, optional, default = 1.0)\n");
     printf("          -w N    new width (int, optional, default = [auto])\n");
     printf("          -z N    new height (int, optional, default = [auto])\n");
@@ -50,7 +50,15 @@ int main(int argc, char *argv[])
     int newh = 0, neww = 0;
     bool fhelp = false;
     char *namefilter;
+    float ims = 0.0f, imratio;
+    unsigned width, height, new_width, new_height, hr, wr;
+    int imscaler;
+    IMTpixel **p_im, **d_im, **c_im;
+    IMTpixel **s_im, **m_im, **x_im;
+    FIBITMAP *dib, *dst_dib;
+    FREE_IMAGE_FORMAT out_fif;
     namefilter="gsample";
+
     while ((opt = getopt(argc, argv, ":f:p:r:w:z:h")) != -1)
     {
         switch(opt)
@@ -95,15 +103,13 @@ int main(int argc, char *argv[])
     FreeImage_SetOutputMessage(FreeImageErrorHandler);
 
     printf("Input= %s\n", src_filename);
-    FIBITMAP *dib = ImthresholdGenericLoader(src_filename, 0);
+    dib = ImthresholdGenericLoader(src_filename, 0);
     if (dib)
     {
         if (FreeImage_GetImageType(dib) == FIT_BITMAP)
         {
-            FIBITMAP* dst_dib;
-            unsigned width = FreeImage_GetWidth(dib);
-            unsigned height = FreeImage_GetHeight(dib);
-            unsigned new_width, new_height;
+            width = FreeImage_GetWidth(dib);
+            height = FreeImage_GetHeight(dib);
             if (newh <= 0 && neww <= 0)
             {
                 new_width = width * ratio;
@@ -124,8 +130,8 @@ int main(int argc, char *argv[])
                 new_width = neww;
                 new_height = (height * neww) / width;
             }
-            IMTpixel** p_im = IMTalloc(height, width);
-            IMTpixel** d_im = IMTalloc(new_height, new_width);
+            p_im = IMTalloc(height, width);
+            d_im = IMTalloc(new_height, new_width);
 
             printf("Width= %d\n", new_width);
             printf("Height= %d\n", new_height);
@@ -135,60 +141,64 @@ int main(int argc, char *argv[])
             if (strcmp(namefilter, "bicubic") == 0)
             {
                 printf("Filter= %s\n", namefilter);
-                IMTFilterSBicub(p_im, d_im, height, width, new_height, new_width);
-                if (ppart < 0.0f || ppart > 0.0f)
-                {
-                    float ims = 0.0f;
-                    IMTpixel** c_im = IMTalloc(height, width);
-                    IMTFilterSBicub(d_im, c_im, new_height, new_width, height, width);
-                    printf("Prefilter= %f\n", ppart);
-                    ims = IMTFilterMirrorPart(p_im, c_im, height, width, ppart);
-                    printf("RIS= %f\n", ims);
-                    IMTFilterSBicub(c_im, d_im, height, width, new_height, new_width);
-                    IMTfree(c_im, height);
-                }
+                imscaler = SCALER_BICUBIC;
             }
             else if (strcmp(namefilter, "biline") == 0)
             {
                 printf("Filter= %s\n", namefilter);
-                IMTFilterSBilin(p_im, d_im, height, width, new_height, new_width);
-                if (ppart < 0.0f || ppart > 0.0f)
-                {
-                    float ims = 0.0f;
-                    IMTpixel** c_im = IMTalloc(height, width);
-                    IMTFilterSBilin(d_im, c_im, new_height, new_width, height, width);
-                    printf("Prefilter= %f\n", ppart);
-                    ims = IMTFilterMirrorPart(p_im, c_im, height, width, ppart);
-                    printf("RIS= %f\n", ims);
-                    IMTFilterSBilin(c_im, d_im, height, width, new_height, new_width);
-                    IMTfree(c_im, height);
-                }
+                imscaler = SCALER_BILINE;
             }
             else if (strcmp(namefilter, "bicont") == 0)
             {
                 printf("Filter= %s\n", namefilter);
-                IMTFilterSBicont(p_im, d_im, height, width, new_height, new_width);
-                if (ppart < 0.0f || ppart > 0.0f)
-                {
-                    float ims = 0.0f;
-                    IMTpixel** c_im = IMTalloc(height, width);
-                    IMTFilterSBicont(d_im, c_im, new_height, new_width, height, width);
-                    printf("Prefilter= %f\n", ppart);
-                    ims = IMTFilterMirrorPart(p_im, c_im, height, width, ppart);
-                    printf("RIS= %f\n", ims);
-                    IMTFilterSBicont(c_im, d_im, height, width, new_height, new_width);
-                    IMTfree(c_im, height);
-                }
+                imscaler = SCALER_BICONT;
             }
             else if (strcmp(namefilter, "nearest") == 0)
             {
                 printf("Filter= %s\n", namefilter);
-                IMTFilterSNearest(p_im, d_im, height, width, new_height, new_width);
+                imscaler = SCALER_NEAREST;
             }
             else
             {
                 printf("Filter= gsample\n");
-                IMTFilterSGsample(p_im, d_im, height, width, new_height, new_width);
+                imscaler = SCALER_GSAMPLE;
+            }
+            printf("Prefilter= %f\n", ppart);
+            IMTFilterSize(p_im, d_im, imscaler, height, width, new_height, new_width);
+            if (ppart > 0.0f)
+            {
+                c_im = IMTalloc(height, width);
+                IMTFilterSize(d_im, c_im, imscaler, new_height, new_width, height, width);
+                ims = IMTFilterMirrorPart(p_im, c_im, height, width, ppart);
+                IMTfree(c_im, height);
+                printf("RIS= %f\n", ims);
+                IMTFilterSize(p_im, d_im, imscaler, height, width, new_height, new_width);
+            }
+            else if (ppart < 0.0f)
+            {
+                imratio = new_height;
+                imratio /= height;
+                imratio *= new_width;
+                imratio /= width;
+                if (imratio > 0.0f)
+                {
+                    imratio = sqrt(imratio);
+                    wr = (width + imratio - 1) / imratio;
+                    hr = (height + imratio - 1) / imratio;
+                    s_im = IMTalloc(hr, wr);
+                    m_im = IMTalloc(height, width);
+                    x_im = IMTalloc(new_height, new_width);
+                    IMTFilterSize(p_im, s_im, imscaler, height, width, hr, wr);
+                    IMTFilterSize(s_im, m_im, imscaler, hr, wr, height, width);
+                    IMTfree(s_im, hr);
+                    IMTFilterMathMinus (m_im, p_im, height, width, 127);
+                    ims = IMTFilterIRange (m_im, height, width, 127, 0.25f * ppart);
+                    printf("IRIS= %f\n", ims);
+                    IMTFilterSize(m_im, x_im, imscaler, height, width, new_height, new_width);
+                    IMTfree(m_im, height);
+                    IMTFilterSize(m_im, x_im, imscaler, height, width, new_height, new_width);
+                    IMTFilterMathPlus (d_im, x_im, new_height, new_width, -127);
+                }
             }
             IMTfree(p_im, height);
             dst_dib = FreeImage_Allocate(new_width, new_height, 24);
@@ -197,7 +207,7 @@ int main(int argc, char *argv[])
 
             if (dst_dib)
             {
-                FREE_IMAGE_FORMAT out_fif = FreeImage_GetFIFFromFilename(output_filename);
+                out_fif = FreeImage_GetFIFFromFilename(output_filename);
                 if(out_fif != FIF_UNKNOWN)
                 {
                     FreeImage_Save(out_fif, dst_dib, output_filename, 0);

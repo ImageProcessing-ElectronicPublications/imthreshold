@@ -65,6 +65,14 @@ typedef struct
 }
 IMTinfo;
 
+enum Scaler {
+    SCALER_NEAREST,
+    SCALER_BICONT,
+    SCALER_BICUBIC,
+    SCALER_BILINE,
+    SCALER_GSAMPLE
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 BYTE ByteClamp(int);
@@ -120,6 +128,7 @@ float IMTFilterFindSkew (BYTE**, unsigned, unsigned);
 void IMTFilterRotate (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
 IMTinfo IMTFilterInfo (IMTpixel**, unsigned, unsigned, unsigned);
 void IMTFilterInvert (IMTpixel**, unsigned, unsigned);
+float IMTFilterIRange (IMTpixel**, unsigned, unsigned, int, float);
 void IMTFilterCopy (IMTpixel**, IMTpixel**, unsigned, unsigned);
 void IMTFilterAdSmooth (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
 void IMTFilterInpaint (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, unsigned);
@@ -184,6 +193,7 @@ IMTpixel IMTInterpolateBiLine (IMTpixel**, int, int, float, float);
 void IMTFilterSBicub (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSBicont (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSBilin (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
+void IMTFilterSize (IMTpixel**, IMTpixel**, int, unsigned, unsigned, unsigned, unsigned);
 int IMTFilterSBWMag2 (BYTE**, BYTE**, unsigned, unsigned, unsigned, unsigned);
 int IMTFilterSBWReduce2 (BYTE**, BYTE**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSGsample (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);

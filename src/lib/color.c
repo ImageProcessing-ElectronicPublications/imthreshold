@@ -259,19 +259,51 @@ IMTpixel IMTFilterIllumCorr (IMTpixel** p_im, IMTpixel** b_im, IMTpixel** d_im, 
 
 void IMTFilterInvert (IMTpixel** p_im, unsigned height, unsigned width)
 {
-    unsigned x, y, d, t;
+    unsigned x, y, d;
+    BYTE val;
     for (y = 0; y < height; y++)
     {
         for (x = 0; x < width; x++)
         {
             for (d = 0; d < 3; d++)
             {
-                t = (unsigned)(255 - p_im[y][x].c[d]);
-                p_im[y][x].c[d] = (BYTE)(t);
+                val = ByteClamp(255 - p_im[y][x].c[d]);
+                p_im[y][x].c[d] = val;
             }
             p_im[y][x] = IMTcalcS(p_im[y][x]);
         }
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+float IMTFilterIRange (IMTpixel** p_im, unsigned height, unsigned width, int delta, float mult)
+{
+    unsigned x, y, d;
+    float imx, ims = 0.0f;
+    BYTE val;
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            for (d = 0; d < 3; d++)
+            {
+                imx = p_im[y][x].c[d];
+                imx -= delta;
+                imx *= mult;
+                ims += ((imx < 0.0f) ? -imx : imx);
+                imx += delta;
+                val = ByteClamp((int)(imx + 0.5f));
+                p_im[y][x].c[d] = val;
+            }
+            p_im[y][x] = IMTcalcS(p_im[y][x]);
+        }
+    }
+    ims /= 3;
+    ims /= width;
+    ims /= height;
+
+    return ims;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -730,7 +762,7 @@ float IMTFilterLevelSize (IMTpixel** p_im, IMTpixel** d_im, unsigned height, uns
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float IMTFilterMirror (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width)
+float IMTFilterMirror (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsigned width)
 {
     unsigned y, x, d;
     int im, imm, imd;
@@ -743,13 +775,13 @@ float IMTFilterMirror (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
             for (d = 0; d < 3; d++)
             {
                 im = (int)p_im[y][x].c[d];
-                imm = (int)d_im[y][x].c[d];
+                imm = (int)m_im[y][x].c[d];
                 imd = im - imm;
                 im += imd;
                 ims += (float)imd;
-                d_im[y][x].c[d] = ByteClamp(im);
+                p_im[y][x].c[d] = ByteClamp(im);
             }
-            d_im[y][x] = IMTcalcS (d_im[y][x]);
+            p_im[y][x] = IMTcalcS (p_im[y][x]);
         }
     }
     ims /= 3.0;
@@ -761,7 +793,7 @@ float IMTFilterMirror (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
 
 ///////////////////////////////////////////////////////////////////////////////
 
-float IMTFilterMirrorPart (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, float part)
+float IMTFilterMirrorPart (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsigned width, float part)
 {
     unsigned y, x, d;
     int im, imm, imd;
@@ -774,16 +806,16 @@ float IMTFilterMirrorPart (IMTpixel** p_im, IMTpixel** d_im, unsigned height, un
             for (d = 0; d < 3; d++)
             {
                 im = (int)p_im[y][x].c[d];
-                imm = (int)d_im[y][x].c[d];
+                imm = (int)m_im[y][x].c[d];
                 imd = im - imm;
                 imx = (float)imd;
                 imx *= part;
                 imd = (int)(imx + 0.5);
                 im += imd;
-                ims += (float)imd;
-                d_im[y][x].c[d] = ByteClamp(im);
+                ims += (float)((imd < 0) ? -imd : imd);
+                p_im[y][x].c[d] = ByteClamp(im);
             }
-            d_im[y][x] = IMTcalcS (d_im[y][x]);
+            p_im[y][x] = IMTcalcS (p_im[y][x]);
         }
     }
     ims /= 3;

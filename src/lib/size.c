@@ -240,6 +240,30 @@ void IMTFilterSBicont (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterSize (IMTpixel** p_im, IMTpixel** d_im, int scaler, unsigned height, unsigned width, unsigned new_height, unsigned new_width)
+{
+    switch(scaler)
+    {
+        case SCALER_NEAREST:
+            IMTFilterSNearest(p_im, d_im, height, width, new_height, new_width);
+            break;
+        case SCALER_BICONT:
+            IMTFilterSBicont(p_im, d_im, height, width, new_height, new_width);
+            break;
+        case SCALER_BICUBIC:
+            IMTFilterSBicub(p_im, d_im, height, width, new_height, new_width);
+            break;
+        case SCALER_BILINE:
+            IMTFilterSBilin(p_im, d_im, height, width, new_height, new_width);
+            break;
+        case SCALER_GSAMPLE:
+            IMTFilterSGsample(p_im, d_im, height, width, new_height, new_width);
+            break;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 int IMTFilterSBWMag2 (BYTE** d_im, BYTE** r_im, unsigned height, unsigned width, unsigned height2, unsigned width2)
 {
     unsigned y, x, y1, x1, y2, x2, n, s, threshold = 0;

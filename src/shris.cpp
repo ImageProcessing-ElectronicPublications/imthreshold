@@ -47,6 +47,12 @@ int main(int argc, char *argv[])
     bool reduce = false;
     bool fhelp = false;
     char *namefilter;
+    unsigned width, height, width2, height2;
+    int hr, wr, hr2, wr2;
+    IMTpixel **p_im, **d_im;
+    IMTpixel **s_im, **m_im, **x_im;
+    FIBITMAP *dib, *dst_dib;
+    FREE_IMAGE_FORMAT out_fif;
     namefilter="hris";
     while ((opt = getopt(argc, argv, ":f:m:rh")) != -1)
     {
@@ -98,16 +104,13 @@ int main(int argc, char *argv[])
     FreeImage_SetOutputMessage(FreeImageErrorHandler);
 
     printf("Input= %s\n", src_filename);
-    FIBITMAP *dib = ImthresholdGenericLoader(src_filename, 0);
+    dib = ImthresholdGenericLoader(src_filename, 0);
     if (dib)
     {
         if (FreeImage_GetImageType(dib) == FIT_BITMAP)
         {
-            FIBITMAP* dst_dib;
-            unsigned width = FreeImage_GetWidth(dib);
-            unsigned height = FreeImage_GetHeight(dib);
-            unsigned width2;
-            unsigned height2;
+            width = FreeImage_GetWidth(dib);
+            height = FreeImage_GetHeight(dib);
             printf("Mode= %d\n", smode);
             if (reduce > 0)
             {
@@ -121,8 +124,8 @@ int main(int argc, char *argv[])
             }
             printf("Width= %d\n", width2);
             printf("Height= %d\n", height2);
-            IMTpixel** p_im = IMTalloc(height, width);
-            IMTpixel** d_im = IMTalloc(height2, width2);
+            p_im = IMTalloc(height, width);
+            d_im = IMTalloc(height2, width2);
 
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
@@ -136,14 +139,13 @@ int main(int argc, char *argv[])
                 if (strcmp(namefilter, "iris") == 0)
                 {
                     printf("Scale= Up %s\n", namefilter);
-                    int hr, wr, hr2, wr2;
                     wr = (width + smode - 1) / smode;
                     hr = (height + smode - 1) / smode;
                     wr2 = wr * smode;
                     hr2 = hr * smode;
-                    IMTpixel** s_im = IMTalloc(hr, wr);
-                    IMTpixel** m_im = IMTalloc(hr2, wr2);
-                    IMTpixel** x_im = IMTalloc(height2, width2);
+                    s_im = IMTalloc(hr, wr);
+                    m_im = IMTalloc(hr2, wr2);
+                    x_im = IMTalloc(height2, width2);
                     IMTFilterSReduce(p_im, s_im, height, width, smode);
                     IMTFilterSHRIS(s_im, m_im, hr, wr, smode);
                     IMTfree(s_im, hr);
@@ -153,6 +155,7 @@ int main(int argc, char *argv[])
                     IMTfree(m_im, hr2);
                     IMTFilterSHRIS(p_im, d_im, height, width, smode);
                     IMTFilterMathPlus (x_im, d_im, height2, width2, -127);
+                    IMTFilterMathAverage (x_im, d_im, height2, width2, 0);
                     IMTFilterMathAverage (d_im, x_im, height2, width2, 0);
                     IMTfree(x_im, height2);
                 }
@@ -180,7 +183,7 @@ int main(int argc, char *argv[])
 
             if (dst_dib)
             {
-                FREE_IMAGE_FORMAT out_fif = FreeImage_GetFIFFromFilename(output_filename);
+                out_fif = FreeImage_GetFIFFromFilename(output_filename);
                 if(out_fif != FIF_UNKNOWN)
                 {
                     FreeImage_Save(out_fif, dst_dib, output_filename, 0);
