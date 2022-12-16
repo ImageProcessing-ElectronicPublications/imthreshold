@@ -96,6 +96,71 @@ IMTpixel IMTInterpolateBiLine (IMTpixel** p_im, int height, int width, float y, 
 
 ////////////////////////////////////////////////////////////////////////////////
 
+float IMTInterpolateAkima (int* x, float* y, float v)
+{
+    int i;
+    float dx, dy, a, b, fv, val;
+    float m[5], t[2];
+
+    for(i = 0; i < 5; i++)
+    {
+        dx = x[i + 1] - x[i];
+        dy = y[i + 1] - y[i];
+        m[i] = (dx == 0) ? 0.0f : (dy / dx);
+    }
+    for(i = 0; i < 2; i++)
+    {
+        a = (m[i + 2] > m[i + 3]) ? (m[i + 2] - m[i + 3]) : (m[i + 3] - m[i + 2]);
+        b = (m[i] > m[i + 1]) ? (m[i] - m[i + 1]) : (m[i + 1] - m[i]);
+        t[i] = ((a + b) > 0) ? ((a * m[i + 1] + b * m[i + 2]) / (a + b)) : (0.5f * (m[i + 1] + m[i + 2]));
+    }
+    dx = v - x[2];
+    dy = x[3] - x[2];
+    fv = (dy > 0.0f) ? (dx / dy) : 0.0f;
+    val = y[2] + t[0] * dx + (3.0f * m[2] - 2.0f * t[0] - t[1]) * dx * fv + (t[0] + t[1] - 2.0f * m[2]) * dx * fv * fv;
+
+    return val;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+IMTpixel IMTInterpolateBiAkima (IMTpixel** p_im, int height, int width, float y, float x)
+{
+    int i, j, d, xi, yi, xf, yf, xfa, yfa;
+    int zx[6], zy[6];
+    float z, zz[6], zzz[6];
+    IMTpixel dim;
+
+    yi = (int)y;
+    yi = (yi < 0) ? 0 : (yi < height) ? yi : (height - 1);
+    xi = (int)x;
+    xi = (xi < 0) ? 0 : (xi < width) ? xi : (width - 1);
+    for(d = 0; d < 3; d++)
+    {
+        for(i = -2; i < 4; i++)
+        {
+            yf = (int)y + i;
+            yfa = (yf < 0) ? 0 : (yf < height) ? yf : (height - 1);
+            zy[i + 2] = yf;
+            for(j = -2; j < 4; j++)
+            {
+                xf = (int)x + j;
+                xfa = (xf < 0) ? 0 : (xf < width) ? xf : (width - 1);
+                zx[j + 2] = xf;
+                zz[j + 2] = p_im[yfa][xfa].c[d];
+            }
+            zzz[i + 2] = IMTInterpolateAkima(zx, zz, x);
+        }
+        z = IMTInterpolateAkima(zy, zzz, y);
+        dim.c[d] = ByteClamp((int)(z + 0.5f));
+    }
+    dim = IMTcalcS (dim);
+
+    return dim;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterSBicub (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, unsigned new_height, unsigned new_width)
 {
     unsigned y, x;
@@ -105,7 +170,7 @@ void IMTFilterSBicub (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigne
 
     for (y = 0; y < new_height; y++ )
     {
-        oy  = ((float)y + 0.5f) * yFactor - 0.5;
+        oy  = ((float)y + 0.5f) * yFactor - 0.5f;
         for (x = 0; x < new_width; x++ )
         {
             ox  = ((float)x  + 0.5f) * xFactor - 0.5f;
@@ -125,7 +190,7 @@ void IMTFilterSBilin (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigne
 
     for (y = 0; y < new_height; y++)
     {
-        oy  = ((float)y + 0.5f) * yFactor - 0.5;
+        oy  = ((float)y + 0.5f) * yFactor - 0.5f;
         for (x = 0; x < new_width; x++ )
         {
             ox  = ((float)x  + 0.5f) * xFactor - 0.5f;
@@ -152,7 +217,7 @@ void IMTFilterSBicont (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
     pim = IMTalloc (4, 4);
     for (y = 0; y < h; y++ )
     {
-        oy  = ((float)y + 0.5f) * yFactor - 0.5;
+        oy  = ((float)y + 0.5f) * yFactor - 0.5f;
         oy1 = (int)oy;
         dy  = oy - (float)oy1;
         for (x = 0; x < w; x++ )
@@ -177,9 +242,9 @@ void IMTFilterSBicont (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
                 for (j = 0; j < 4; j++)
                 {
                     ox2 = ox1 + j - 1;
-                    if ( ox2 < 0 )
+                    if ( ox2 < 0.0f )
                     {
-                        ox2 = 0;
+                        ox2 = 0.0f;
                     }
                     if ( ox2 > xmax )
                     {
@@ -191,12 +256,12 @@ void IMTFilterSBicont (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
                     k++;
                 }
             }
-            sdist /= 16.0;
-            if (sdist == 0)
+            sdist /= 16.0f;
+            if (sdist == 0.0f)
             {
                 for (k = 0; k < 16; k++)
                 {
-                    pdist[k] = 1.0;
+                    pdist[k] = 1.0f;
                 }
             }
             else
@@ -240,6 +305,26 @@ void IMTFilterSBicont (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsign
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterSBiakima (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, unsigned new_height, unsigned new_width)
+{
+    unsigned y, x;
+    float xFactor = (float)width / new_width;
+    float yFactor = (float)height / new_height;
+    float ox, oy;
+
+    for (y = 0; y < new_height; y++ )
+    {
+        oy  = ((float)y + 0.5f) * yFactor - 0.5f;
+        for (x = 0; x < new_width; x++ )
+        {
+            ox  = ((float)x  + 0.5f) * xFactor - 0.5f;
+            d_im[y][x] = IMTInterpolateBiAkima (p_im, height, width, oy, ox);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterSize (IMTpixel** p_im, IMTpixel** d_im, int scaler, unsigned height, unsigned width, unsigned new_height, unsigned new_width)
 {
     switch(scaler)
@@ -255,6 +340,9 @@ void IMTFilterSize (IMTpixel** p_im, IMTpixel** d_im, int scaler, unsigned heigh
             break;
         case SCALER_BILINE:
             IMTFilterSBilin(p_im, d_im, height, width, new_height, new_width);
+            break;
+        case SCALER_BIAKIMA:
+            IMTFilterSBiakima(p_im, d_im, height, width, new_height, new_width);
             break;
         case SCALER_GSAMPLE:
             IMTFilterSGsample(p_im, d_im, height, width, new_height, new_width);

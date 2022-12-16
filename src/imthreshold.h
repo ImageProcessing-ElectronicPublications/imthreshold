@@ -70,6 +70,7 @@ enum Scaler {
     SCALER_BICONT,
     SCALER_BICUBIC,
     SCALER_BILINE,
+    SCALER_BIAKIMA,
     SCALER_GSAMPLE
 };
 
@@ -190,9 +191,12 @@ void IMTFilterWiener (IMTpixel**, IMTpixel**, unsigned, unsigned, int, float);
 int IMTFilterWhiteFill (IMTpixel**, unsigned, unsigned);
 IMTpixel IMTInterpolateBiCubic (IMTpixel**, int, int, float, float);
 IMTpixel IMTInterpolateBiLine (IMTpixel**, int, int, float, float);
+float IMTInterpolateAkima (int*, float*, float);
+IMTpixel IMTInterpolateBiAkima (IMTpixel**, int, int, float, float);
 void IMTFilterSBicub (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSBicont (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSBilin (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
+void IMTFilterSBiakima (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSize (IMTpixel**, IMTpixel**, int, unsigned, unsigned, unsigned, unsigned);
 int IMTFilterSBWMag2 (BYTE**, BYTE**, unsigned, unsigned, unsigned, unsigned);
 int IMTFilterSBWReduce2 (BYTE**, BYTE**, unsigned, unsigned, unsigned, unsigned);

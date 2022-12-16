@@ -27,9 +27,10 @@ void ImthresholdFilterSizeUsage()
     printf("                    'bicubic'\n");
     printf("                    'biline'\n");
     printf("                    'bicont'\n");
+    printf("                    'biakima'\n");
     printf("                    'gsample' (default)\n");
     printf("                    'nearest'\n");
-    printf("          -p N.N  part prefilter RIS (float, optional, default = 1.0[off])\n");
+    printf("          -p N.N  part prefilter RIS (float, optional, default = 1.0)\n");
     printf("          -r N.N  ratio (float, optional, default = 1.0)\n");
     printf("          -w N    new width (int, optional, default = [auto])\n");
     printf("          -z N    new height (int, optional, default = [auto])\n");
@@ -152,6 +153,11 @@ int main(int argc, char *argv[])
             {
                 printf("Filter= %s\n", namefilter);
                 imscaler = SCALER_BICONT;
+            }
+            else if (strcmp(namefilter, "biakima") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                imscaler = SCALER_BIAKIMA;
             }
             else if (strcmp(namefilter, "nearest") == 0)
             {

@@ -3,9 +3,9 @@ PROGNAME      = $(PNAME)-deskew $(PNAME)-rotate $(PNAME)-filter $(PNAME)-fautoin
 SRCS          = src
 CC            = gcc
 CPP           = g++
-CFLAGS        = -DUNIX -I$(SRCS) -O2 -Wall -s
+CFLAGS        = -DUNIX -I$(SRCS) -Wall -s
 VER           = 0
-VERB          = 20220702
+VERB          = 20221216
 ifeq ($(OS),Windows_NT)
 LIBS          = $(SRCS)/FreeImage.lib
 PLIBF         = $(PNAME).$(VER).dll
