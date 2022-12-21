@@ -28,6 +28,24 @@ void IMTFilterRGBtoRYB4 (IMTpixel** p_im, unsigned height, unsigned width, int d
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterRGBtoYCbCr (IMTpixel** p_im, unsigned height, unsigned width, int direct)
+{
+    unsigned y, x;
+    IMTpixel pim;
+
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            pim = p_im[y][x];
+            pim = IMTRGBtoYCbCr (pim, direct);
+            p_im[y][x] = pim;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterSCCor (IMTpixel** p_im, unsigned height, unsigned width)
 {
     unsigned y, x;

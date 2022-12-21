@@ -23,16 +23,16 @@ void ImthresholdFilterSeparateUsage()
 {
     printf("Usage : imthreshold-separate [options] <input_file> <input_mask_file>(BW) <output_fg_file> <output_bg_file>\n\n");
     printf("options:\n");
+    printf("          -b N    base block size (int, optional, default = 3)\n");
+    printf("          -c N    clean blur radius (int, optional, default = 0)\n");
+    printf("          -f N    foreground divide (int, optional, default = 2)\n");
+    printf("          -k N.N  coefficient delta threshold (float, optional, default = 2.0)\n");
+    printf("          -l N    level (int, optional, default = 0[auto])\n");
     printf("          -m str  name metod:\n");
     printf("                    'delta'\n");
     printf("                    'inpaint'\n");
     printf("                    'mscale'\n");
     printf("                    'simple (default)'\n");
-    printf("          -c N    clean blur radius (int, optional, default = 0)\n");
-    printf("          -b N    base block size (int, optional, default = 3)\n");
-    printf("          -f N    foreground divide (int, optional, default = 2)\n");
-    printf("          -k N.N  coefficient delta threshold (float, optional, default = 2.0)\n");
-    printf("          -l N    level (int, optional, default = 0[auto])\n");
     printf("          -r      rewrite mask (bool, optional, default = false)\n");
     printf("          -o N.N  overlay (float, optional, default = 0.5)\n");
     printf("          -h      this help\n");

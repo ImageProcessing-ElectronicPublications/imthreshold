@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20220702 "02 Jul 2022" "User Manual"
+.TH "ImThreshold" 1 0.20221221 "21 Dec 2022" "User Manual"
 
 .SH NAME
  imthreshold-fpmean
@@ -12,21 +12,29 @@ imthreshold-fpmean [options] <input_file> <output_file>
 
 .SH OPTIONS
 .TP
--r N.N
-radius (float, optional, default = 3.0)
-.TP
 -m str
 mode
-(string, optional, default = similar):
-    similar,
+(string, optional):
+    similar (default),
     nlm,
     bilateral,
     wbselect,
     radial,
-    simple.
+    simple,
+    minmax.
 .TP
 -n
 neared (bool, optional, default = false)
+.TP
+-q str
+colorspace:
+(string, optional):
+    'rgb' (default),
+    'ryb4',
+    'ycbcr'.
+.TP
+-r N.N
+radius (float, optional, default = 3.0)
 .TP
 -h
 help

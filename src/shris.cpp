@@ -29,6 +29,10 @@ void ImthresholdFilterSHRISUsage()
     printf("                    'iris'\n");
     printf("                    'frp' (long!)\n");
     printf("          -m      mode (int, optional, default = 2, {2,3})\n");
+    printf("          -q str  colorspace:\n");
+    printf("                    'rgb' (default)\n");
+    printf("                    'ryb4'\n");
+    printf("                    'ycbcr'\n");
     printf("          -r      reduce scale (bool, optional)\n");
     printf("          -h      this help\n");
 }
@@ -46,7 +50,7 @@ int main(int argc, char *argv[])
     unsigned smode = 2;
     bool reduce = false;
     bool fhelp = false;
-    char *namefilter;
+    char *namefilter, *csp;
     unsigned width, height, width2, height2;
     int hr, wr, hr2, wr2;
     IMTpixel **p_im, **d_im;
@@ -54,7 +58,8 @@ int main(int argc, char *argv[])
     FIBITMAP *dib, *dst_dib;
     FREE_IMAGE_FORMAT out_fif;
     namefilter="hris";
-    while ((opt = getopt(argc, argv, ":f:m:rh")) != -1)
+    csp = "rgb";
+    while ((opt = getopt(argc, argv, ":f:m:q:rh")) != -1)
     {
         switch(opt)
         {
@@ -63,6 +68,9 @@ int main(int argc, char *argv[])
             break;
         case 'm':
             smode = atof(optarg);
+            break;
+        case 'q':
+            csp = optarg;
             break;
         case 'r':
             reduce = true;
@@ -129,6 +137,16 @@ int main(int argc, char *argv[])
 
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
+            if (strcmp(csp, "ryb4") == 0)
+            {
+                printf("ColorSpace= RYB4\n");
+                IMTFilterRGBtoRYB4(p_im, height, width, 1);
+            }
+            else if (strcmp(csp, "ycbcr") == 0)
+            {
+                printf("ColorSpace= YCbCr\n");
+                IMTFilterRGBtoYCbCr(p_im, height, width, 1);
+            }
             if (reduce)
             {
                 printf("Scale= Reduce.\n");
@@ -175,8 +193,17 @@ int main(int argc, char *argv[])
                     IMTFilterSHRIS(p_im, d_im, height, width, smode);
                 }
             }
-
             IMTfree(p_im, height);
+            if (strcmp(csp, "ryb4") == 0)
+            {
+                printf("ColorSpace= RGB\n");
+                IMTFilterRGBtoRYB4(d_im, width2, height2, -1);
+            }
+            else if (strcmp(csp, "ycbcr") == 0)
+            {
+                printf("ColorSpace= RGB\n");
+                IMTFilterRGBtoYCbCr(d_im, width2, height2, -1);
+            }
             dst_dib = FreeImage_Allocate(width2, height2, 24);
             ImthresholdSetData(dst_dib, d_im);
             IMTfree(d_im, height2);

@@ -23,6 +23,9 @@ void ImthresholdFilterTSauvolaUsage()
 {
     printf("Usage : imthreshold-tlocal [options] <input_image> <output_image>(BW)\n\n");
     printf("options:\n");
+    printf("          -b      color correct (bool, optional, default = false)\n");
+    printf("          -c N    contrast limit (int, optional, default = 128)\n");
+    printf("          -d N.N  delta (float, optional, default = -5.0)\n");
     printf("          -f str  name filter:\n");
     printf("                    'abutaleb'\n");
     printf("                    'bernsen'\n");
@@ -36,15 +39,16 @@ void ImthresholdFilterTSauvolaUsage()
     printf("                    'niblack'\n");
     printf("                    'sauvola' (default)\n");
     printf("                    'size'\n");
-    printf("          -b      color correct (bool, optional, default = false)\n");
-    printf("          -c N    contrast limit (int, optional, default = 128)\n");
-    printf("          -d N.N  delta (float, optional, default = -5.0)\n");
-    printf("          -i      invert (bool, optional, default = false)\n");
     printf("          -g N    dynamic range (int, optional, default = 128)\n");
+    printf("          -i      invert (bool, optional, default = false)\n");
     printf("          -l N    lower bound (int, optional, default = 0)\n");
     printf("          -n      norm (bool, optional, default = false)\n");
     printf("          -o N.N  overlay (float, optional, default = 0.5)\n");
     printf("          -r N    radius (int, optional, default = 7)\n");
+    printf("          -q str  colorspace:\n");
+    printf("                    'rgb' (default)\n");
+    printf("                    'ryb4'\n");
+    printf("                    'ycbcr'\n");
     printf("          -s N.N  sensitivity (float, optional, default = 0.2)\n");
     printf("          -u N    upper bound (int, optional, default = 255)\n");
     printf("          -z      mirror of mean (bool, optional, default = false)\n");
@@ -75,15 +79,13 @@ int main(int argc, char *argv[])
     bool fmirror = false;
     bool fhelp = false;
     int threshold = 0;
-    char *namefilter;
-    namefilter="sauvola";
-    while ((opt = getopt(argc, argv, ":f:bc:d:ig:l:no:r:s:u:zh")) != -1)
+    char *namefilter, *csp;
+    namefilter = "sauvola";
+    csp = "rgb";
+    while ((opt = getopt(argc, argv, ":bc:d:f:g:il:no:q:r:s:u:zh")) != -1)
     {
         switch(opt)
         {
-        case 'f':
-            namefilter = optarg;
-            break;
         case 'b':
             fccor = true;
             break;
@@ -92,6 +94,9 @@ int main(int argc, char *argv[])
             break;
         case 'd':
             delta = atof(optarg);
+            break;
+        case 'f':
+            namefilter = optarg;
             break;
         case 'i':
             finv = true;
@@ -107,6 +112,9 @@ int main(int argc, char *argv[])
             break;
         case 'o':
             doverlay = atof(optarg);
+            break;
+        case 'q':
+            csp = optarg;
             break;
         case 'r':
             radius = atof(optarg);
@@ -160,6 +168,17 @@ int main(int argc, char *argv[])
 
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
+
+            if (strcmp(csp, "ryb4") == 0)
+            {
+                printf("ColorSpace= RYB4\n");
+                IMTFilterRGBtoRYB4(p_im, height, width, 1);
+            }
+            else if (strcmp(csp, "ycbcr") == 0)
+            {
+                printf("ColorSpace= YCbCr\n");
+                IMTFilterRGBtoYCbCr(p_im, height, width, 1);
+            }
             if (fccor)
             {
                 IMTFilterSCCor(p_im, height, width);

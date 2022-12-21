@@ -23,6 +23,10 @@ void ImthresholdFilterDespeckleUsage()
 {
     printf("Usage : imthreshold-fdespeckle [options] <input_image>(BW) <output_image>(BW)\n\n");
     printf("options:\n");
+    printf("          -a N    aperture size (int, optional, default = 3)\n");
+    printf("          -i      invert (bool, optional, default = false)\n");
+    printf("          -k N.N  lambda neuro learnen (float, optional, default = 0.1)\n");
+    printf("          -l N    learnen number (int, optional, default = 1)\n");
     printf("          -m str  name method:\n");
     printf("                    'hist'\n");
     printf("                    'invert'\n");
@@ -31,10 +35,6 @@ void ImthresholdFilterDespeckleUsage()
     printf("                    'neuro'\n");
     printf("                    'smearing'\n");
     printf("                    'simple' (default)\n");
-    printf("          -a N    aperture size (int, optional, default = 3)\n");
-    printf("          -i      invert (bool, optional, default = false)\n");
-    printf("          -k N.N  lambda neuro learnen (float, optional, default = 0.1)\n");
-    printf("          -l N    learnen number (int, optional, default = 1)\n");
     printf("          -h      this help\n");
 }
 
@@ -55,13 +55,10 @@ int main(int argc, char *argv[])
     bool fhelp = false;
     char *namefilter;
     namefilter="simple";
-    while ((opt = getopt(argc, argv, ":m:a:ik:l:h")) != -1)
+    while ((opt = getopt(argc, argv, ":a:ik:l:m:h")) != -1)
     {
         switch(opt)
         {
-        case 'm':
-            namefilter = optarg;
-            break;
         case 'a':
             Ksize = atof(optarg);
             break;
@@ -73,6 +70,9 @@ int main(int argc, char *argv[])
             break;
         case 'l':
             lnum = atof(optarg);
+            break;
+        case 'm':
+            namefilter = optarg;
             break;
         case 'h':
             fhelp = true;

@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20220702 "02 Jul 2022" "User Manual"
+.TH "ImThreshold" 1 0.20221221 "21 Dec 2022" "User Manual"
 
 .SH NAME
  imthreshold-math
@@ -10,6 +10,9 @@ Math opertion of two image.
 imthreshold-math [options] <input_file> <input_file> <output_file>
 
 .SH OPTIONS
+.TP
+-d N
+delta (int, optional, default = 0)
 .TP
 -m str
 name method
@@ -31,9 +34,6 @@ name method
     'diff'
     'patch'
     'threshold (default)'
-.TP
--d N
-delta (int, optional, default = 0)
 .TP
 -r N
 radius (int, optional, default = 5)

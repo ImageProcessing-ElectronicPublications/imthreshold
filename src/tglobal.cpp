@@ -23,6 +23,8 @@ void ImthresholdFilterTGlobalUsage()
 {
     printf("Usage : imthreshold-tglobal [options] <input_image> <output_image>(BW)\n\n");
     printf("options:\n");
+    printf("          -b      color correct (bool, optional, default = false)\n");
+    printf("          -d N    delta (int, optional, default = 0)\n");
     printf("          -f str  name filter:\n");
     printf("                    'bht'\n");
     printf("                    'bimod' (default)\n");
@@ -43,12 +45,14 @@ void ImthresholdFilterTGlobalUsage()
     printf("                    'rot'\n");
     printf("                    'tsai'\n");
     printf("                    'use'\n");
-    printf("          -b      color correct (bool, optional, default = false)\n");
-    printf("          -d N    delta (int, optional, default = 0)\n");
     printf("          -i      invert (bool, optional, default = false)\n");
     printf("          -k N    K par (k/2) (int, optional, default = 2)\n");
     printf("          -m N    max iteration (int, optional, default = 10)\n");
     printf("          -n      norm (bool, optional, default = false)\n");
+    printf("          -q str  colorspace:\n");
+    printf("                    'rgb' (default)\n");
+    printf("                    'ryb4'\n");
+    printf("                    'ycbcr'\n");
     printf("          -s N    shift (int, optional, default = -32)\n");
     printf("          -w      weight colors (bool, optional)\n");
     printf("          -z      mirror of mean (bool, optional, default = false)\n");
@@ -76,20 +80,21 @@ int main(int argc, char *argv[])
     bool finv = false;
     bool fhelp = false;
     int threshold;
-    char *namefilter;
-    namefilter="bimod";
-    while ((opt = getopt(argc, argv, ":f:bd:ik:m:ns:wzh")) != -1)
+    char *namefilter, *csp;
+    namefilter = "bimod";
+    csp = "rgb";
+    while ((opt = getopt(argc, argv, ":bd:f:ik:m:nq:s:wzh")) != -1)
     {
         switch(opt)
         {
-        case 'f':
-            namefilter = optarg;
+        case 'b':
+            fccor = true;
             break;
         case 'd':
             delta = atof(optarg);
             break;
-        case 'b':
-            fccor = true;
+        case 'f':
+            namefilter = optarg;
             break;
         case 'i':
             finv = true;
@@ -102,6 +107,9 @@ int main(int argc, char *argv[])
             break;
         case 'n':
             fnorm = true;
+            break;
+        case 'q':
+            csp = optarg;
             break;
         case 's':
             shift = atof(optarg);
@@ -151,6 +159,17 @@ int main(int argc, char *argv[])
 
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
+
+            if (strcmp(csp, "ryb4") == 0)
+            {
+                printf("ColorSpace= RYB4\n");
+                IMTFilterRGBtoRYB4(p_im, height, width, 1);
+            }
+            else if (strcmp(csp, "ycbcr") == 0)
+            {
+                printf("ColorSpace= YCbCr\n");
+                IMTFilterRGBtoYCbCr(p_im, height, width, 1);
+            }
             if (fccor)
             {
                 IMTFilterSCCor(p_im, height, width);

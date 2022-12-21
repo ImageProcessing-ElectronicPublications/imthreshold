@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20220702 "02 Jul 2022" "User Manual"
+.TH "ImThreshold" 1 0.20221221 "21 Dec 2022" "User Manual"
 
 .SH NAME
 imthreshold-filter
@@ -10,6 +10,15 @@ Filter image.
 imthreshold-filter [options] <input_image> <output_image>
 
 .SH OPTIONS
+.TP
+-a N.N
+amount (float, optional, default = 0.5)
+.TP
+-c N.N
+contour factor (float, optional, default = -1[auto])
+.TP
+-d N
+max delta (int, optional, default = 50)
 .TP
 -f str
 name filter:
@@ -49,18 +58,6 @@ name filter:
     'whitefill'
     'wiener'
 .TP
--4
-RGB to RYB4 (bool, optional, default = false)
-.TP
--a N.N
-amount (float, optional, default = 0.5)
-.TP
--c N.N
-contour factor (float, optional, default = -1[auto])
-.TP
--d N
-max delta (int, optional, default = 50)
-.TP
 -i N
 num divide (int, optional, default = 1)
 .TP
@@ -75,6 +72,12 @@ noise size (float, optional, default = -1.0[auto])
 .TP
 -p N
 posterize divide factor (int, optional, default = 16)
+.TP
+-q str
+colorspace:
+    'rgb' (default)
+    'ryb4'
+    'ycbcr'
 .TP
 -r N.N
 radius (float, optional, default = 3.0)

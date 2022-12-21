@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20220702 "02 Jul 2022" "User Manual"
+.TH "ImThreshold" 1 0.20221221 "21 Dec 2022" "User Manual"
 
 .SH NAME
 imthreshold-separate
@@ -11,18 +11,11 @@ imthreshold-separate [options] <input_file> <input_mask_file>(BW) <output_fg_fil
 
 .SH OPTIONS
 .TP
--m str
-name method:
-                    'delta'
-                    'inpaint'
-                    'mscale'
-                    'simple' (default).
-TP
--c N
-clean blur radius (int, optional, default = 0)
-.TP
 -b N
 base block size (int, optional, default = 3)
+.TP
+-c N
+clean blur radius (int, optional, default = 0)
 .TP
 -f N
 foreground divide (int, optional, default = 2)
@@ -32,6 +25,13 @@ coefficient delta threshold (float, optional, default = 2.0)
 .TP
 -l N
 level (int, optional, default = 0[auto])
+.TP
+-m str
+name method:
+                    'delta'
+                    'inpaint'
+                    'mscale'
+                    'simple' (default)
 .TP
 -o N.N
 overlay (float, optional, default = 0.5)

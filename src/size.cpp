@@ -31,6 +31,10 @@ void ImthresholdFilterSizeUsage()
     printf("                    'gsample' (default)\n");
     printf("                    'nearest'\n");
     printf("          -p N.N  part prefilter RIS (float, optional, default = 1.0)\n");
+    printf("          -q str  colorspace:\n");
+    printf("                    'rgb' (default)\n");
+    printf("                    'ryb4'\n");
+    printf("                    'ycbcr'\n");
     printf("          -r N.N  ratio (float, optional, default = 1.0)\n");
     printf("          -w N    new width (int, optional, default = [auto])\n");
     printf("          -z N    new height (int, optional, default = [auto])\n");
@@ -50,7 +54,7 @@ int main(int argc, char *argv[])
     float ratio = 1.0f, ppart = 1.0f;
     int newh = 0, neww = 0;
     bool fhelp = false;
-    char *namefilter;
+    char *namefilter, *csp;
     float ims = 0.0f, imratio;
     unsigned width, height, new_width, new_height, hr, wr;
     int imscaler;
@@ -59,8 +63,8 @@ int main(int argc, char *argv[])
     FIBITMAP *dib, *dst_dib;
     FREE_IMAGE_FORMAT out_fif;
     namefilter="gsample";
-
-    while ((opt = getopt(argc, argv, ":f:p:r:w:z:h")) != -1)
+    csp = "rgb";
+    while ((opt = getopt(argc, argv, ":f:p:q:r:w:z:h")) != -1)
     {
         switch(opt)
         {
@@ -69,6 +73,9 @@ int main(int argc, char *argv[])
             break;
         case 'p':
             ppart = atof(optarg);
+            break;
+        case 'q':
+            csp = optarg;
             break;
         case 'r':
             ratio = atof(optarg);
@@ -139,6 +146,16 @@ int main(int argc, char *argv[])
 
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
+            if (strcmp(csp, "ryb4") == 0)
+            {
+                printf("ColorSpace= RYB4\n");
+                IMTFilterRGBtoRYB4(p_im, height, width, 1);
+            }
+            else if (strcmp(csp, "ycbcr") == 0)
+            {
+                printf("ColorSpace= YCbCr\n");
+                IMTFilterRGBtoYCbCr(p_im, height, width, 1);
+            }
             if (strcmp(namefilter, "bicubic") == 0)
             {
                 printf("Filter= %s\n", namefilter);
@@ -207,6 +224,16 @@ int main(int argc, char *argv[])
                 }
             }
             IMTfree(p_im, height);
+            if (strcmp(csp, "ryb4") == 0)
+            {
+                printf("ColorSpace= RGB\n");
+                IMTFilterRGBtoRYB4(d_im, new_height, new_width, -1);
+            }
+            else if (strcmp(csp, "ycbcr") == 0)
+            {
+                printf("ColorSpace= RGB\n");
+                IMTFilterRGBtoYCbCr(d_im, new_height, new_width, -1);
+            }
             dst_dib = FreeImage_Allocate(new_width, new_height, 24);
             ImthresholdSetData(dst_dib, d_im);
             IMTfree(d_im, new_height);

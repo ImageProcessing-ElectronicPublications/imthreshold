@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20220702 "02 Jul 2022" "User Manual"
+.TH "ImThreshold" 1 0.20221221 "21 Dec 2022" "User Manual"
 
 .SH NAME
 imthreshold-tdjvul
@@ -11,11 +11,11 @@ imthreshold-tdjvul [options] <input_file> <output_file>(BW) [fg_file] [bg_file] 
 
 .SH OPTIONS
 .TP
--4
-RGB to RYB4 (bool, optional, default = false)
-.TP
 -a N.N
 anisotropic (float, optional, default = 0.0)
+.TP
+-b N
+base block size (int, optional, default = 3)
 .TP
 -c N
 clean fg, bg blur radius (int, optional, default = 0)
@@ -23,23 +23,26 @@ clean fg, bg blur radius (int, optional, default = 0)
 -d N
 despeckle aperture size (int, optional, default = 0)
 .TP
--b N
-base block size (int, optional, default = 3)
-.TP
 -f N
 foreground divide (int, optional, default = 2)
 .TP
--l N
-level (int, optional, default = 0[auto])
-.TP
 -i
 invert station (bool, optional, default = false)
+.TP
+-l N
+level (int, optional, default = 0[auto])
 .TP
 -o N.N
 overlay (float, optional, default = 0.5)
 .TP
 -p N
 posterize fg (int, optional, default = 0)
+.TP
+-q str
+colorspace:
+    'rgb' (default)
+    'ryb4'
+    'ycbcr'
 .TP
 -w N
 w/b mode (int, optional, default = 0 [auto], >0-white, <0-black)

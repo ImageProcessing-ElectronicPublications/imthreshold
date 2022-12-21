@@ -23,6 +23,7 @@ void ImthresholdFilterMathUsage()
 {
     printf("Usage : imthreshold-math [options] <input_file> <input_file> <output_file>\n\n");
     printf("options:\n");
+    printf("          -d N    delta (int, optional, default = 0)\n");
     printf("          -m str  name metod:\n");
     printf("                    'average'\n");
     printf("                    'blur'\n");
@@ -41,7 +42,6 @@ void ImthresholdFilterMathUsage()
     printf("                    'diff'\n");
     printf("                    'patch'\n");
     printf("                    'threshold (default)'\n");
-    printf("          -d N    delta (int, optional, default = 0)\n");
     printf("          -r N    radius (int, optional, default = 5)\n");
     printf("          -h      this help\n");
 }
@@ -61,15 +61,15 @@ int main(int argc, char *argv[])
     bool fhelp = false;
     char *namefilter;
     namefilter="threshold";
-    while ((opt = getopt(argc, argv, ":m:d:r:h")) != -1)
+    while ((opt = getopt(argc, argv, ":d:m:r:h")) != -1)
     {
         switch(opt)
         {
-        case 'm':
-            namefilter = optarg;
-            break;
         case 'd':
             delta = atof(optarg);
+            break;
+        case 'm':
+            namefilter = optarg;
             break;
         case 'r':
             radius = atoi(optarg);

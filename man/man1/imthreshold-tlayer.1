@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20220702 "02 Jul 2022" "User Manual"
+.TH "ImThreshold" 1 0.20221221 "21 Dec 2022" "User Manual"
 
 .SH NAME
 imthreshold-tlayer
@@ -11,6 +11,12 @@ imthreshold-tlayer [options] <input_image> <output_image>
 
 .SH OPTIONS
 .TP
+-c N
+contrast limit (int, optional, default = 128)
+.TP
+-d N.N
+delta (float, optional, default = -5.0)
+.TP
 -f str
 name filter:
     'bernsen'
@@ -21,12 +27,6 @@ name filter:
     'niblack'
     'sauvola' (default)
     'size'
-.TP
--c N
-contrast limit (int, optional, default = 128)
-.TP
--d N.N
-delta (float, optional, default = -5.0)
 .TP
 -g N
 dynamic range (int, optional, default = 128)
@@ -39,6 +39,12 @@ norm (bool, optional, default = false)
 .TP
 -o N.N
 overlay (float, optional, default = 0.5)
+.TP
+-q str
+colorspace:
+    'rgb' (default)
+    'ryb4'
+    'ycbcr'
 .TP
 -r N
 radius (int, optional, default = 7)

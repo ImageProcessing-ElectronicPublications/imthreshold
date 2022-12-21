@@ -23,16 +23,19 @@ void ImthresholdIMTFilterDjVuLUsage()
 {
     printf("Usage : imthreshold-tdjvul [options] <input_file> <output_file>(BW) [fg_file] [bg_file] [fg_mask] [bg_mask]\n\n");
     printf("options:\n");
-    printf("          -4      RGB to RYB4 (bool, optional, default = false)\n");
     printf("          -a N.N  anisotropic (float, optional, default = 0.0)\n");
+    printf("          -b N    base block size (int, optional, default = 3)\n");
     printf("          -c N    clean fg, bg blur radius (int, optional, default = 0)\n");
     printf("          -d N    despeckle aperture size (int, optional, default = 0)\n");
-    printf("          -b N    base block size (int, optional, default = 3)\n");
     printf("          -f N    foreground divide (int, optional, default = 2)\n");
     printf("          -i      invert station (bool, optional, default = false)\n");
     printf("          -l N    level (int, optional, default = 0 [auto])\n");
     printf("          -o N.N  overlay (float, optional, default = 0.5)\n");
     printf("          -p N    posterize fg (int, optional, default = 0)\n");
+    printf("          -q str  colorspace:\n");
+    printf("                    'rgb' (default)\n");
+    printf("                    'ryb4'\n");
+    printf("                    'ycbcr'\n");
     printf("          -w N    w/b mode (int, optional, default = 0 [auto], >0-white, <0-black)\n");
     printf("          -h      this help\n");
 }
@@ -57,17 +60,24 @@ int main(int argc, char *argv[])
     int fdespeckle = 0;
     unsigned fposter = 0;
     bool finvs = false;
-    bool fryb4 = false;
     bool fhelp = false;
-    while ((opt = getopt(argc, argv, ":4a:c:d:b:f:il:p:o:w:h")) != -1)
+    char *csp;
+    csp = "rgb";
+    while ((opt = getopt(argc, argv, ":a:b:c:d:f:il:o:p:q:w:h")) != -1)
     {
         switch(opt)
         {
-        case '4':
-            fryb4 = true;
+        case 'a':
+            anisotropic = atof(optarg);
             break;
         case 'b':
             bgs = atof(optarg);
+            break;
+        case 'c':
+            fclean = atof(optarg);
+            break;
+        case 'd':
+            fdespeckle = atof(optarg);
             break;
         case 'f':
             fgs = atof(optarg);
@@ -78,23 +88,17 @@ int main(int argc, char *argv[])
         case 'i':
             finvs = true;
             break;
-        case 'w':
-            wbmode = atof(optarg);
-            break;
-        case 'a':
-            anisotropic = atof(optarg);
-            break;
         case 'o':
             doverlay = atof(optarg);
             break;
-        case 'c':
-            fclean = atof(optarg);
-            break;
-        case 'd':
-            fdespeckle = atof(optarg);
-            break;
         case 'p':
             fposter = atof(optarg);
+            break;
+        case 'q':
+            csp = optarg;
+            break;
+        case 'w':
+            wbmode = atof(optarg);
             break;
         case 'h':
             fhelp = true;
@@ -180,10 +184,15 @@ int main(int argc, char *argv[])
 
                 ImthresholdGetData(dib, p_im);
                 FreeImage_Unload(dib);
-                if (fryb4)
+                if (strcmp(csp, "ryb4") == 0)
                 {
                     printf("ColorSpace= RYB4\n");
                     IMTFilterRGBtoRYB4(p_im, height, width, 1);
+                }
+                else if (strcmp(csp, "ycbcr") == 0)
+                {
+                    printf("ColorSpace= YCbCr\n");
+                    IMTFilterRGBtoYCbCr(p_im, height, width, 1);
                 }
                 if (fposter != 0)
                 {
@@ -200,11 +209,17 @@ int main(int argc, char *argv[])
                 }
                 IMTfree(p_im, height);
 
-                if (fryb4)
+                if (strcmp(csp, "ryb4") == 0)
                 {
                     printf("ColorSpace= RGB\n");
                     IMTFilterRGBtoRYB4(fg_im, heightfg, widthfg, -1);
                     IMTFilterRGBtoRYB4(bg_im, heightbg, widthbg, -1);
+                }
+                else if (strcmp(csp, "ycbcr") == 0)
+                {
+                    printf("ColorSpace= RGB\n");
+                    IMTFilterRGBtoYCbCr(fg_im, heightfg, widthfg, -1);
+                    IMTFilterRGBtoYCbCr(bg_im, heightbg, widthbg, -1);
                 }
                 if (fdespeckle > 0)
                 {

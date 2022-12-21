@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20220702 "02 Jul 2022" "User Manual"
+.TH "ImThreshold" 1 0.20221221 "21 Dec 2022" "User Manual"
 
 .SH NAME
 imthreshold-tglobal
@@ -10,6 +10,12 @@ Global thresholding image.
 imthreshold-tglobal [options] <input_image> <output_image>(BW)
 
 .SH OPTIONS
+.TP
+-b
+color correct (bool, optional, default = false)
+.TP
+-d N
+delta (int, optional, default = 0)
 .TP
 -f str
 name filter:
@@ -33,12 +39,6 @@ name filter:
     'tsai'
     'use' (T=127)
 .TP
--b
-color correct (bool, optional, default = false)
-.TP
--d N
-delta (int, optional, default = 0)
-.TP
 -i
 invert (bool, optional, default = false)
 .TP
@@ -50,6 +50,12 @@ max iteration (int, optional, default = 10)
 .TP
 -n
 norm (bool, optional, default = false)
+.TP
+-q str
+colorspace:
+    'rgb' (default)
+    'ryb4'
+    'ycbcr'
 .TP
 -s N
 shift (int, optional, default = -32)

@@ -23,9 +23,20 @@ void ImthresholdFilterPMeanUsage()
 {
     printf("Usage : imthreshold-fpmean [options] <input_file> <output_file>\n\n");
     printf("options:\n");
-    printf("          -r N.N  radius (float, optional, default = 3.0)\n");
-    printf("          -m str  mode {similar, nlm, bilateral, wbselect, radial, simple, minmax} (str, optional, default = similar)\n");
+    printf("          -m str  mode:\n");
+    printf("                    'similar' (default)\n");
+    printf("                    'nlm'\n");
+    printf("                    'bilateral'\n");
+    printf("                    'wbselect'\n");
+    printf("                    'radial'\n");
+    printf("                    'simple'\n");
+    printf("                    'minmax'\n");
     printf("          -n      neared (bool, optional, default = false)\n");
+    printf("          -q str  colorspace:\n");
+    printf("                    'rgb' (default)\n");
+    printf("                    'ryb4'\n");
+    printf("                    'ycbcr'\n");
+    printf("          -r N.N  radius (float, optional, default = 3.0)\n");
     printf("          -h      this help\n");
 }
 
@@ -42,13 +53,12 @@ int main(int argc, char *argv[])
     bool fhelp = false;
     bool fneared = false;
     int iradius;
-    while ((opt = getopt(argc, argv, ":r:m:nh")) != -1)
+    char *csp;
+    csp = "rgb";
+    while ((opt = getopt(argc, argv, ":m:nq:r:h")) != -1)
     {
         switch(opt)
         {
-        case 'r':
-            radius = atof(optarg);
-            break;
         case 'm':
             if (strcmp(optarg, "wbselect") == 0)
             {
@@ -81,6 +91,12 @@ int main(int argc, char *argv[])
             break;
         case 'n':
             fneared = true;
+            break;
+        case 'q':
+            csp = optarg;
+            break;
+        case 'r':
+            radius = atof(optarg);
             break;
         case 'h':
             fhelp = true;
@@ -172,8 +188,30 @@ int main(int argc, char *argv[])
 
                 ImthresholdGetData(dib, p_im);
                 FreeImage_Unload(dib);
+
+                if (strcmp(csp, "ryb4") == 0)
+                {
+                    printf("ColorSpace= RYB4\n");
+                    IMTFilterRGBtoRYB4(p_im, height, width, 1);
+                }
+                else if (strcmp(csp, "ycbcr") == 0)
+                {
+                    printf("ColorSpace= YCbCr\n");
+                    IMTFilterRGBtoYCbCr(p_im, height, width, 1);
+                }
                 IMTFilterPMean(p_im, d_im, height, width, radius, fmode, fneared);
                 IMTfree(p_im, height);
+
+                if (strcmp(csp, "ryb4") == 0)
+                {
+                    printf("ColorSpace= RGB\n");
+                    IMTFilterRGBtoRYB4(d_im, height, width, -1);
+                }
+                else if (strcmp(csp, "ycbcr") == 0)
+                {
+                    printf("ColorSpace= RGB\n");
+                    IMTFilterRGBtoYCbCr(d_im, height, width, -1);
+                }
                 dst_dib = FreeImage_Allocate(width, height, 24);
                 ImthresholdSetData(dst_dib, d_im);
                 IMTfree(d_im, height);

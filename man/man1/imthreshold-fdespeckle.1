@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20220702 "02 Jul 2022" "User Manual"
+.TH "ImThreshold" 1 0.20221221 "21 Dec 2022" "User Manual"
 
 .SH NAME
 imthreshold-fdespeckle
@@ -12,16 +12,6 @@ imthreshold-fdespeckle [options] <input_image>(BW) <output_image>(BW)
 
 .SH OPTIONS
 .TP
--m str
-name method:
-    'hist'
-    'invert'
-    'mag2'
-    'minmax'
-    'neuro'
-    'smearing'
-    'simple' (default)
-.TP
 -a N
 aperture size (int, optional, default = 2)
 .TP
@@ -33,6 +23,16 @@ lambda neuro learnen (float, optional, default = 0.1)
 .TP
 -l N
 learnen number (int, optional, default = 1)
+.TP
+-m str
+name method:
+    'hist'
+    'invert'
+    'mag2'
+    'minmax'
+    'neuro'
+    'smearing'
+    'simple' (default)
 .TP
 -h
 help
