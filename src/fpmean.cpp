@@ -36,6 +36,7 @@ void ImthresholdFilterPMeanUsage()
     printf("                    'rgb' (default)\n");
     printf("                    'ryb4'\n");
     printf("                    'ycbcr'\n");
+    printf("                    'hsv'\n");
     printf("          -r N.N  radius (float, optional, default = 3.0)\n");
     printf("          -h      this help\n");
 }
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
     bool fhelp = false;
     bool fneared = false;
     int iradius;
-    char *csp;
+    char *csp, *cspn;
     csp = "rgb";
     while ((opt = getopt(argc, argv, ":m:nq:r:h")) != -1)
     {
@@ -189,29 +190,15 @@ int main(int argc, char *argv[])
                 ImthresholdGetData(dib, p_im);
                 FreeImage_Unload(dib);
 
-                if (strcmp(csp, "ryb4") == 0)
-                {
-                    printf("ColorSpace= RYB4\n");
-                    IMTFilterRGBtoRYB4(p_im, height, width, 1);
-                }
-                else if (strcmp(csp, "ycbcr") == 0)
-                {
-                    printf("ColorSpace= YCbCr\n");
-                    IMTFilterRGBtoYCbCr(p_im, height, width, 1);
-                }
+                cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
+                printf("ColorSpace= %s\n", cspn);
+
                 IMTFilterPMean(p_im, d_im, height, width, radius, fmode, fneared);
                 IMTfree(p_im, height);
 
-                if (strcmp(csp, "ryb4") == 0)
-                {
-                    printf("ColorSpace= RGB\n");
-                    IMTFilterRGBtoRYB4(d_im, height, width, -1);
-                }
-                else if (strcmp(csp, "ycbcr") == 0)
-                {
-                    printf("ColorSpace= RGB\n");
-                    IMTFilterRGBtoYCbCr(d_im, height, width, -1);
-                }
+                cspn = IMTFilterRGBtoCSP(d_im, height, width, csp, 1);
+                printf("ColorSpace= %s\n", cspn);
+
                 dst_dib = FreeImage_Allocate(width, height, 24);
                 ImthresholdSetData(dst_dib, d_im);
                 IMTfree(d_im, height);

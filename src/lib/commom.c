@@ -163,6 +163,105 @@ IMTpixel IMTRGBtoYCbCr (IMTpixel pim, int direct)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+IMTpixel IMTRGBtoHSV (IMTpixel p, int direct)
+{
+    int r, g, b, h, s, v;
+    int i, vm, va, vi, vd;
+    int max = 0, min = 255;
+
+    if (direct < 0)
+    {
+        h = p.c[0];
+        s = p.c[1];
+        v = p.c[2];
+        r = g = b = v;
+        i = (h * 6 / 255) % 6;
+        vm = ((255 - s) * v + 127)/ 255;
+        va = ((v - vm) * (6 * h - i * 255) + 127)/ 255;
+        vi = vm + va;
+        vd = v - va;
+        if (s > 0)
+        {
+            switch (i)
+            {
+            default:
+            case 0:
+                g = vi;
+                b = vm;
+                break;
+            case 1:
+                r = vd;
+                b = vm;
+                break;
+            case 2:
+                r = vm;
+                b = vi;
+                break;
+            case 3:
+                r = vm;
+                g = vd;
+                break;
+            case 4:
+                r = vi;
+                g = vm;
+                break;
+            case 5:
+                g = vm;
+                b = vd;
+                break;
+            }
+        }
+        p.c[0] = r;
+        p.c[1] = g;
+        p.c[2] = b;
+    }
+    else
+    {
+        r = p.c[0];
+        g = p.c[1];
+        b = p.c[2];
+        max = (r < g) ? g : r;
+        max = (max < b) ? b : max;
+        min = (r > g) ? g : r;
+        min = (min > b) ? b : min;
+        h = max - min;
+        if (h > 0)
+        {
+            if (max == r)
+            {
+                h = (255 * (g - b) / h + 3) / 6;
+                if (h < 0)
+                {
+                    h += 255;
+                }
+            }
+            else if (max == g)
+            {
+                h = (255 * 2 + 255 * (b - r) / h + 3) / 6;
+            }
+            else
+            {
+                h = (255 * 4 + 255 * (r - g) / h + 3) / 6;
+            }
+        }
+        s = max - min;
+        if (max > 0)
+        {
+            s *= 255;
+            s += max / 2;
+            s /= max;
+        }
+        v = max;
+        p.c[0] = h;
+        p.c[1] = s;
+        p.c[2] = v;
+    }
+    p = IMTcalcS(p);
+    return p;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 IMTpixel** IMTalloc (unsigned height, unsigned width)
 {
     IMTpixel** im;

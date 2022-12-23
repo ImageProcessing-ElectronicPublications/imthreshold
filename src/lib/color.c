@@ -46,6 +46,47 @@ void IMTFilterRGBtoYCbCr (IMTpixel** p_im, unsigned height, unsigned width, int 
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterRGBtoHSV (IMTpixel** p_im, unsigned height, unsigned width, int direct)
+{
+    unsigned y, x;
+    IMTpixel pim;
+
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            pim = p_im[y][x];
+            pim = IMTRGBtoHSV (pim, direct);
+            p_im[y][x] = pim;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+char* IMTFilterRGBtoCSP (IMTpixel** p_im, unsigned height, unsigned width, char* csp, int direct)
+{
+    char *colorspace = "RGB";
+    if (strcmp(csp, "ryb4") == 0)
+    {
+        if (direct >= 0) colorspace = "RYB4";
+        IMTFilterRGBtoRYB4(p_im, height, width, direct);
+    }
+    else if (strcmp(csp, "ycbcr") == 0)
+    {
+        if (direct >= 0) colorspace = "YCbCr";
+        IMTFilterRGBtoYCbCr(p_im, height, width, direct);
+    }
+    else if (strcmp(csp, "hsv") == 0)
+    {
+        if (direct >= 0) colorspace = "HSV";
+        IMTFilterRGBtoHSV(p_im, height, width, direct);
+    }
+    return colorspace;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterSCCor (IMTpixel** p_im, unsigned height, unsigned width)
 {
     unsigned y, x;

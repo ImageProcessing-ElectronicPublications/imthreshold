@@ -53,6 +53,7 @@ void ImthresholdFilterTGlobalUsage()
     printf("                    'rgb' (default)\n");
     printf("                    'ryb4'\n");
     printf("                    'ycbcr'\n");
+    printf("                    'hsv'\n");
     printf("          -s N    shift (int, optional, default = -32)\n");
     printf("          -w      weight colors (bool, optional)\n");
     printf("          -z      mirror of mean (bool, optional, default = false)\n");
@@ -80,7 +81,7 @@ int main(int argc, char *argv[])
     bool finv = false;
     bool fhelp = false;
     int threshold;
-    char *namefilter, *csp;
+    char *namefilter, *csp, *cspn;
     namefilter = "bimod";
     csp = "rgb";
     while ((opt = getopt(argc, argv, ":bd:f:ik:m:nq:s:wzh")) != -1)
@@ -160,16 +161,9 @@ int main(int argc, char *argv[])
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
 
-            if (strcmp(csp, "ryb4") == 0)
-            {
-                printf("ColorSpace= RYB4\n");
-                IMTFilterRGBtoRYB4(p_im, height, width, 1);
-            }
-            else if (strcmp(csp, "ycbcr") == 0)
-            {
-                printf("ColorSpace= YCbCr\n");
-                IMTFilterRGBtoYCbCr(p_im, height, width, 1);
-            }
+            cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
+            printf("ColorSpace= %s\n", cspn);
+
             if (fccor)
             {
                 IMTFilterSCCor(p_im, height, width);

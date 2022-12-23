@@ -70,6 +70,7 @@ void ImthresholdFilterUsage()
     printf("                    'rgb' (default)\n");
     printf("                    'ryb4'\n");
     printf("                    'ycbcr'\n");
+    printf("                    'hsv'\n");
     printf("          -r N.N  radius (float, optional, default = 3.0)\n");
     printf("          -s N.N  sigma (float, optional, default = 4.0)\n");
     printf("          -t N.N  threshold (float, optional, default = 0.0)\n");
@@ -101,7 +102,7 @@ int main(int argc, char *argv[])
     float threshold = 0.0;
     int upper_bound = 223;
     bool fhelp = false;
-    char *namefilter, *csp;
+    char *namefilter, *csp, *cspn;
     namefilter="none";
     csp = "rgb";
     while ((opt = getopt(argc, argv, ":a:c:d:f:i:k:l:n:p:q:r:s:t:u:h")) != -1)
@@ -187,16 +188,9 @@ int main(int argc, char *argv[])
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
 
-            if (strcmp(csp, "ryb4") == 0)
-            {
-                printf("ColorSpace= RYB4\n");
-                IMTFilterRGBtoRYB4(p_im, height, width, 1);
-            }
-            else if (strcmp(csp, "ycbcr") == 0)
-            {
-                printf("ColorSpace= YCbCr\n");
-                IMTFilterRGBtoYCbCr(p_im, height, width, 1);
-            }
+            cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
+            printf("ColorSpace= %s\n", cspn);
+
             if (strcmp(namefilter, "adsmooth") == 0)
             {
                 printf("Filter= %s\n", namefilter);
@@ -700,16 +694,10 @@ int main(int argc, char *argv[])
             {
                 printf("Filter= none\n");
             }
-            if (strcmp(csp, "ryb4") == 0)
-            {
-                printf("ColorSpace= RGB\n");
-                IMTFilterRGBtoRYB4(p_im, height, width, -1);
-            }
-            else if (strcmp(csp, "ycbcr") == 0)
-            {
-                printf("ColorSpace= RGB\n");
-                IMTFilterRGBtoYCbCr(p_im, height, width, -1);
-            }
+
+            cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, -1);
+            printf("ColorSpace= %s\n", cspn);
+
             dst_dib = FreeImage_Allocate(width, height, 24);
             ImthresholdSetData(dst_dib, p_im);
             IMTfree(p_im, height);

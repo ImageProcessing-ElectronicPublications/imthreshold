@@ -36,6 +36,7 @@ void ImthresholdIMTFilterDjVuLUsage()
     printf("                    'rgb' (default)\n");
     printf("                    'ryb4'\n");
     printf("                    'ycbcr'\n");
+    printf("                    'hsv'\n");
     printf("          -w N    w/b mode (int, optional, default = 0 [auto], >0-white, <0-black)\n");
     printf("          -h      this help\n");
 }
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
     unsigned fposter = 0;
     bool finvs = false;
     bool fhelp = false;
-    char *csp;
+    char *csp, *cspn;
     csp = "rgb";
     while ((opt = getopt(argc, argv, ":a:b:c:d:f:il:o:p:q:w:h")) != -1)
     {
@@ -184,16 +185,10 @@ int main(int argc, char *argv[])
 
                 ImthresholdGetData(dib, p_im);
                 FreeImage_Unload(dib);
-                if (strcmp(csp, "ryb4") == 0)
-                {
-                    printf("ColorSpace= RYB4\n");
-                    IMTFilterRGBtoRYB4(p_im, height, width, 1);
-                }
-                else if (strcmp(csp, "ycbcr") == 0)
-                {
-                    printf("ColorSpace= YCbCr\n");
-                    IMTFilterRGBtoYCbCr(p_im, height, width, 1);
-                }
+
+                cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
+                printf("ColorSpace= %s\n", cspn);
+
                 if (fposter != 0)
                 {
                     printf("Posterize= %d\n", fposter);
@@ -209,18 +204,10 @@ int main(int argc, char *argv[])
                 }
                 IMTfree(p_im, height);
 
-                if (strcmp(csp, "ryb4") == 0)
-                {
-                    printf("ColorSpace= RGB\n");
-                    IMTFilterRGBtoRYB4(fg_im, heightfg, widthfg, -1);
-                    IMTFilterRGBtoRYB4(bg_im, heightbg, widthbg, -1);
-                }
-                else if (strcmp(csp, "ycbcr") == 0)
-                {
-                    printf("ColorSpace= RGB\n");
-                    IMTFilterRGBtoYCbCr(fg_im, heightfg, widthfg, -1);
-                    IMTFilterRGBtoYCbCr(bg_im, heightbg, widthbg, -1);
-                }
+                cspn = IMTFilterRGBtoCSP(fg_im, heightfg, widthfg, csp, -1);
+                cspn = IMTFilterRGBtoCSP(bg_im, heightbg, widthbg, csp, -1);
+                printf("ColorSpace= %s\n", cspn);
+
                 if (fdespeckle > 0)
                 {
                     printf("Despeckle= %d\n", fdespeckle);

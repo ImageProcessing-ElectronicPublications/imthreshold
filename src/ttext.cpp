@@ -28,6 +28,7 @@ void ImthresholdFilterTTextUsage()
     printf("                    'rgb' (default)\n");
     printf("                    'ryb4'\n");
     printf("                    'ycbcr'\n");
+    printf("                    'hsv'\n");
     printf("          -r N    radius (int, optional, default = 5)\n");
     printf("          -h      this help\n");
 }
@@ -46,7 +47,7 @@ int main(int argc, char *argv[])
     int radius = 5;
     bool fhelp = false;
     int threshold = 0;
-    char *csp;
+    char *csp, *cspn;
     csp = "rgb";
     while ((opt = getopt(argc, argv, ":c:q:r:h")) != -1)
     {
@@ -110,16 +111,9 @@ int main(int argc, char *argv[])
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
 
-			if (strcmp(csp, "ryb4") == 0)
-			{
-				printf("ColorSpace= RYB4\n");
-				IMTFilterRGBtoRYB4(p_im, height, width, 1);
-			}
-			else if (strcmp(csp, "ycbcr") == 0)
-			{
-				printf("ColorSpace= YCbCr\n");
-				IMTFilterRGBtoYCbCr(p_im, height, width, 1);
-			}
+            cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
+            printf("ColorSpace= %s\n", cspn);
+
             threshold = IMTFilterTText(p_im, d_im, height, width, contour, radius);
             printf("Threshold= %d\n", threshold / 3);
             dst_dib = FreeImage_Allocate(width, height, 1);

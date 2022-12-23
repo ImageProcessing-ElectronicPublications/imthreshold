@@ -62,11 +62,11 @@ int main(int argc, char *argv[])
     {
         switch(opt)
         {
-        case 'm':
-            namefilter = optarg;
-            break;
         case 'b':
             bgs = atof(optarg);
+            break;
+        case 'c':
+            fclean = atof(optarg);
             break;
         case 'f':
             fgs = atof(optarg);
@@ -77,11 +77,11 @@ int main(int argc, char *argv[])
         case 'l':
             level = atof(optarg);
             break;
+        case 'm':
+            namefilter = optarg;
+            break;
         case 'o':
             doverlay = atof(optarg);
-            break;
-        case 'c':
-            fclean = atof(optarg);
             break;
         case 'r':
             frewrite = true;

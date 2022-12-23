@@ -101,8 +101,11 @@ void IMTHist (IMTpixel**, unsigned long long*, unsigned, unsigned, unsigned, uns
 int IMTHistBiMod (unsigned long long*, unsigned, float);
 IMTpixel IMTRGBtoRYB4 (IMTpixel, int);
 IMTpixel IMTRGBtoYCbCr (IMTpixel, int);
+IMTpixel IMTRGBtoHSV (IMTpixel, int);
 void IMTFilterRGBtoRYB4 (IMTpixel**, unsigned, unsigned, int);
 void IMTFilterRGBtoYCbCr (IMTpixel**, unsigned, unsigned, int);
+void IMTFilterRGBtoHSV (IMTpixel**, unsigned, unsigned, int);
+char* IMTFilterRGBtoCSP (IMTpixel**, unsigned, unsigned, char*, int);
 void IMTFilterSCCor (IMTpixel**, unsigned, unsigned);
 void IMTFilterSMirror (IMTpixel**, unsigned, unsigned);
 int IMTFilterSNorm (IMTpixel**, unsigned, unsigned);

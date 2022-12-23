@@ -49,6 +49,7 @@ void ImthresholdFilterTSauvolaUsage()
     printf("                    'rgb' (default)\n");
     printf("                    'ryb4'\n");
     printf("                    'ycbcr'\n");
+    printf("                    'hsv'\n");
     printf("          -s N.N  sensitivity (float, optional, default = 0.2)\n");
     printf("          -u N    upper bound (int, optional, default = 255)\n");
     printf("          -z      mirror of mean (bool, optional, default = false)\n");
@@ -79,7 +80,7 @@ int main(int argc, char *argv[])
     bool fmirror = false;
     bool fhelp = false;
     int threshold = 0;
-    char *namefilter, *csp;
+    char *namefilter, *csp, *cspn;
     namefilter = "sauvola";
     csp = "rgb";
     while ((opt = getopt(argc, argv, ":bc:d:f:g:il:no:q:r:s:u:zh")) != -1)
@@ -169,16 +170,9 @@ int main(int argc, char *argv[])
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
 
-            if (strcmp(csp, "ryb4") == 0)
-            {
-                printf("ColorSpace= RYB4\n");
-                IMTFilterRGBtoRYB4(p_im, height, width, 1);
-            }
-            else if (strcmp(csp, "ycbcr") == 0)
-            {
-                printf("ColorSpace= YCbCr\n");
-                IMTFilterRGBtoYCbCr(p_im, height, width, 1);
-            }
+            cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
+            printf("ColorSpace= %s\n", cspn);
+
             if (fccor)
             {
                 IMTFilterSCCor(p_im, height, width);

@@ -33,6 +33,7 @@ void ImthresholdFilterSHRISUsage()
     printf("                    'rgb' (default)\n");
     printf("                    'ryb4'\n");
     printf("                    'ycbcr'\n");
+    printf("                    'hsv'\n");
     printf("          -r      reduce scale (bool, optional)\n");
     printf("          -h      this help\n");
 }
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
     unsigned smode = 2;
     bool reduce = false;
     bool fhelp = false;
-    char *namefilter, *csp;
+    char *namefilter, *csp, *cspn;
     unsigned width, height, width2, height2;
     int hr, wr, hr2, wr2;
     IMTpixel **p_im, **d_im;
@@ -137,16 +138,10 @@ int main(int argc, char *argv[])
 
             ImthresholdGetData(dib, p_im);
             FreeImage_Unload(dib);
-            if (strcmp(csp, "ryb4") == 0)
-            {
-                printf("ColorSpace= RYB4\n");
-                IMTFilterRGBtoRYB4(p_im, height, width, 1);
-            }
-            else if (strcmp(csp, "ycbcr") == 0)
-            {
-                printf("ColorSpace= YCbCr\n");
-                IMTFilterRGBtoYCbCr(p_im, height, width, 1);
-            }
+
+            cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
+            printf("ColorSpace= %s\n", cspn);
+
             if (reduce)
             {
                 printf("Scale= Reduce.\n");
@@ -194,16 +189,10 @@ int main(int argc, char *argv[])
                 }
             }
             IMTfree(p_im, height);
-            if (strcmp(csp, "ryb4") == 0)
-            {
-                printf("ColorSpace= RGB\n");
-                IMTFilterRGBtoRYB4(d_im, width2, height2, -1);
-            }
-            else if (strcmp(csp, "ycbcr") == 0)
-            {
-                printf("ColorSpace= RGB\n");
-                IMTFilterRGBtoYCbCr(d_im, width2, height2, -1);
-            }
+
+            cspn = IMTFilterRGBtoCSP(d_im, width2, height2, csp, -1);
+            printf("ColorSpace= %s\n", cspn);
+
             dst_dib = FreeImage_Allocate(width2, height2, 24);
             ImthresholdSetData(dst_dib, d_im);
             IMTfree(d_im, height2);
