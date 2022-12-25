@@ -196,7 +196,7 @@ void IMTFilterWiener (IMTpixel**, IMTpixel**, unsigned, unsigned, int, float);
 int IMTFilterWhiteFill (IMTpixel**, unsigned, unsigned);
 IMTpixel IMTInterpolateBiCubic (IMTpixel**, int, int, float, float);
 IMTpixel IMTInterpolateBiLine (IMTpixel**, int, int, float, float);
-float IMTInterpolateAkima (int*, float*, float);
+float IMTInterpolateAkima (float*, float);
 IMTpixel IMTInterpolateBiAkima (IMTpixel**, int, int, float, float);
 void IMTFilterSBicub (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSBicont (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);

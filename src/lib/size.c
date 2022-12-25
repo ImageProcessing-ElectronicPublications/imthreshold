@@ -96,17 +96,15 @@ IMTpixel IMTInterpolateBiLine (IMTpixel** p_im, int height, int width, float y, 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float IMTInterpolateAkima (int* x, float* y, float v)
+float IMTInterpolateAkima (float* y, float dx)
 {
     int i;
-    float dx, dy, a, b, fv, val;
+    float a, b, val;
     float m[5], t[2];
 
     for(i = 0; i < 5; i++)
     {
-        dx = x[i + 1] - x[i];
-        dy = y[i + 1] - y[i];
-        m[i] = (dx == 0) ? 0.0f : (dy / dx);
+        m[i] = y[i + 1] - y[i];
     }
     for(i = 0; i < 2; i++)
     {
@@ -114,10 +112,7 @@ float IMTInterpolateAkima (int* x, float* y, float v)
         b = (m[i] > m[i + 1]) ? (m[i] - m[i + 1]) : (m[i + 1] - m[i]);
         t[i] = ((a + b) > 0) ? ((a * m[i + 1] + b * m[i + 2]) / (a + b)) : (0.5f * (m[i + 1] + m[i + 2]));
     }
-    dx = v - x[2];
-    dy = x[3] - x[2];
-    fv = (dy > 0.0f) ? (dx / dy) : 0.0f;
-    val = y[2] + t[0] * dx + (3.0f * m[2] - 2.0f * t[0] - t[1]) * dx * fv + (t[0] + t[1] - 2.0f * m[2]) * dx * fv * fv;
+    val = y[2] + (t[0] + ((m[2] + m[2] + m[2] - t[0] - t[0] - t[1]) + (t[0] + t[1] - m[2] - m[2]) * dx) * dx) * dx;
 
     return val;
 }
@@ -127,7 +122,6 @@ float IMTInterpolateAkima (int* x, float* y, float v)
 IMTpixel IMTInterpolateBiAkima (IMTpixel** p_im, int height, int width, float y, float x)
 {
     int i, j, d, xi, yi, xf, yf, xfa, yfa;
-    int zx[6], zy[6];
     float z, zz[6], zzz[6];
     IMTpixel dim;
 
@@ -141,17 +135,15 @@ IMTpixel IMTInterpolateBiAkima (IMTpixel** p_im, int height, int width, float y,
         {
             yf = (int)y + i;
             yfa = (yf < 0) ? 0 : (yf < height) ? yf : (height - 1);
-            zy[i + 2] = yf;
             for(j = -2; j < 4; j++)
             {
                 xf = (int)x + j;
                 xfa = (xf < 0) ? 0 : (xf < width) ? xf : (width - 1);
-                zx[j + 2] = xf;
                 zz[j + 2] = p_im[yfa][xfa].c[d];
             }
-            zzz[i + 2] = IMTInterpolateAkima(zx, zz, x);
+            zzz[i + 2] = IMTInterpolateAkima(zz, (x - xi));
         }
-        z = IMTInterpolateAkima(zy, zzz, y);
+        z = IMTInterpolateAkima(zzz, (y - yi));
         dim.c[d] = ByteClamp((int)(z + 0.5f));
     }
     dim = IMTcalcS (dim);
