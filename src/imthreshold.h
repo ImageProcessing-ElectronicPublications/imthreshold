@@ -15,6 +15,11 @@
 #ifndef IMTHRESHOLD_H
 #define IMTHRESHOLD_H
 #define MAXVAL 256
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 #ifndef PI
 #define PI  ((float)3.14159265358979323846264338327950288419716939937510)
 #endif
@@ -269,5 +274,9 @@ int IMTFilterTText (IMTpixel**, BYTE**, unsigned, unsigned, unsigned, unsigned);
 int IMTFilterTTsaiValue (IMTpixel**, unsigned, unsigned, int);
 int IMTFilterTTsai (IMTpixel**, BYTE**, unsigned, unsigned, int);
 int IMTFilterTWhiteRohrer (IMTpixel**, BYTE**, unsigned, unsigned, int, int, int, int, int, int);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif // _\cplusplus
 
 #endif // IMTHRESHOLD_H
