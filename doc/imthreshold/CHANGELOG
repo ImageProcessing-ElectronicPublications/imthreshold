@@ -1,3 +1,7 @@
+0.20230114
+
+    DjVuL: fix block size and added layer factor
+
 0.20221216
 
     Size: biakima: simplify, time *= 0.87

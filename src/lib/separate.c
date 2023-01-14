@@ -41,7 +41,7 @@ void IMTFilterSeparateBGFGL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMT
     BYTE fgbase, bgbase, mim;
     unsigned cnth, cntw;
     IMTpixel pim, fgim, bgim;
-    float fgdist, bgdist, kover, fgpart, bgpart;
+    float fgdist, bgdist, kover, fgpart, bgpart, lpart;
     unsigned maskbl, maskover, bgsover, fgsum[3], bgsum[3], fgnum, bgnum;
 
     IMTpixel** fgt_im = IMTalloc(heightbg, widthbg);
@@ -65,6 +65,7 @@ void IMTFilterSeparateBGFGL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMT
             blsz *= 2;
         }
     }
+    blsz /= 2;
     fgbase = 127;
     bgbase = 127;
     for (y = 0; y < heightbg; y++)
@@ -87,6 +88,7 @@ void IMTFilterSeparateBGFGL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMT
         maskbl = bgs * blsz;
         maskover = (unsigned)(kover * maskbl);
         bgsover = (kover * blsz);
+        lpart = (float)(level - l) / (float)level;
         for (i = 0; i < cnth; i++)
         {
             y0 = i * maskbl;
@@ -157,6 +159,8 @@ void IMTFilterSeparateBGFGL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMT
                     fgpart += (2.0 * fgdist / (fgdist + bgdist));
                     bgpart += (2.0 * bgdist / (fgdist + bgdist));
                 }
+                fgpart *= lpart;
+                bgpart *= lpart;
                 fgim = IMTaverageIc(fgt_im, fgim, y0b, x0b, y1b, x1b, fgpart);
                 bgim = IMTaverageIc(bg_im, bgim, y0b, x0b, y1b, x1b, bgpart);
             }

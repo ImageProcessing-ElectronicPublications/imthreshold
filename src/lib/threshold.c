@@ -1643,7 +1643,7 @@ int IMTFilterTDjVuL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMTpixel** 
     BYTE fgbase, bgbase;
     unsigned cnth, cntw;
     IMTpixel pim, gim, tim, fgim, bgim;
-    float fgdist, bgdist, kover, fgpart, bgpart, fgk = 1.0;
+    float fgdist, bgdist, kover, fgpart, bgpart, lpart, fgk = 1.0;
     unsigned maskbl, maskover, bgsover, fgsum[3], bgsum[3], fgnum, bgnum;
 
     IMTpixel** fgt_im = IMTalloc(heightbg, widthbg);
@@ -1667,6 +1667,7 @@ int IMTFilterTDjVuL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMTpixel** 
             blsz *= 2;
         }
     }
+    blsz /= 2;
     immean = IMTmean(p_im, height, width);
     imwb = IMTwb(p_im, immean, height, width);
     if (anisotropic == 0)
@@ -1714,6 +1715,7 @@ int IMTFilterTDjVuL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMTpixel** 
         maskbl = bgs * blsz;
         maskover = (kover * maskbl);
         bgsover = (kover * blsz);
+        lpart = (float)(level - l) / (float)level;
         for (i = 0; i < cnth; i++)
         {
             y0 = i * maskbl;
@@ -1758,7 +1760,8 @@ int IMTFilterTDjVuL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMTpixel** 
                     for (x = x0; x < x1; x++)
                     {
                         pim = p_im[y][x];
-                        tim = IMTrefilter1p (pim, gim);
+                        //tim = IMTrefilter1p (pim, gim);
+                        tim = pim;
                         fgdist = IMTdist(tim, fgim);
                         bgdist = IMTdist(tim, bgim);
                         if (fgdist * fgk < bgdist)
@@ -1806,6 +1809,8 @@ int IMTFilterTDjVuL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMTpixel** 
                     fgpart += (2.0 * fgdist / (fgdist + bgdist));
                     bgpart += (2.0 * bgdist / (fgdist + bgdist));
                 }
+                fgpart *= lpart;
+                bgpart *= lpart;
                 fgim = IMTaverageIc(fgt_im, fgim, y0b, x0b, y1b, x1b, fgpart);
                 bgim = IMTaverageIc(bg_im, bgim, y0b, x0b, y1b, x1b, bgpart);
             }
@@ -2720,6 +2725,7 @@ int IMTFilterTMscaleLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsign
         level++;
         blsz *= 2;
     }
+    blsz /= 2;
     rsz = 1;
     while (rsz < radius)
     {
