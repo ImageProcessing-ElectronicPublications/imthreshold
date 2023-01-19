@@ -910,125 +910,203 @@ void IMTFilterMirrorMean (IMTpixel** p_im, unsigned height, unsigned width)
 
 unsigned IMTFilterKMeans (IMTpixel** IMTim, unsigned height, unsigned width, unsigned ncluster, unsigned iters)
 {
-    unsigned y, x, i, j, d, y0, x0, y1, x1;
-    unsigned nr, nr2, nc, k, d0, dn, dd, dy, dx;
-    IMTpixel fgim, bgim;
-    float fgdist, bgdist, cl;
-    IMTpixel* fg_c = (IMTpixel*)malloc(ncluster * sizeof(IMTpixel));
-    IMTcluster* fg_cs = (IMTcluster*)malloc(ncluster * sizeof(IMTcluster));
-    cl = (float)ncluster;
-    cl = sqrt(cl);
-    nr = (unsigned)cl;
-    if (nr < cl)
-    {
-        nr++;
-    }
-    nr2 = nr / 2;
+    int y, x, ym, xm, d, itr, i, h, l, dist, distmin, cluster, changes;
+    float fcluster;
+    IMTpixel p, pm;
+    IMTcluster *means = (IMTcluster*)malloc(ncluster * sizeof(IMTcluster));
 
-    if (iters == 0)
+    for (i = 0; i < ncluster; i++)
     {
-        iters = ncluster;
-    }
-
-    dy = height / nr;
-    for (k = 0; k < nr; k++)
-    {
-        d0 = (k * ncluster + nr2) / nr;
-        dn = ((k + 1) * ncluster + nr2) / nr;
-        nc = dn - d0;
-        dx = width / nc;
-        y0 = k * dy;
-        y1 = y0 + dy;
-        if (y1 > height)
-        {
-            y1 = height;
-        }
-        for (d = d0; d < dn; d++)
-        {
-            dd = d - d0;
-            x0 = dd * dx;
-            x1 = x0 + dx;
-            if (x1 > width)
-            {
-                x1 = width;
-            }
-            fg_c[d] = IMTmeanIc(IMTim, y0, x0, y1, x1);
-            fg_cs[d].c[0] = 0;
-            fg_cs[d].c[1] = 0;
-            fg_cs[d].c[2] = 0;
-            fg_cs[d].n = 0;
-        }
-    }
-    for (j = 0; j < iters; j++)
-    {
-        for (d = 0; d < 3; d++)
-        {
-            fg_cs[j].c[d] = 0;
-        }
-        fg_cs[j].n = 0;
+        h = 255 * i / ncluster;
+        p.c[0] = h;
+        p.c[1] = 255;
+        p.c[2] = 255;
+        p = IMTcalcS (p);
+        p = IMTRGBtoHSV (p, -1);
+        distmin = 256 * 3;
+        ym = 0;
+        xm = 0;
         for (y = 0; y < height; y++)
         {
             for (x = 0; x < width; x++)
             {
-                fgim = IMTim[y][x];
-                bgdist = 2;
-                i = 0;
-                for (k = 0; k < ncluster; k++)
+                dist = IMTdist(p, IMTim[y][x]);
+                if (dist < distmin)
                 {
-                    bgim = fg_c[k];
-                    fgdist = IMTdist(fgim, bgim);
-                    if (fgdist < bgdist)
-                    {
-                        bgdist = fgdist;
-                        i = k;
-                    }
+                    distmin = dist;
+                    ym = y;
+                    xm = x;
                 }
-                for (d = 0; d < 3; d++)
-                {
-                    fg_cs[i].c[d] += fgim.c[d];
-                }
-                fg_cs[i].n++;
+
             }
         }
-        for (k = 0; k < ncluster; k++)
+        for (d = 0; d < 3; d++)
         {
-            i = fg_cs[k].n;
-            if (i > 0)
-            {
-                for (d = 0; d < 3; d++)
-                {
-                    fg_c[k].c[d] = ByteClamp(((fg_cs[k].c[d] + i - 1)/ i));
-                }
-            }
+            means[i].c[d] = (float)IMTim[ym][xm].c[d];
+        }
+        means[i].n = 1;
+    }
+    
+    fcluster = 1.0f / sqrt((float)ncluster);
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            IMTim[y][x].s = 0;
         }
     }
     for (y = 0; y < height; y++)
     {
         for (x = 0; x < width; x++)
         {
-            fgim = IMTim[y][x];
-            bgdist = 2.0;
-            i = 0;
-            for (k = 0; k < ncluster; k++)
+            distmin = 256 * 3;
+            l = 0;
+            for (i = 0; i < ncluster; i++)
             {
-                bgim = fg_c[k];
-                fgdist = (float)IMTdist(fgim, bgim);
-                if (fgdist < bgdist)
+                for (d = 0; d < 3; d++)
                 {
-                    bgdist = fgdist;
-                    i = k;
+                    pm.c[d] = (unsigned)(means[i].c[d] + 0.5f);
+                }
+                dist = IMTdist(pm, IMTim[y][x]);
+                if (dist < distmin)
+                {
+                    distmin = dist;
+                    l = i;
                 }
             }
-            for (d = 0; d < 3; d++)
-            {
-                bgim.c[d] = fg_c[i].c[d];
-            }
-            bgim = IMTcalcS (bgim);
-            IMTim[y][x] = bgim;
+            IMTim[y][x].s = l;
         }
     }
-    free(fg_c);
-    free(fg_cs);
+
+    for (itr = 0; itr < iters; itr++)
+    {
+        for (i = 0; i < ncluster; i++)
+        {
+            for (d = 0; d < 3; d++)
+            {
+                means[i].c[d] = 0.0f;
+            }
+            means[i].n = 0;
+        }
+        for (y = 0; y < height; y++)
+        {
+            for (x = 0; x < width; x++)
+            {
+                cluster = IMTim[y][x].s;
+                for (d = 0; d < 3; d++)
+                {
+                    means[cluster].c[d] += (float)IMTim[y][x].c[d];
+                }
+                means[cluster].n++;
+            }
+        }
+        changes = 0;
+        for (i = 0; i < ncluster; i++)
+        {
+            if (means[i].n > 0)
+            {
+                for (d = 0; d < 3; d++)
+                {
+                    means[i].c[d] /= (float)means[i].n;
+                }
+            }
+            else
+            {
+                h = 255 * i / ncluster;
+                p.c[0] = h;
+                p.c[1] = 255;
+                p.c[2] = 255;
+                p = IMTcalcS (p);
+                p = IMTRGBtoHSV (p, -1);
+                distmin = 256 * 3;
+                l = 0;
+                for (i = 0; i < ncluster; i++)
+                {
+                    for (d = 0; d < 3; d++)
+                    {
+                        pm.c[d] = (unsigned)(means[i].c[d] + 0.5f);
+                    }
+                    dist = IMTdist(p, pm);
+                    if (dist < distmin)
+                    {
+                        distmin = dist;
+                        l = i;
+                    }
+                }
+                for (d = 0; d < 3; d++)
+                {
+                    p.c[d] *= fcluster;
+                    p.c[d] += (unsigned)(means[l].c[d] * (1.0f - fcluster) + 0.5f);
+                }
+                distmin = 256 * 3;
+                ym = 0;
+                xm = 0;
+                for (y = 0; y < height; y++)
+                {
+                    for (x = 0; x < width; x++)
+                    {
+                        dist = IMTdist(p, IMTim[y][x]);
+                        if (dist < distmin)
+                        {
+                            distmin = dist;
+                            ym = y;
+                            xm = x;
+                        }
+
+                    }
+                }
+                for (d = 0; d < 3; d++)
+                {
+                    means[i].c[d] = (float)IMTim[ym][xm].c[d];
+                }
+                means[i].n = 1;
+                changes++;
+            }
+        }
+        for (y = 0; y < height; y++)
+        {
+            for (x = 0; x < width; x++)
+            {
+                distmin = 256 * 3;
+                cluster = 0;
+                for (i = 0; i < ncluster; i++)
+                {
+                    for (d = 0; d < 3; d++)
+                    {
+                        pm.c[d] = (unsigned)(means[i].c[d] + 0.5f);
+                    }
+                    dist = IMTdist(pm, IMTim[y][x]);
+                    if (dist < distmin)
+                    {
+                        distmin = dist;
+                        cluster = i;
+                    }
+                }
+                if (cluster != IMTim[y][x].s)
+                {
+                    changes++;
+                    IMTim[y][x].s = cluster;
+                }
+            }
+        }
+        if (changes == 0)
+        {
+            break;
+        }
+    }
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            cluster = IMTim[y][x].s;
+            for (d = 0; d < 3; d++)
+            {
+                IMTim[y][x].c[d] = ByteClamp((int)(means[cluster].c[d] + 0.5f));
+            }
+            IMTim[y][x] = IMTcalcS (IMTim[y][x]);
+        }
+    }
+    free(means);
 
     return iters;
 }
@@ -1132,6 +1210,13 @@ float IMTFilterPosterize (IMTpixel** p_im, unsigned height, unsigned width, unsi
         ims /= width;
         ims /= height;
     }
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            p_im[y][x] = IMTcalcS (p_im[y][x]);
+        }
+    }
 
     return ims;
 }
@@ -1210,6 +1295,13 @@ float IMTFilterQuant (IMTpixel** p_im, unsigned height, unsigned width, unsigned
     }
     imds /= n;
     imds /= 3;
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            p_im[y][x] = IMTcalcS (p_im[y][x]);
+        }
+    }
 
     return imds;
 }

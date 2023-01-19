@@ -1,3 +1,7 @@
+0.20230119
+
+    Filter: rewrite KMeans (based of HSV)
+
 0.20230114
 
     DjVuL: fix block size and added layer factor

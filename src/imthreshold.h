@@ -51,18 +51,18 @@ IMTpixel;
 
 typedef struct
 {
-    int c[3];
-    unsigned n;
+    float c[3];
+    unsigned long int n;
 }
 IMTcluster;
 
 typedef struct
 {
-    unsigned width;
-    unsigned height;
-    unsigned bpp;
-    unsigned min;
-    unsigned max;
+    unsigned int width;
+    unsigned int height;
+    unsigned int bpp;
+    unsigned int min;
+    unsigned int max;
     float mid;
     float mean;
     float std;
