@@ -1,3 +1,8 @@
+0.20230221
+
+    Filter: autowhite
+    Threshold: correct blur method
+
 0.20230119
 
     Filter: rewrite KMeans (based of HSV)

@@ -142,6 +142,7 @@ void IMTFilterInvert (IMTpixel**, unsigned, unsigned);
 float IMTFilterIRange (IMTpixel**, unsigned, unsigned, int, float);
 void IMTFilterCopy (IMTpixel**, IMTpixel**, unsigned, unsigned);
 void IMTFilterAdSmooth (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
+void IMTFilterAutoWhite (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
 void IMTFilterInpaint (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, unsigned);
 void IMTFilterSeparate (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, unsigned);
 void IMTFilterSeparateBGFGL (IMTpixel**, BYTE**, IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned, unsigned, float);

@@ -211,10 +211,10 @@ int main(int argc, char *argv[])
                 printf("Filter= %s\n", namefilter);
                 IMTpixel** b_im = IMTalloc(height, width);
                 IMTFilterGaussBlur (p_im, b_im, height, width, radius);
-                IMTFilterMathDivide (b_im, p_im, height, width, 0);
+                IMTFilterMathDivide (b_im, p_im, height, width, -127);
                 printf("Sensitivity= %f\n", sensitivity);
                 IMTFilterSCScale (b_im, height, width, sensitivity, IMTset(255, 255, 255));
-                IMTFilterMathDivide (p_im, b_im, height, width, 0);
+                IMTFilterMathDivide (p_im, b_im, height, width, -127);
                 IMTfree(b_im, height);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTBiMod (p_im, d_im, height, width, delta);

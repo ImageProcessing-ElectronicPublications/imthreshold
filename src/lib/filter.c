@@ -139,6 +139,95 @@ void IMTFilterAdSmooth (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsig
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterAutoWhite (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, float radius)
+{
+    unsigned int y, x, d, k, minv, maxv;
+    int c, delta;
+    unsigned long int count, thres, sum, hist[256];
+
+    count = (unsigned long int)width * height;
+    thres = count * radius / 256;
+    for (d = 0; d < 3; d++)
+    {
+        for (k = 0; k < 256; k++)
+        {
+            hist[k] = 0;
+        }
+        for (y = 0; y < height; y++)
+        {
+            for (x = 0; x < width; x++)
+            {
+                k = p_im[y][x].c[d];
+                hist[k]++;
+            }
+        }
+        minv = 0;
+        maxv = 255;
+        sum = 0;
+        for (k = 0; k < 256; k++)
+        {
+            sum += hist[k];
+            if (sum < thres)
+            {
+                minv = k;
+            }
+            else
+            {
+                break;
+            }
+        }
+        sum = 0;
+        for (k = 0; k < 256; k++)
+        {
+            sum += hist[255 - k];
+            if (sum < thres)
+            {
+                maxv = 255 - k;
+            }
+            else
+            {
+                break;
+            }
+        }
+        delta = (int)maxv - (int)minv;
+        if (delta > 0)
+        {
+            for (k = 0; k < 256; k++)
+            {
+                c = ((int)k - (int)minv) * 255 / delta;
+                hist[k] = ByteClamp(c);
+            }
+            for (y = 0; y < height; y++)
+            {
+                for (x = 0; x < width; x++)
+                {
+                    k = p_im[y][x].c[d];
+                    d_im[y][x].c[d] = hist[k];
+                }
+            }
+        }
+        else
+        {
+            for (y = 0; y < height; y++)
+            {
+                for (x = 0; x < width; x++)
+                {
+                    d_im[y][x].c[d] = p_im[y][x].c[d];
+                }
+            }
+        }
+    }
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            d_im[y][x] = IMTcalcS (d_im[y][x]);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterInpaint (IMTpixel** p_im, BYTE** m_im, IMTpixel** g_im, unsigned height, unsigned width, unsigned value)
 {
     unsigned y, x, d, nb, nn, ns, yp, xp, yn, xn, yf, xf;

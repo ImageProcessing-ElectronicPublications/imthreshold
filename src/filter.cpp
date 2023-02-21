@@ -30,6 +30,7 @@ void ImthresholdFilterUsage()
     printf("          -d N    max delta (int, optional, default = 50)\n");
     printf("          -f str  name filter:\n");
     printf("                    'adsmooth'\n");
+    printf("                    'autowhite'\n");
     printf("                    'bimod'\n");
     printf("                    'blur'\n");
     printf("                    'bwc'\n");
@@ -194,21 +195,30 @@ int main(int argc, char *argv[])
             if (strcmp(namefilter, "adsmooth") == 0)
             {
                 printf("Filter= %s\n", namefilter);
-                int radiusint;
                 IMTpixel** d_im = IMTalloc(height, width);
 
                 if (radius < 0)
                 {
                     radius = -radius;
                 }
-                radiusint = int(radius + 0.5);
-                if (radiusint == 0)
-                {
-                    radiusint = 1;
-                }
-                printf("Radius= %d\n", radiusint);
+                printf("Radius= %f\n", radius);
 
-                IMTFilterAdSmooth(p_im, d_im, height, width, radiusint);
+                IMTFilterAdSmooth(p_im, d_im, height, width, radius);
+                IMTFilterCopy (d_im, p_im, height, width);
+                IMTfree(d_im, height);
+            }
+            else if (strcmp(namefilter, "autowhite") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                IMTpixel** d_im = IMTalloc(height, width);
+
+                if (radius < 0)
+                {
+                    radius = -radius;
+                }
+                printf("Radius= %f\n", radius);
+
+                IMTFilterAutoWhite(p_im, d_im, height, width, radius);
                 IMTFilterCopy (d_im, p_im, height, width);
                 IMTfree(d_im, height);
             }
