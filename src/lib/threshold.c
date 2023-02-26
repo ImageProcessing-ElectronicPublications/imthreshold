@@ -1384,8 +1384,6 @@ int IMTFilterTDithH (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned wid
         { 0, 0, 0, 0 },
         { 0, 0, 0, 0 }
     };
-    char dith1s = "A";
-    char dith2s = "a";
     int dith[4][4];
     int hdithy[2][17], hdithx[2][17], herr, herrp, herrg;
     wwidth = (wwidth < 2) ? 2 : wwidth;
@@ -1537,7 +1535,6 @@ int IMTFilterTDithO (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned wid
         { 13,  0,  2, 18, 50, 63, 61, 45 },
         { 24, 16,  8, 26, 39, 47, 55, 37 }
     };
-    char odiths = "0";
     int odithy[65], odithx[65], herr, herrp, herrg;
     for (y = 0; y < wwidth; y++)
     {
@@ -1626,6 +1623,94 @@ int IMTFilterTDithO (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned wid
     }
     threshold /= whg;
     threshold /= wwn;
+
+    return threshold;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int IMTFilterTDithBayer (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned width, int delta)
+{
+    unsigned int y, x, yb, xb;
+    unsigned int wwidth = 8;
+    int thres, pix;
+    int threshold = 383;
+    // Bayer dither matrix
+    int bdith[8][8] =
+    {
+        { 0, 32,  8, 40,  2, 34, 10, 42},
+        {48, 16, 56, 24, 50, 18, 58, 26},
+        {12, 44,  4, 36, 14, 46,  6, 38},
+        {60, 28, 52, 20, 62, 30, 54, 22},
+        { 3, 35, 11, 43,  1, 33,  9, 41},
+        {51, 19, 59, 27, 49, 17, 57, 25},
+        {15, 47,  7, 39, 13, 45,  5, 37},
+        {63, 31, 55, 23, 61, 29, 53, 21}
+    };
+
+    for (y = 0; y < wwidth; y++)
+    {
+        for (x = 0; x < wwidth; x++)
+        {
+            bdith[y][x] *= 12;
+        }
+    }
+    for (y = 0; y < height; y++)
+    {
+        yb = y % wwidth;
+        for (x = 0; x < width; x++)
+        {
+            xb = x % wwidth;
+            thres = bdith[yb][xb];
+            pix = p_im[y][x].s;
+            pix += delta;
+            d_im[y][x] = (BYTE)((pix < thres) ? 0 : 255);
+        }
+    }
+
+    return threshold;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int IMTFilterTDithDots (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned width, int delta)
+{
+    unsigned int y, x, yb, xb;
+    unsigned int wwidth = 8;
+    int thres, pix;
+    int threshold = 383;
+    // Dots dither matrix
+    int ddith[8][8] =
+    {
+        {13,  9,  5, 12, 18, 22, 26, 19},
+        { 6,  1,  0,  8, 25, 30, 31, 23},
+        {10,  2,  3,  4, 21, 29, 28, 27},
+        {14,  7, 11, 15, 17, 24, 20, 16},
+        {18, 22, 26, 19, 13,  9,  5, 12},
+        {25, 30, 31, 23,  6,  1,  0,  8},
+        {21, 29, 28, 27, 10,  2,  3,  4},
+        {17, 24, 20, 16, 14,  7, 11, 15}
+    };
+
+    for (y = 0; y < wwidth; y++)
+    {
+        for (x = 0; x < wwidth; x++)
+        {
+            ddith[y][x] *= 24;
+        }
+    }
+    for (y = 0; y < height; y++)
+    {
+        yb = y % wwidth;
+        for (x = 0; x < width; x++)
+        {
+            xb = x % wwidth;
+            thres = ddith[yb][xb];
+            pix = p_im[y][x].s;
+            pix += delta;
+            d_im[y][x] = (BYTE)((pix < thres) ? 0 : 255);
+        }
+    }
 
     return threshold;
 }

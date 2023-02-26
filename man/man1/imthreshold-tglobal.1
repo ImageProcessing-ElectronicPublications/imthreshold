@@ -1,4 +1,4 @@
-.TH "ImThreshold" 1 0.20230221 "21 Feb 2023" "User Manual"
+.TH "ImThreshold" 1 0.20230226 "26 Feb 2023" "User Manual"
 
 .SH NAME
 imthreshold-tglobal
@@ -19,15 +19,14 @@ delta (int, optional, default = 0)
 .TP
 -f str
 name filter:
+    'bayer'
     'bht'
     'bimod' (default)
     'bimodc'
     'color'
     'dither'
-    'dithh' (Knuth D.E.)
-    'ditho' (Knuth D.E.)
-    'dithq'
-    'ditht'
+    'dithk' (Knuth D.E.)
+    'dots'
     'entropy'
     'eqbright'
     'grad'
@@ -50,6 +49,9 @@ max iteration (int, optional, default = 10)
 .TP
 -n
 norm (bool, optional, default = false)
+.TP
+-p N
+pattern (int, optional, default = 4)
 .TP
 -q str
 colorspace:

@@ -26,15 +26,14 @@ void ImthresholdFilterTGlobalUsage()
     printf("          -b      color correct (bool, optional, default = false)\n");
     printf("          -d N    delta (int, optional, default = 0)\n");
     printf("          -f str  name filter:\n");
+    printf("                    'bayer'\n");
     printf("                    'bht'\n");
     printf("                    'bimod' (default)\n");
     printf("                    'bimodc'\n");
     printf("                    'color'\n");
     printf("                    'dither'\n");
-    printf("                    'dithh'\n");
-    printf("                    'ditho'\n");
-    printf("                    'dithq'\n");
-    printf("                    'ditht'\n");
+    printf("                    'dithk'\n");
+    printf("                    'dots'\n");
     printf("                    'entropy'\n");
     printf("                    'eqbright'\n");
     printf("                    'grad'\n");
@@ -49,6 +48,7 @@ void ImthresholdFilterTGlobalUsage()
     printf("          -k N    K par (k/2) (int, optional, default = 2)\n");
     printf("          -m N    max iteration (int, optional, default = 10)\n");
     printf("          -n      norm (bool, optional, default = false)\n");
+    printf("          -p N    pattern (int, optional, default = 4)\n");
     printf("          -q str  colorspace:\n");
     printf("                    'rgb' (default)\n");
     printf("                    'ryb4'\n");
@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
     int opt;
     int delta = 0;
     int knum = 2;
+    int pattern = 4;
     int iters = 10;
     int shift = -32;
     bool weight = false;
@@ -84,7 +85,7 @@ int main(int argc, char *argv[])
     char *namefilter, *csp, *cspn;
     namefilter = "bimod";
     csp = "rgb";
-    while ((opt = getopt(argc, argv, ":bd:f:ik:m:nq:s:wzh")) != -1)
+    while ((opt = getopt(argc, argv, ":bd:f:ik:m:np:q:s:wzh")) != -1)
     {
         switch(opt)
         {
@@ -108,6 +109,9 @@ int main(int argc, char *argv[])
             break;
         case 'n':
             fnorm = true;
+            break;
+        case 'p':
+            pattern = atof(optarg);
             break;
         case 'q':
             csp = optarg;
@@ -179,7 +183,13 @@ int main(int argc, char *argv[])
                 threshold = IMTFilterSNorm(p_im, height, width);
                 printf("Norm= %d\n", threshold);
             }
-            if (strcmp(namefilter, "bht") == 0)
+            if (strcmp(namefilter, "bayer") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                printf("Delta= %d\n", delta);
+                threshold = IMTFilterTDithBayer(p_im, d_im, height, width, delta);
+            }
+            else if (strcmp(namefilter, "bht") == 0)
             {
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTBHT(p_im, d_im, height, width);
@@ -201,33 +211,27 @@ int main(int argc, char *argv[])
                 printf("Filter= %s\n", namefilter);
                 threshold = IMTFilterTDither(p_im, d_im, height, width);
             }
-            else if (strcmp(namefilter, "dithh") == 0)
+            else if (strcmp(namefilter, "dithk") == 0)
             {
                 printf("Filter= %s\n", namefilter);
+                printf("Pattern= %d\n", pattern);
                 printf("Coeff= %d\n", knum);
                 printf("Delta= %d\n", delta);
-                threshold = IMTFilterTDithH(p_im, d_im, height, width, knum, delta, 4);
+                if (pattern > 4)
+                {
+                    threshold = IMTFilterTDithO(p_im, d_im, height, width, knum, delta);
+                }
+                else
+                {
+                    pattern = (pattern < 2) ? 2 : pattern;
+                    threshold = IMTFilterTDithH(p_im, d_im, height, width, knum, delta, pattern);
+                }
             }
-            else if (strcmp(namefilter, "ditho") == 0)
+            else if (strcmp(namefilter, "dots") == 0)
             {
                 printf("Filter= %s\n", namefilter);
-                printf("Coeff= %d\n", knum);
                 printf("Delta= %d\n", delta);
-                threshold = IMTFilterTDithO(p_im, d_im, height, width, knum, delta);
-            }
-            else if (strcmp(namefilter, "dithq") == 0)
-            {
-                printf("Filter= %s\n", namefilter);
-                printf("Coeff= %d\n", knum);
-                printf("Delta= %d\n", delta);
-                threshold = IMTFilterTDithH(p_im, d_im, height, width, knum, delta, 2);
-            }
-            else if (strcmp(namefilter, "ditht") == 0)
-            {
-                printf("Filter= %s\n", namefilter);
-                printf("Coeff= %d\n", knum);
-                printf("Delta= %d\n", delta);
-                threshold = IMTFilterTDithH(p_im, d_im, height, width, knum, delta, 3);
+                threshold = IMTFilterTDithDots(p_im, d_im, height, width, delta);
             }
             else if (strcmp(namefilter, "entropy") == 0)
             {
