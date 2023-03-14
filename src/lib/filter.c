@@ -859,121 +859,100 @@ void IMTGaussLineMatrix (float *cmatrix, float radius)
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-void IMTFilterGaussBlur (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, float radius)
+void IMTFilterGaussBlur (IMTpixel** p_im, IMTpixel** d_im, unsigned int height, unsigned int width, float radius)
 {
-    int iradius;
-    int y, x, yf, xf, i;
-    unsigned d;
-    float imc;
-    float sc[3];
-    float* gaussmat;
-    IMTpixel** t_im;
-    int h = (int)height;
-    int w = (int)width;
+    unsigned int iradius, hw, y, x, i, d;
+    float imc, sc, *gaussmat, *buf;
 
-    if (radius < 0)
+    if (radius < 0.0f)
     {
         radius = -radius;
     }
-    iradius = (int)(2.0 * radius + 0.5) + 1;
+    iradius = (int)(2.0f * radius + 0.5f) + 1;
+    hw = (height < width) ? width : height;
+    hw += iradius;
+    hw += iradius;
 
-    gaussmat = (float*)malloc((iradius) * sizeof(float));
-    t_im = IMTalloc(height, width);
+    gaussmat = (float*)malloc(iradius * sizeof(float));
+    buf = (float*)malloc(hw * sizeof(float));
 
     IMTGaussLineMatrix (gaussmat, radius);
 
     if (iradius > 1)
     {
-        for (y = 0; y < h; y++)
+        for (d = 0; d < 3; d++)
         {
-            for (x = 0; x < w; x++)
+            for (y = 0; y < height; y++)
             {
-                for (d = 0; d < 3; d++)
+                for (x = 0; x < iradius; x++)
                 {
-                    imc = (float)p_im[y][x].c[d];
-                    sc[d] = imc * gaussmat[0];
+                    buf[x] = (float)p_im[y][0].c[d];
+                    buf[width + iradius + x] = (float)p_im[y][width - 1].c[d];
                 }
-                for (i = 1; i < iradius; i++)
+                for (x = 0; x < width; x++)
                 {
-                    yf = y - i;
-                    if (yf < 0)
-                    {
-                        yf = 0;
-                    }
-                    for (d = 0; d < 3; d++)
-                    {
-                        imc = (float)p_im[yf][x].c[d];
-                        sc[d] += imc * gaussmat[i];
-                    }
-                    yf = y + i;
-                    if (yf >= h)
-                    {
-                        yf = h - 1;
-                    }
-                    for (d = 0; d < 3; d++)
-                    {
-                        imc = (float)p_im[yf][x].c[d];
-                        sc[d] += imc * gaussmat[i];
-                    }
+                    buf[x + iradius] = (float)p_im[y][x].c[d];
                 }
-                for (d = 0; d < 3; d++)
+                for (x = 0; x < width; x++)
                 {
-                    t_im[y][x].c[d] = ByteClamp((int)(sc[d] + 0.5));
+                    imc = buf[x + iradius];
+                    sc = imc * gaussmat[0];
+                    for (i = 1; i < iradius; i++)
+                    {
+                        imc = buf[x + iradius - i];
+                        sc += imc * gaussmat[i];
+                        imc = buf[x + iradius + i];;
+                        sc += imc * gaussmat[i];
+                    }
+                    d_im[y][x].c[d] = ByteClamp((int)(sc + 0.5f));
+                }
+            }
+            for (x = 0; x < width; x++)
+            {
+                for (y = 0; y < iradius; y++)
+                {
+                    buf[y] = (float)d_im[0][x].c[d];
+                    buf[height + iradius + y] = (float)d_im[height - 1][x].c[d];
+                }
+                for (y = 0; y < height; y++)
+                {
+                    buf[y + iradius] = (float)d_im[y][x].c[d];
+                }
+                for (y = 0; y < height; y++)
+                {
+                    imc = buf[y + iradius];
+                    sc = imc * gaussmat[0];
+                    for (i = 1; i < iradius; i++)
+                    {
+                        imc = buf[y + iradius - i];
+                        sc += imc * gaussmat[i];
+                        imc = buf[y + iradius + i];
+                        sc += imc * gaussmat[i];
+                    }
+                    d_im[y][x].c[d] = ByteClamp((int)(sc + 0.5f));
                 }
             }
         }
-        for (y = 0; y < h; y++)
+        for (y = 0; y < height; y++)
         {
-            for (x = 0; x < w; x++)
+            for (x = 0; x < width; x++)
             {
-                for (d = 0; d < 3; d++)
-                {
-                    imc = (float)t_im[y][x].c[d];
-                    sc[d] = imc * gaussmat[0];
-                }
-                for (i = 1; i < iradius; i++)
-                {
-                    xf = x - i;
-                    if (xf < 0)
-                    {
-                        xf = 0;
-                    }
-                    for (d = 0; d < 3; d++)
-                    {
-                        imc = (float)t_im[y][xf].c[d];
-                        sc[d] += imc * gaussmat[i];
-                    }
-                    xf = x + i;
-                    if (xf >= w)
-                    {
-                        xf = w - 1;
-                    }
-                    for (d = 0; d < 3; d++)
-                    {
-                        imc = (float)t_im[y][xf].c[d];
-                        sc[d] += imc * gaussmat[i];
-                    }
-                }
-                for (d = 0; d < 3; d++)
-                {
-                    d_im[y][x].c[d] = ByteClamp((int)(sc[d] + 0.5));
-                }
                 d_im[y][x] = IMTcalcS (d_im[y][x]);
             }
         }
     }
     else
     {
-        for (y = 0; y < h; y++)
+        for (y = 0; y < height; y++)
         {
-            for (x = 0; x< w; x++)
+            for (x = 0; x < width; x++)
             {
                 d_im[y][x] = p_im[y][x];
             }
         }
     }
 
-    IMTfree(t_im, height);
+    free(buf);
     free(gaussmat);
 }
 
