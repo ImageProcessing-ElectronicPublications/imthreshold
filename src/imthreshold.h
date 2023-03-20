@@ -142,6 +142,7 @@ void IMTFilterInvert (IMTpixel**, unsigned, unsigned);
 float IMTFilterIRange (IMTpixel**, unsigned, unsigned, int, float);
 void IMTFilterCopy (IMTpixel**, IMTpixel**, unsigned, unsigned);
 void IMTFilterAdSmooth (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
+void IMTFilterAutoLevel (IMTpixel**, IMTpixel**, unsigned int, unsigned int, unsigned int);
 void IMTFilterAutoWhite (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
 void IMTFilterInpaint (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, unsigned);
 void IMTFilterSeparate (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, unsigned);
@@ -200,6 +201,7 @@ void IMTFilterUnsharpMask (IMTpixel**, IMTpixel**, unsigned, unsigned, float, in
 float IMTFilterNoiseVariance (IMTpixel**, unsigned, unsigned, int);
 void IMTFilterWiener (IMTpixel**, IMTpixel**, unsigned, unsigned, int, float);
 int IMTFilterWhiteFill (IMTpixel**, unsigned, unsigned);
+void IMTFilterReverse (IMTpixel**, IMTpixel**, unsigned int, unsigned int);
 IMTpixel IMTInterpolateBiCubic (IMTpixel**, int, int, float, float);
 IMTpixel IMTInterpolateBiLine (IMTpixel**, int, int, float, float);
 float IMTInterpolateAkima (float*, float);

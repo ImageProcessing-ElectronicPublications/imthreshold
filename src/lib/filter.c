@@ -139,6 +139,88 @@ void IMTFilterAdSmooth (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsig
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterAutoLevel (IMTpixel** p_im, IMTpixel** d_im, unsigned int height, unsigned int width, unsigned int tile)
+{
+    unsigned int y, x, y0, x0, y1, x1, d, wy, wx, i, j;
+    int c;
+    unsigned long int sum, sums, count, counts;
+    IMTpixel **l_im;
+
+    wy = (height + tile - 1) / tile;
+    wx = (width + tile - 1) / tile;
+    l_im = IMTalloc(wy, wx);
+
+    for (d = 0; d < 3; d++)
+    {
+        sums = 0;
+        counts = 0;
+        for (i = 0; i < wy; i++)
+        {
+            y0 = i * tile;
+            y1 = y0 + tile;
+            y1 = (y1 < height) ? y1 : height;
+            for (j = 0; j < wx; j++)
+            {
+                x0 = j * tile;
+                x1 = x0 + tile;
+                x1 = (x1 < width) ? x1 : width;
+                sum = 0;
+                count = 0;
+                for (y = y0; y < y1; y++)
+                {
+                    for (x = x0; x < x1; x++)
+                    {
+                        c = p_im[y][x].c[d];
+                        sum += c;
+                        count++;
+                    }
+                }
+                count = (count > 0) ? count : 1;
+                sum /= count;
+                l_im[i][j].c[d] = sum;
+                sums += sum;
+                counts++;
+            }
+        }
+        counts = (counts > 0) ? counts : 1;
+        sums /= counts;
+		for (i = 0; i < wy; i++)
+		{
+			for (j = 0; j < wx; j++)
+			{
+				c = 127;
+				c += sums;
+				c -= l_im[i][j].c[d];
+				l_im[i][j].c[d] = ByteClamp(c);
+			}
+		}
+    }
+    IMTFilterSize(l_im, d_im, SCALER_BILINE, wy, wx, height, width);
+    IMTfree(l_im, wy);
+    for (d = 0; d < 3; d++)
+    {
+        for (y = 0; y < height; y++)
+        {
+            for (x = 0; x < width; x++)
+            {
+                c = p_im[y][x].c[d];
+                c += d_im[y][x].c[d];
+                c -= 127;
+                d_im[y][x].c[d] = ByteClamp(c);
+            }
+        }
+    }
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            d_im[y][x] = IMTcalcS (d_im[y][x]);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterAutoWhite (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, float radius)
 {
     unsigned int y, x, d, k, minv, maxv;
@@ -451,7 +533,6 @@ void IMTFilterPeron (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned
                 d_im[y][x] = IMTcalcS (d_im[y][x]);
             }
         }
-        IMTFilterCopy(d_im, p_im, height, width);
     }
 }
 
@@ -1460,6 +1541,21 @@ void IMTFilterMorph (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned
             }
         }
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void IMTFilterReverse (IMTpixel** p_im, IMTpixel** d_im, unsigned int height, unsigned int width)
+{
+    unsigned int y, x;
+
+	for (y = 0; y < height; y++ )
+	{
+		for (x = 0; x < width; x++ )
+		{
+			d_im[y][x] = IMTrefilter1p (p_im[y][x], d_im[y][x]);
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
