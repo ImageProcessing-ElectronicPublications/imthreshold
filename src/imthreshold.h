@@ -165,6 +165,7 @@ void IMTFilterMathMinus (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
 void IMTFilterMathMirror (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
 void IMTFilterMathMultiply (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
 void IMTFilterMathNorm (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
+void IMTFilterMathOverlay (IMTpixel**, IMTpixel**, unsigned int, unsigned int, int);
 void IMTFilterMathPlus (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
 float IMTFilterMathSharpenBadMetric (IMTpixel**, IMTpixel**, unsigned, unsigned);
 void IMTFilterMathThreshold (IMTpixel**, IMTpixel**, BYTE**, unsigned, unsigned, int);

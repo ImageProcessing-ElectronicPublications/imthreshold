@@ -378,6 +378,42 @@ void IMTFilterMathNorm (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsig
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterMathOverlay (IMTpixel** p_im, IMTpixel** m_im, unsigned int height, unsigned int width, int delta)
+{
+    unsigned int y, x, d;
+    int im, imm, imo;
+
+    for ( y = 0; y < height; y++ )
+    {
+        for ( x = 0; x < width; x++ )
+        {
+            for (d = 0; d < 3; d++)
+            {
+                im = (int)p_im[y][x].c[d];
+                imm = (int)m_im[y][x].c[d];
+                imo = im;
+                if (imo > 127)
+                {
+                    im = 255 - im;
+                    imm = 255 - imm;
+                }
+                im *= imm;
+                im *= 2;
+                im /= 255;
+                if (imo > 127)
+                {
+                    im = 255 - im;
+                }
+                im += delta;
+                p_im[y][x].c[d] = ByteClamp(im);
+            }
+            p_im[y][x] = IMTcalcS (p_im[y][x]);
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterMathPlus (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsigned width, int delta)
 {
     unsigned y, x, d;

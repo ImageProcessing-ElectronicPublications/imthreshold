@@ -38,6 +38,7 @@ void ImthresholdFilterMathUsage()
     printf("                    'mirror'\n");
     printf("                    'multiply'\n");
     printf("                    'norm'\n");
+    printf("                    'overlay'\n");
     printf("                    'plus'\n");
     printf("                    'diff'\n");
     printf("                    'patch'\n");
@@ -119,8 +120,8 @@ int main(int argc, char *argv[])
             {
                 if (FreeImage_GetImageType(dib) == FIT_BITMAP)
                 {
-                    unsigned widthm = FreeImage_GetWidth (dib);
-                    unsigned heightm = FreeImage_GetHeight (dib);
+                    unsigned int widthm = FreeImage_GetWidth (dib);
+                    unsigned int heightm = FreeImage_GetHeight (dib);
 
                     if ((height == heightm) && (width == widthm))
                     {
@@ -241,6 +242,15 @@ int main(int argc, char *argv[])
                             printf("Delta= %d\n", delta);
 
                             IMTFilterMathNorm (p_im, m_im, height, width, delta);
+                            dst_dib = FreeImage_Allocate (width, height, 24);
+                            ImthresholdSetData (dst_dib, p_im);
+                        }
+                        else if (strcmp(namefilter, "overlay") == 0)
+                        {
+                            printf("Filter= %s\n", namefilter);
+                            printf("Delta= %d\n", delta);
+
+                            IMTFilterMathOverlay (p_im, m_im, height, width, delta);
                             dst_dib = FreeImage_Allocate (width, height, 24);
                             ImthresholdSetData (dst_dib, p_im);
                         }
