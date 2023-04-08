@@ -34,6 +34,7 @@ void ImthresholdFilterTSauvolaUsage()
     printf("                    'chistian'\n");
     printf("                    'dalg'\n");
     printf("                    'edge'\n");
+    printf("                    'edgeplus'\n");
     printf("                    'gravure'\n");
     printf("                    'mscale'\n");
     printf("                    'niblack'\n");
@@ -242,6 +243,19 @@ int main(int argc, char *argv[])
                 IMTpixel** b_im = IMTalloc(height, width);
                 IMTFilterGaussBlur (p_im, b_im, height, width, radius);
                 IMTFilterSEdge (p_im, b_im, height, width);
+                IMTfree(b_im, height);
+                printf("Delta= %f\n", delta);
+                threshold = IMTFilterTBiMod (p_im, d_im, height, width, delta);
+            }
+            else if (strcmp(namefilter, "edgeplus") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                IMTpixel** b_im = IMTalloc(height, width);
+                IMTFilterGaussBlur (p_im, b_im, height, width, radius);
+                IMTFilterSEdge (b_im, p_im, height, width);
+                IMTFilterSNegate (b_im, height, width);
+                printf("Sensitivity= %f\n", sensitivity);
+                IMTFilterSMean (p_im, b_im, height, width, sensitivity);
                 IMTfree(b_im, height);
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTBiMod (p_im, d_im, height, width, delta);

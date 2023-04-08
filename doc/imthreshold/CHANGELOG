@@ -1,3 +1,7 @@
+0.20230408
+
+    Threshold: EdgePlus == BiMod(I + Edge)
+
 0.20230330
 
     Math: Overlay

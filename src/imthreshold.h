@@ -116,6 +116,8 @@ void IMTFilterSMirror (IMTpixel**, unsigned, unsigned);
 int IMTFilterSNorm (IMTpixel**, unsigned, unsigned);
 void IMTFilterSCScale (IMTpixel**, unsigned, unsigned, float, IMTpixel);
 void IMTFilterSEdge (IMTpixel**, IMTpixel**, unsigned, unsigned);
+void IMTFilterSNegate (IMTpixel**, unsigned, unsigned);
+void IMTFilterSMean (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
 void IMTFilterSSelect (IMTpixel**, unsigned, unsigned, unsigned);
 void IMTFilterInvertBW (BYTE**, unsigned, unsigned);
 unsigned IMTdist (IMTpixel, IMTpixel);

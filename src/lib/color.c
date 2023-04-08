@@ -228,6 +228,47 @@ void IMTFilterSEdge (IMTpixel** p_im, IMTpixel** b_im, unsigned height, unsigned
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterSNegate (IMTpixel** p_im, unsigned height, unsigned width)
+{
+    unsigned y, x;
+    int ims;
+    IMTpixel pim;
+
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            pim = p_im[y][x];
+            ims = 765 - (int)pim.s;
+            p_im[y][x].s = Byte3Clamp(ims);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void IMTFilterSMean (IMTpixel** p_im, IMTpixel** b_im, unsigned height, unsigned width, float sensitivity)
+{
+    unsigned y, x;
+    float ims;
+    IMTpixel pim, bim;
+
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            pim = p_im[y][x];
+            bim = b_im[y][x];
+            ims = (float)pim.s * sensitivity;
+            ims += (float)bim.s * (1.0 - sensitivity);
+            ims *= 0.5f;
+            p_im[y][x].s = Byte3Clamp((int)(ims + 0.5f));
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterSSelect (IMTpixel** p_im, unsigned height, unsigned width, unsigned comp)
 {
     unsigned y, x;
