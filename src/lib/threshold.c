@@ -1929,6 +1929,43 @@ int IMTFilterTDjVuL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMTpixel** 
     return wbmode;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+int IMTFilterTEdge (IMTpixel** p_im, BYTE** d_im, unsigned int height, unsigned int width, int radius, float delta)
+{
+    int threshold = 0;
+    IMTpixel** b_im = IMTalloc(height, width);
+
+    IMTFilterGaussBlur (p_im, b_im, height, width, radius);
+    IMTFilterSEdge (p_im, b_im, height, width);
+
+    IMTfree(b_im, height);
+
+    threshold = IMTFilterTBiMod (p_im, d_im, height, width, delta);
+
+    return threshold;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int IMTFilterTEdgePlus (IMTpixel** p_im, BYTE** d_im, unsigned int height, unsigned int width, int radius, float delta)
+{
+    int threshold = 0;
+    IMTpixel** b_im = IMTalloc(height, width);
+    IMTpixel** r_im = IMTalloc(height, width);
+
+    IMTFilterCopy (p_im, r_im, height, width);
+    IMTFilterGaussBlur (p_im, b_im, height, width, radius);
+    IMTFilterMathDivide (p_im, b_im, height, width, -127);
+    IMTfree(b_im, height);
+    IMTFilterMathMultiply (p_im, r_im, height, width, 0);
+    IMTfree(r_im, height);
+
+    threshold = IMTFilterTBiMod (p_im, d_im, height, width, delta);
+
+    return threshold;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int IMTFilterTEntValue (IMTpixel** p_im, unsigned height, unsigned width)

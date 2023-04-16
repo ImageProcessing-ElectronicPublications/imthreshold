@@ -250,6 +250,8 @@ int IMTFilterTDithO (IMTpixel**, BYTE**, unsigned, unsigned, int, int);
 int IMTFilterTDithBayer (IMTpixel**, BYTE**, unsigned, unsigned, int);
 int IMTFilterTDithDots (IMTpixel**, BYTE**, unsigned, unsigned, int);
 int IMTFilterTDjVuL (IMTpixel**, BYTE**, IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned, unsigned, int, float, float, unsigned);
+int IMTFilterTEdge (IMTpixel**, BYTE**, unsigned int, unsigned int, int, float);
+int IMTFilterTEdgePlus (IMTpixel**, BYTE**, unsigned int, unsigned int, int, float);
 int IMTFilterTEntValue (IMTpixel**, unsigned, unsigned);
 int IMTFilterTEnt (IMTpixel**, BYTE**, unsigned, unsigned);
 int IMTFilterTEqBrightValue (IMTpixel**, unsigned, unsigned);
