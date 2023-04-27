@@ -28,6 +28,7 @@ void ImthresholdFilterDespeckleUsage()
     printf("          -k N.N  lambda neuro learnen (float, optional, default = 0.1)\n");
     printf("          -l N    learnen number (int, optional, default = 1)\n");
     printf("          -m str  name method:\n");
+    printf("                    'hatch'\n");
     printf("                    'hist'\n");
     printf("                    'invert'\n");
     printf("                    'mag2'\n");
@@ -125,6 +126,11 @@ int main(int argc, char *argv[])
                     float kdp = 0.0;
                     kdp = IMTFilterDphist(p_im, height, width, Ksize);
                     printf("Despeckle= %f\n", kdp);
+                }
+                else if (strcmp(namefilter, "hatch") == 0)
+                {
+                    printf("Method= %s\n", namefilter);
+                    IMTFilterDHatch(p_im, height, width, Ksize);
                 }
                 else if (strcmp(namefilter, "invert") == 0)
                 {

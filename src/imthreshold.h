@@ -127,6 +127,7 @@ IMTpixel IMTmaxIc (IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 IMTpixel IMTminIc (IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 IMTpixel IMTaverageIc (IMTpixel**, IMTpixel, unsigned, unsigned, unsigned, unsigned, float);
 void IMTFilterDespeck2 (BYTE**, unsigned, unsigned, unsigned);
+void IMTFilterDHatch (BYTE**, unsigned, unsigned, unsigned);
 unsigned IMTFilterDMag2 (BYTE**, unsigned, unsigned, unsigned);
 void IMTFilterDNeuro2 (BYTE**, unsigned, unsigned, unsigned, float, unsigned);
 float IMTFilterDphist (BYTE**, unsigned, unsigned, unsigned);

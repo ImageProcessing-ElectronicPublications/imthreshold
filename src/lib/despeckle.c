@@ -23,6 +23,8 @@ void IMTFilterInvertBW (BYTE** p_im, unsigned height, unsigned width)
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterDespeck2 (BYTE** p_im, unsigned height, unsigned width, unsigned Ksize)
 {
     unsigned k2 = Ksize/2;
@@ -33,11 +35,11 @@ void IMTFilterDespeck2 (BYTE** p_im, unsigned height, unsigned width, unsigned K
 
     for (y = 0; y < height; y++)
     {
-        y0 = ((y > k2) ? (y - k2) : 0);
+        y0 = ((y < k2) ? 0 : (y - k2));
         y2 = (((y + kmax) < height) ? (y + kmax) : height);
         for (x = 0; x < width; x++)
         {
-            x0 = ((x > k2) ? (x - k2) : 0);
+            x0 = ((x < k2) ? 0 : (x - k2));
             x2 = (((x + kmax) < width) ? (x + kmax) : width);
             val = 0;
             n = 0;
@@ -64,6 +66,54 @@ void IMTFilterDespeck2 (BYTE** p_im, unsigned height, unsigned width, unsigned K
             else
             {
                 val = 0;
+            }
+            d_im[y][x] = (BYTE)val;
+        }
+    }
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            p_im[y][x] = d_im[y][x];
+        }
+    }
+
+    BWfree(d_im, height);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void IMTFilterDHatch (BYTE** p_im, unsigned height, unsigned width, unsigned Ksize)
+{
+    unsigned k2 = Ksize/2;
+    unsigned kmax = Ksize - k2;
+    unsigned y, x, y0, x0, y1, x1, y2, x2;
+    unsigned n, val;
+    BYTE** d_im = BWalloc(height, width);
+
+    for (y = 0; y < height; y++)
+    {
+        y0 = ((y < k2) ? 0 : (y - k2));
+        y2 = (((y + kmax) < height) ? (y + kmax) : height);
+        for (x = 0; x < width; x++)
+        {
+            x0 = ((x < k2) ? 0 : (x - k2));
+            x2 = (((x + kmax) < width) ? (x + kmax) : width);
+            val = p_im[y][x];
+            n = 0;
+            if (val == 0)
+            {
+                for(y1 = y0; y1 < y2; y1++)
+                {
+                    for(x1 = x0; x1 < x2; x1++)
+                    {
+                        if (p_im[y1][x1] > 0)
+                        {
+                            n++;
+                        }
+                    }
+                }
+                val = (n > 0) ? val : 255;
             }
             d_im[y][x] = (BYTE)val;
         }

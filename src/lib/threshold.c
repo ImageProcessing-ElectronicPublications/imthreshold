@@ -696,15 +696,12 @@ int IMTFilterTBiModP (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigne
 
 int IMTFilterTBiModLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsigned width, int radius, float sensitivity, int delta)
 {
-    unsigned y, x, y0, x0, y1, x1, r;
+    unsigned int y, x, y0, x0, y1, x1, r;
     float TG, T, Ts;
     WORD val;
     int threshold = 0;
 
-    if (radius < 0)
-    {
-        radius = -radius;
-    }
+    radius = (radius < 0) ? -radius : radius;
     r = radius;
     TG = IMTFilterTBiModValueIc (p_im, 0, 0, height, width);
     if (r > 0)
@@ -713,28 +710,14 @@ int IMTFilterTBiModLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsigne
         TG *= (1 - sensitivity);
         for (y = 0; y < height; y++ )
         {
-            y0 = 0;
-            if (y > r)
-            {
-                y0 = y - r;
-            }
+            y0 = (y < r) ? 0 : y - r;
             y1 = y + r;
-            if (y1 > height)
-            {
-                y1 = height;
-            }
+            y1 = (y1 < height) ? y1 : height;
             for (x = 0; x < width; x++ )
             {
-                x0 = 0;
-                if (x > r)
-                {
-                    x0 = x - r;
-                }
+                x0 = (x < r) ? 0 : (x - r);
                 x1 = x + r;
-                if (x1 > width)
-                {
-                    x1 = width;
-                }
+                x1 = (x1 < width) ? x1 : width;
                 T = IMTFilterTBiModValueIc (p_im, y0, x0, y1, x1);
                 T *= sensitivity;
                 T += TG;
@@ -855,18 +838,12 @@ int IMTFilterTColor (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned wid
 
 int IMTFilterTChistianLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsigned width, int radius, float sensitivity, int lower_bound, int upper_bound, float delta)
 {
-    unsigned x, y, n;
-    int y1, x1, y2, x2, yf, xf;
+    unsigned int x, y, n, y1, x1, y2, x2, yf, xf;
     float imx, imMg, imVg, imm, imv, t, st = 0, sn = 0;
     int threshold = 0;
-    int h = height;
-    int w = width;
     WORD val;
 
-    if (radius < 0)
-    {
-        radius = -radius;
-    }
+    radius = (radius < 0) ? -radius : radius;
     if (upper_bound < lower_bound)
     {
         upper_bound += lower_bound;
@@ -876,36 +853,18 @@ int IMTFilterTChistianLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsi
     lower_bound *= 3;
     upper_bound *= 3;
 
-    imMg = 765.0;
-    imVg = 0.0;
+    imMg = 765.0f;
+    imVg = 0.0f;
     for (y = 0; y < height; y++)
     {
-        y1 = y;
-        y1 -= radius;
-        if (y1 < 0)
-        {
-            y1 = 0;
-        }
-        y2 = y + 1;
-        y2 += radius;
-        if (y2 > h)
-        {
-            y2 = h;
-        }
+        y1 = (y < radius) ? 0 : (y - radius);
+        y2 = y + radius + 1;
+        y2 = (y2 < height) ? y2 : height;
         for (x = 0; x < width; x++)
         {
-            x1 = x;
-            x1 -= radius;
-            if (x1 < 0)
-            {
-                x1 = 0;
-            }
-            x2 = x + 1;
-            x2 += radius;
-            if (x2 > w)
-            {
-                x2 = w;
-            }
+            x1 = (x < radius) ? 0 : (x - radius);
+            x2 = x + radius + 1;
+            x2 = (x2 < width) ? x2 : width;
             imm = 0;
             imv = 0;
             n = 0;
@@ -947,32 +906,14 @@ int IMTFilterTChistianLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsi
     }
     for (y = 0; y < height; y++)
     {
-        y1 = y;
-        y1 -= radius;
-        if (y1 < 0)
-        {
-            y1 = 0;
-        }
-        y2 = y + 1;
-        y2 += radius;
-        if (y2 > h)
-        {
-            y2 = h;
-        }
+        y1 = (y < radius) ? 0 : (y - radius);
+        y2 = y + radius + 1;
+        y2 = (y2 < height) ? y2 : height;
         for (x = 0; x < width; x++)
         {
-            x1 = x;
-            x1 -= radius;
-            if (x1 < 0)
-            {
-                x1 = 0;
-            }
-            x2 = x + 1;
-            x2 += radius;
-            if (x2 > w)
-            {
-                x2 = w;
-            }
+            x1 = (x < radius) ? 0 : (x - radius);
+            x2 = x + radius + 1;
+            x2 = (x2 < width) ? x2 : width;
             imm = 0;
             imv = 0;
             n = 0;
@@ -1018,11 +959,8 @@ int IMTFilterTChistianLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsi
             t_im[y][x] = val;
         }
     }
-    if (sn == 0)
-    {
-        sn = 1;
-    }
-    threshold =  (st / sn);
+    sn = (sn > 0) ? sn : 1;
+    threshold = (st / sn);
 
     return threshold;
 }
@@ -2115,11 +2053,7 @@ int IMTFilterGatosBG (IMTpixel** p_im, BYTE** d_im, IMTpixel** bg_im, unsigned h
     int w = width;
     int threshold = 0, st = 0, sn = 0;
 
-    if (radius < 0)
-    {
-        radius = -radius;
-    }
-
+    radius = (radius < 0) ? -radius : radius;
     for (y = 0; y < h; y++)
     {
         for (x = 0; x < w; x++)
@@ -2360,18 +2294,13 @@ int IMTFilterTGrad (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned widt
 
 int IMTFilterTGravureLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsigned width, int radius, float sensitivity, int lower_bound, int upper_bound, float delta)
 {
-    unsigned x, y, n;
-    int y1, x1, y2, x2, yf, xf;
+    unsigned int x, y, n;
+    unsigned int y1, x1, y2, x2, yf, xf;
     float imx, imMg, imVg, imm, imv, t, st = 0, sn = 0;
     int threshold = 0;
-    int h = height;
-    int w = width;
     WORD val;
 
-    if (radius < 0)
-    {
-        radius = -radius;
-    }
+    radius = (radius < 0) ? -radius : radius;
     if (upper_bound < lower_bound)
     {
         upper_bound += lower_bound;
@@ -2410,32 +2339,14 @@ int IMTFilterTGravureLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsig
     }
     for (y = 0; y < height; y++)
     {
-        y1 = y;
-        y1 -= radius;
-        if (y1 < 0)
-        {
-            y1 = 0;
-        }
-        y2 = y + 1;
-        y2 += radius;
-        if (y2 > h)
-        {
-            y2 = h;
-        }
+        y1 = (y < radius) ? 0 : (y - radius);
+        y2 = y + radius + 1;
+        y2 = (y2 < height) ? y2 : height;
         for (x = 0; x < width; x++)
         {
-            x1 = x;
-            x1 -= radius;
-            if (x1 < 0)
-            {
-                x1 = 0;
-            }
-            x2 = x + 1;
-            x2 += radius;
-            if (x2 > w)
-            {
-                x2 = w;
-            }
+            x1 = (x < radius) ? 0 : (x - radius);
+            x2 = x + radius + 1;
+            x2 = (x2 < width) ? x2 : width;
             imm = 0;
             imv = 0;
             n = 0;
@@ -2570,6 +2481,7 @@ int IMTFilterTHalftone2 (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned
 
     return threshold;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -3001,18 +2913,12 @@ int IMTFilterTMscale (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned wi
 
 int IMTFilterTNiblackLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsigned width, int radius, float sensitivity, int lower_bound, int upper_bound, float delta)
 {
-    unsigned y, x, n;
-    int y1, x1, y2, x2, yf, xf;
+    unsigned int y, x, n, y1, x1, y2, x2, yf, xf;
     float imx, imm, imv, t, st = 0, sn = 0;
     int threshold = 0;
-    int h = (int)height;
-    int w = (int)width;
     WORD val;
 
-    if (radius < 0)
-    {
-        radius = -radius;
-    }
+    radius = (radius < 0) ? -radius : radius;
     if (upper_bound < lower_bound)
     {
         upper_bound += lower_bound;
@@ -3024,32 +2930,14 @@ int IMTFilterTNiblackLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsig
 
     for (y = 0; y < height; y++)
     {
-        y1 = (int)y;
-        y1 -= radius;
-        if (y1 < 0)
-        {
-            y1 = 0;
-        }
-        y2 = (int)(y + 1);
-        y2 += radius;
-        if (y2 > h)
-        {
-            y2 = h;
-        }
+        y1 = (y < radius) ? 0 : (y - radius);
+        y2 = y + radius + 1;
+        y2 = (y2 < height) ? y2 : height;
         for (x = 0; x < width; x++)
         {
-            x1 = (int)x;
-            x1 -= radius;
-            if (x1 < 0)
-            {
-                x1 = 0;
-            }
-            x2 = (int)(x + 1);
-            x2 += radius;
-            if (x2 > w)
-            {
-                x2 = w;
-            }
+            x1 = (x < radius) ? 0 : (x - radius);
+            x2 = x + radius + 1;
+            x2 = (x2 < width) ? x2 : width;
             imm = 0;
             imv = 0;
             n = 0;
@@ -3265,18 +3153,12 @@ int IMTFilterTRot (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned width
 
 int IMTFilterTSauvolaLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsigned width, int radius, float sensitivity, int dynamic_range, int lower_bound, int upper_bound, float delta)
 {
-    unsigned x, y, n;
-    int y1, x1, y2, x2, yf, xf;
+    unsigned int x, y, n, y1, x1, y2, x2, yf, xf;
     float imx, imm, imv, ima, t, st = 0, sn = 0;
     int threshold = 0;
-    int h = (int)height;
-    int w = (int)width;
     WORD val;
 
-    if (radius < 0)
-    {
-        radius = -radius;
-    }
+    radius = (radius < 0) ? -radius : radius;
     if (upper_bound < lower_bound)
     {
         upper_bound += lower_bound;
@@ -3288,32 +3170,14 @@ int IMTFilterTSauvolaLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsig
 
     for (y = 0; y < height; y++)
     {
-        y1 = (int)y;
-        y1 -= radius;
-        if (y1 < 0)
-        {
-            y1 = 0;
-        }
-        y2 = (int)(y + 1);
-        y2 += radius;
-        if (y2 > h)
-        {
-            y2 = h;
-        }
+        y1 = (y < radius) ? 0 : (y - radius);
+        y2 = y + radius + 1;
+        y2 = (y2 < height) ? y2 : height;
         for (x = 0; x < width; x++)
         {
-            x1 = (int)x;
-            x1 -= radius;
-            if (x1 < 0)
-            {
-                x1 = 0;
-            }
-            x2 = (int)(x + 1);
-            x2 += radius;
-            if (x2 > w)
-            {
-                x2 = w;
-            }
+            x1 = (x < radius) ? 0 : (x - radius);
+            x2 = x + radius + 1;
+            x2 = (x2 < width) ? x2 : width;
             imm = 0;
             imv = 0;
             n = 0;
@@ -3386,10 +3250,7 @@ int IMTFilterTSizeLayer (IMTpixel** p_im, WORD** t_im, unsigned height, unsigned
     int im, t, threshold = 0;
     WORD val;
 
-    if (radius < 0)
-    {
-        radius = -radius;
-    }
+    radius = (radius < 0) ? -radius : radius;
 
     IMTpixel** s_im = IMTalloc(radius, radius);
     IMTpixel** b_im = IMTalloc(height, width);
@@ -3464,6 +3325,7 @@ int IMTFilterTText (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned widt
 
     WORD** b_im = TLalloc(height, width);
 
+    radius = (radius < 0) ? -radius : radius;
     wr = 2 * radius;
     ws = wr * wr - 1;
 
