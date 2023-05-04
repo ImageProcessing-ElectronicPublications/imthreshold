@@ -210,15 +210,9 @@ int main(int argc, char *argv[])
             else if (strcmp(namefilter, "blur") == 0)
             {
                 printf("Filter= %s\n", namefilter);
-                IMTpixel** b_im = IMTalloc(height, width);
-                IMTFilterGaussBlur (p_im, b_im, height, width, radius);
-                IMTFilterMathDivide (b_im, p_im, height, width, -127);
                 printf("Sensitivity= %f\n", sensitivity);
-                IMTFilterSCScale (b_im, height, width, sensitivity, IMTset(255, 255, 255));
-                IMTFilterMathDivide (p_im, b_im, height, width, -127);
-                IMTfree(b_im, height);
                 printf("Delta= %f\n", delta);
-                threshold = IMTFilterTBiMod (p_im, d_im, height, width, delta);
+                threshold = IMTFilterTBlurDiv (p_im, d_im, height, width, radius, sensitivity, delta);
             }
             else if (strcmp(namefilter, "chistian") == 0)
             {
@@ -246,8 +240,9 @@ int main(int argc, char *argv[])
             else if (strcmp(namefilter, "edgeplus") == 0)
             {
                 printf("Filter= %s\n", namefilter);
+                printf("Sensitivity= %f\n", sensitivity);
                 printf("Delta= %f\n", delta);
-                threshold = IMTFilterTEdgePlus (p_im, d_im, height, width, radius, delta);
+                threshold = IMTFilterTEdgePlus (p_im, d_im, height, width, radius, sensitivity, delta);
             }
             else if (strcmp(namefilter, "gravure") == 0)
             {
