@@ -598,3 +598,40 @@ void IMTFilterDSmearing (BYTE** p_im, unsigned height, unsigned width, unsigned 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+void IMTFilterDWGrid (BYTE** p_im, unsigned int height, unsigned int width, unsigned int Ksize)
+{
+    unsigned int y, x, yg, xg, hg, wg;
+    BYTE** d_im;;
+
+    hg = (height + Ksize - 1) / Ksize;
+    wg = (width + Ksize - 1) / Ksize;
+    d_im = BWalloc(hg, wg);
+    for (yg = 0; yg < hg; yg++)
+    {
+        for (xg = 0; xg < wg; xg++)
+        {
+			d_im[yg][xg] = 255;
+		}
+	}
+    for (y = 0; y < height; y++)
+    {
+        yg = y / Ksize;
+        for (x = 0; x < width; x++)
+        {
+            xg = x / Ksize;
+            d_im[yg][xg] &= (255 - p_im[y][x]);
+        }
+    }
+    for (y = 0; y < height; y++)
+    {
+        yg = y / Ksize;
+        for (x = 0; x < width; x++)
+        {
+            xg = x / Ksize;
+            p_im[y][x] = (255 - d_im[yg][xg]);
+        }
+    }
+
+    BWfree(d_im, hg);
+}

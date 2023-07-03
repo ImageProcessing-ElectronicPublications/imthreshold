@@ -272,3 +272,6 @@ printf ">>\n" >> $fout
 printf "startxref\n" >> $fout
 printf "%d\n" "$xrefC" >> $fout
 printf "%%%%EOF\n" >> $fout
+
+xrefZ=$(cat $fout | wc -c)
+printf "%s: %s\n" $fout $xrefZ

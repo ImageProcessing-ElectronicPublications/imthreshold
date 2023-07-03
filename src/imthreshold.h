@@ -133,6 +133,7 @@ void IMTFilterDNeuro2 (BYTE**, unsigned, unsigned, unsigned, float, unsigned);
 float IMTFilterDphist (BYTE**, unsigned, unsigned, unsigned);
 void IMTFilterDMinMax (BYTE**, unsigned, unsigned, unsigned);
 void IMTFilterDSmearing (BYTE**, unsigned, unsigned, unsigned);
+void IMTFilterDWGrid (BYTE**, unsigned int, unsigned int, unsigned int);
 float IMTFilterDeNoiseDiff1p (IMTpixel**, unsigned, unsigned, float);
 float IMTFilterDeNoiseDiff (IMTpixel**, unsigned, unsigned, unsigned, float);
 void IMTBlurMask (IMTpixel**, BYTE**, unsigned, unsigned, int);

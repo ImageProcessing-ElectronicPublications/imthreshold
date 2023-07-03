@@ -36,6 +36,7 @@ void ImthresholdFilterDespeckleUsage()
     printf("                    'neuro'\n");
     printf("                    'smearing'\n");
     printf("                    'simple' (default)\n");
+    printf("                    'wgrid'\n");
     printf("          -h      this help\n");
 }
 
@@ -136,6 +137,12 @@ int main(int argc, char *argv[])
                 {
                     printf("Method= %s\n", namefilter);
                     IMTFilterInvertBW(p_im, height, width);
+                }
+                else if (strcmp(namefilter, "wgrid") == 0)
+                {
+                    printf("Method= %s\n", namefilter);
+                    unsigned threshold = 0;
+                    IMTFilterDWGrid(p_im, height, width, Ksize);
                 }
                 else if (strcmp(namefilter, "mag2") == 0)
                 {
