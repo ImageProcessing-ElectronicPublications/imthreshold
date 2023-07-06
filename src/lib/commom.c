@@ -552,7 +552,7 @@ float IMTwb (IMTpixel** IMTim, float immean, unsigned height, unsigned width)
     {
         for (x = 0; x < width; x++)
         {
-            imx = (float)IMTim[y][x].s / 3.0;
+            imx = (float)IMTim[y][x].s / 3.0f;
             if (imx > immean)
             {
                 imwn++;
@@ -564,6 +564,29 @@ float IMTwb (IMTpixel** IMTim, float immean, unsigned height, unsigned width)
     imwb /= width;
 
     return imwb;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int IMTwbauto (IMTpixel** p_im, unsigned height, unsigned width, int wbmode)
+{
+    float immean, imwb;
+
+    if (wbmode == 0)
+    {
+        immean = IMTmean(p_im, height, width);
+        imwb = IMTwb(p_im, immean, height, width);
+        if (imwb < 0.5)
+        {
+            wbmode = -1;
+        }
+        else
+        {
+            wbmode = 1;
+        }
+    }
+
+    return wbmode;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -30,6 +30,9 @@ void ImthresholdIMTFilterDjVuLUsage()
     printf("          -f N    foreground divide (int, optional, default = 2)\n");
     printf("          -i      invert station (bool, optional, default = false)\n");
     printf("          -l N    level (int, optional, default = 0 [auto])\n");
+    printf("          -m str  name metod:\n");
+    printf("                    'djvuc'\n");
+    printf("                    'djvul (default)'\n");
     printf("          -o N.N  overlay (float, optional, default = 0.5)\n");
     printf("          -p N    posterize fg (int, optional, default = 0)\n");
     printf("          -q str  colorspace:\n");
@@ -63,8 +66,10 @@ int main(int argc, char *argv[])
     bool finvs = false;
     bool fhelp = false;
     char *csp, *cspn;
-    csp = "rgb";
-    while ((opt = getopt(argc, argv, ":a:b:c:d:f:il:o:p:q:w:h")) != -1)
+    char *namefilter;
+    namefilter = (char*)"djvul";
+    csp = (char*)"rgb";
+    while ((opt = getopt(argc, argv, ":a:b:c:d:f:il:m:o:p:q:w:h")) != -1)
     {
         switch(opt)
         {
@@ -83,11 +88,14 @@ int main(int argc, char *argv[])
         case 'f':
             fgs = atof(optarg);
             break;
+        case 'i':
+            finvs = true;
+            break;
         case 'l':
             level = atof(optarg);
             break;
-        case 'i':
-            finvs = true;
+        case 'm':
+            namefilter = optarg;
             break;
         case 'o':
             doverlay = atof(optarg);
@@ -193,7 +201,22 @@ int main(int argc, char *argv[])
                 {
                     printf("Posterize= %d\n", fposter);
                 }
-                wbmode = IMTFilterTDjVuL(p_im, m_im, fg_im, bg_im, height, width, bgs, fgs, level, wbmode, anisotropic, doverlay, fposter);
+                if (strcmp(namefilter, "djvuc") == 0)
+                {
+                    printf("Filter= %s\n", namefilter);
+                    wbmode = IMTwbauto (p_im, height, width, wbmode);
+                    (void) IMTFilterTBiMod (p_im, m_im, height, width, 0);
+                    if (wbmode < 0)
+                    {
+                        IMTFilterInvertBW(m_im, height, width);
+                    }
+                    IMTFilterSeparateBGFGC (p_im, m_im, fg_im, bg_im, height, width, bgs, fgs, level, doverlay);
+                }
+                else
+                {
+                    printf("Filter= djvul\n");
+                    wbmode = IMTFilterTDjVuL(p_im, m_im, fg_im, bg_im, height, width, bgs, fgs, level, wbmode, anisotropic, doverlay, fposter);
+                }
                 if (wbmode > 0)
                 {
                     printf("Mode= white\n");

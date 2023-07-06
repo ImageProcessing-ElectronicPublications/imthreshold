@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     bool fhelp = false;
     int threshold = 0;
     char *csp, *cspn;
-    csp = "rgb";
+    csp = (char*)"rgb";
     while ((opt = getopt(argc, argv, ":c:q:r:h")) != -1)
     {
         switch(opt)

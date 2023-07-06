@@ -321,24 +321,24 @@ void IMTFilterSize (IMTpixel** p_im, IMTpixel** d_im, int scaler, unsigned heigh
 {
     switch(scaler)
     {
-        case SCALER_NEAREST:
-            IMTFilterSNearest(p_im, d_im, height, width, new_height, new_width);
-            break;
-        case SCALER_BICONT:
-            IMTFilterSBicont(p_im, d_im, height, width, new_height, new_width);
-            break;
-        case SCALER_BICUBIC:
-            IMTFilterSBicub(p_im, d_im, height, width, new_height, new_width);
-            break;
-        case SCALER_BILINE:
-            IMTFilterSBilin(p_im, d_im, height, width, new_height, new_width);
-            break;
-        case SCALER_BIAKIMA:
-            IMTFilterSBiakima(p_im, d_im, height, width, new_height, new_width);
-            break;
-        case SCALER_GSAMPLE:
-            IMTFilterSGsample(p_im, d_im, height, width, new_height, new_width);
-            break;
+    case SCALER_NEAREST:
+        IMTFilterSNearest(p_im, d_im, height, width, new_height, new_width);
+        break;
+    case SCALER_BICONT:
+        IMTFilterSBicont(p_im, d_im, height, width, new_height, new_width);
+        break;
+    case SCALER_BICUBIC:
+        IMTFilterSBicub(p_im, d_im, height, width, new_height, new_width);
+        break;
+    case SCALER_BILINE:
+        IMTFilterSBilin(p_im, d_im, height, width, new_height, new_width);
+        break;
+    case SCALER_BIAKIMA:
+        IMTFilterSBiakima(p_im, d_im, height, width, new_height, new_width);
+        break;
+    case SCALER_GSAMPLE:
+        IMTFilterSGsample(p_im, d_im, height, width, new_height, new_width);
+        break;
     }
 }
 

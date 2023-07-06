@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     bool fneared = false;
     int iradius;
     char *csp, *cspn;
-    csp = "rgb";
+    csp = (char*)"rgb";
     while ((opt = getopt(argc, argv, ":m:nq:r:h")) != -1)
     {
         switch(opt)

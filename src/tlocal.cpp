@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
     bool fhelp = false;
     int threshold = 0;
     char *namefilter, *csp, *cspn;
-    namefilter = "sauvola";
-    csp = "rgb";
+    namefilter = (char*)"sauvola";
+    csp = (char*)"rgb";
     while ((opt = getopt(argc, argv, ":bc:d:f:g:il:no:q:r:s:u:zh")) != -1)
     {
         switch(opt)

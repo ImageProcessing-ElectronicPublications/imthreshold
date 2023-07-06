@@ -987,7 +987,7 @@ unsigned IMTFilterKMeans (IMTpixel** IMTim, unsigned height, unsigned width, uns
         }
         means[i].n = 1;
     }
-    
+
     fcluster = 1.0f / sqrt((float)ncluster);
     for (y = 0; y < height; y++)
     {

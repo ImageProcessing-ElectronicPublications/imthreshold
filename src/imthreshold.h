@@ -70,7 +70,8 @@ typedef struct
 }
 IMTinfo;
 
-enum Scaler {
+enum Scaler
+{
     SCALER_NEAREST,
     SCALER_BICONT,
     SCALER_BICUBIC,
@@ -102,6 +103,7 @@ BYTE IMTmin (IMTpixel**, unsigned, unsigned);
 float IMTmean (IMTpixel**, unsigned, unsigned);
 float IMTdev (IMTpixel**, float, unsigned, unsigned);
 float IMTwb (IMTpixel**, float, unsigned, unsigned);
+int IMTwbauto (IMTpixel**, unsigned, unsigned, int);
 void IMTHist (IMTpixel**, unsigned long long*, unsigned, unsigned, unsigned, unsigned, unsigned);
 int IMTHistBiMod (unsigned long long*, unsigned, float);
 IMTpixel IMTRGBtoRYB4 (IMTpixel, int);
@@ -151,6 +153,7 @@ void IMTFilterAutoWhite (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
 void IMTFilterInpaint (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, unsigned);
 void IMTFilterSeparate (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, unsigned);
 void IMTFilterSeparateBGFGL (IMTpixel**, BYTE**, IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned, unsigned, float);
+void IMTFilterSeparateBGFGC (IMTpixel**, BYTE**, IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned, unsigned, float);
 void IMTFilterSeparateDelta (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, int, float);
 IMTpixel IMTFilterGreyWorld (IMTpixel**, unsigned, unsigned);
 IMTpixel IMTFilterGreyNorm (IMTpixel**, unsigned, unsigned);
@@ -171,6 +174,7 @@ void IMTFilterMathMultiply (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
 void IMTFilterMathNorm (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
 void IMTFilterMathOverlay (IMTpixel**, IMTpixel**, unsigned int, unsigned int, int);
 void IMTFilterMathPlus (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
+void IMTFilterMathScreen (IMTpixel**, IMTpixel**, unsigned int, unsigned int, int);
 float IMTFilterMathSharpenBadMetric (IMTpixel**, IMTpixel**, unsigned, unsigned);
 void IMTFilterMathThreshold (IMTpixel**, IMTpixel**, BYTE**, unsigned, unsigned, int);
 float IMTFilterMirror (IMTpixel**, IMTpixel**, unsigned, unsigned);

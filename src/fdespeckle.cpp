@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     bool finv = false;
     bool fhelp = false;
     char *namefilter;
-    namefilter="simple";
+    namefilter = (char*)"simple";
     while ((opt = getopt(argc, argv, ":a:ik:l:m:h")) != -1)
     {
         switch(opt)
@@ -141,7 +141,6 @@ int main(int argc, char *argv[])
                 else if (strcmp(namefilter, "wgrid") == 0)
                 {
                     printf("Method= %s\n", namefilter);
-                    unsigned threshold = 0;
                     IMTFilterDWGrid(p_im, height, width, Ksize);
                 }
                 else if (strcmp(namefilter, "mag2") == 0)

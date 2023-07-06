@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     FreeImage_Initialise();
 #endif // FREEIMAGE_LIB
 
-    char *namefilter = "bimod";
+    char *namefilter = (char *)"bimod";
     int opt;
     bool fhelp = false;
     while ((opt = getopt(argc, argv, ":f:h")) != -1)

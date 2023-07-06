@@ -184,16 +184,16 @@ void IMTFilterAutoLevel (IMTpixel** p_im, IMTpixel** d_im, unsigned int height, 
         }
         counts = (counts > 0) ? counts : 1;
         sums /= counts;
-		for (i = 0; i < wy; i++)
-		{
-			for (j = 0; j < wx; j++)
-			{
-				c = 127;
-				c += sums;
-				c -= l_im[i][j].c[d];
-				l_im[i][j].c[d] = ByteClamp(c);
-			}
-		}
+        for (i = 0; i < wy; i++)
+        {
+            for (j = 0; j < wx; j++)
+            {
+                c = 127;
+                c += sums;
+                c -= l_im[i][j].c[d];
+                l_im[i][j].c[d] = ByteClamp(c);
+            }
+        }
     }
     IMTFilterSize(l_im, d_im, SCALER_BILINE, wy, wx, height, width);
     IMTfree(l_im, wy);
@@ -1549,13 +1549,13 @@ void IMTFilterReverse (IMTpixel** p_im, IMTpixel** d_im, unsigned int height, un
 {
     unsigned int y, x;
 
-	for (y = 0; y < height; y++ )
-	{
-		for (x = 0; x < width; x++ )
-		{
-			d_im[y][x] = IMTrefilter1p (p_im[y][x], d_im[y][x]);
-		}
-	}
+    for (y = 0; y < height; y++ )
+    {
+        for (x = 0; x < width; x++ )
+        {
+            d_im[y][x] = IMTrefilter1p (p_im[y][x], d_im[y][x]);
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

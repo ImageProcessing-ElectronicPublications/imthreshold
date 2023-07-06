@@ -27,9 +27,9 @@ void ImthresholdFilterMathUsage()
     printf("          -m str  name metod:\n");
     printf("                    'average'\n");
     printf("                    'blur'\n");
+    printf("                    'diff'\n");
     printf("                    'distance'\n");
     printf("                    'divide'\n");
-    printf("                    'sbmetric'\n");
     printf("                    'geometric'\n");
     printf("                    'harmonic'\n");
     printf("                    'max'\n");
@@ -39,9 +39,10 @@ void ImthresholdFilterMathUsage()
     printf("                    'multiply'\n");
     printf("                    'norm'\n");
     printf("                    'overlay'\n");
-    printf("                    'plus'\n");
-    printf("                    'diff'\n");
     printf("                    'patch'\n");
+    printf("                    'plus'\n");
+    printf("                    'screen'\n");
+    printf("                    'sbmetric'\n");
     printf("                    'threshold (default)'\n");
     printf("          -r N    radius (int, optional, default = 5)\n");
     printf("          -h      this help\n");
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
     unsigned radius = 5;
     bool fhelp = false;
     char *namefilter;
-    namefilter="threshold";
+    namefilter = (char*)"threshold";
     while ((opt = getopt(argc, argv, ":d:m:r:h")) != -1)
     {
         switch(opt)
@@ -152,6 +153,15 @@ int main(int argc, char *argv[])
                             printf("Radius= %d\n", radius);
 
                             IMTFilterMathBlur (p_im, m_im, height, width, radius, delta);
+                            dst_dib = FreeImage_Allocate (width, height, 24);
+                            ImthresholdSetData (dst_dib, p_im);
+                        }
+                        else if (strcmp(namefilter, "diff") == 0)
+                        {
+                            printf("Filter= %s\n", namefilter);
+                            printf("Delta= %d\n", delta);
+
+                            IMTFilterMathMinus (p_im, m_im, height, width, (delta + 127));
                             dst_dib = FreeImage_Allocate (width, height, 24);
                             ImthresholdSetData (dst_dib, p_im);
                         }
@@ -254,12 +264,30 @@ int main(int argc, char *argv[])
                             dst_dib = FreeImage_Allocate (width, height, 24);
                             ImthresholdSetData (dst_dib, p_im);
                         }
+                        else if (strcmp(namefilter, "patch") == 0)
+                        {
+                            printf("Filter= %s\n", namefilter);
+                            printf("Delta= %d\n", delta);
+
+                            IMTFilterMathPlus (p_im, m_im, height, width, (delta - 127));
+                            dst_dib = FreeImage_Allocate (width, height, 24);
+                            ImthresholdSetData (dst_dib, p_im);
+                        }
                         else if (strcmp(namefilter, "plus") == 0)
                         {
                             printf("Filter= %s\n", namefilter);
                             printf("Delta= %d\n", delta);
 
                             IMTFilterMathPlus (p_im, m_im, height, width, delta);
+                            dst_dib = FreeImage_Allocate (width, height, 24);
+                            ImthresholdSetData (dst_dib, p_im);
+                        }
+                        else if (strcmp(namefilter, "screen") == 0)
+                        {
+                            printf("Filter= %s\n", namefilter);
+                            printf("Delta= %d\n", delta);
+
+                            IMTFilterMathScreen (p_im, m_im, height, width, delta);
                             dst_dib = FreeImage_Allocate (width, height, 24);
                             ImthresholdSetData (dst_dib, p_im);
                         }
@@ -270,24 +298,6 @@ int main(int argc, char *argv[])
 
                             emetric = IMTFilterMathSharpenBadMetric (p_im, m_im, height, width);
                             printf("SharpenBad= %f\n", emetric);
-                            dst_dib = FreeImage_Allocate (width, height, 24);
-                            ImthresholdSetData (dst_dib, p_im);
-                        }
-                        else if (strcmp(namefilter, "diff") == 0)
-                        {
-                            printf("Filter= %s\n", namefilter);
-                            printf("Delta= %d\n", delta);
-
-                            IMTFilterMathMinus (p_im, m_im, height, width, (delta + 127));
-                            dst_dib = FreeImage_Allocate (width, height, 24);
-                            ImthresholdSetData (dst_dib, p_im);
-                        }
-                        else if (strcmp(namefilter, "patch") == 0)
-                        {
-                            printf("Filter= %s\n", namefilter);
-                            printf("Delta= %d\n", delta);
-
-                            IMTFilterMathPlus (p_im, m_im, height, width, (delta - 127));
                             dst_dib = FreeImage_Allocate (width, height, 24);
                             ImthresholdSetData (dst_dib, p_im);
                         }

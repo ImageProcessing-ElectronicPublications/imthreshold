@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
     bool fhelp = false;
     int threshold;
     char *namefilter, *csp, *cspn;
-    namefilter = "bimod";
-    csp = "rgb";
+    namefilter = (char*)"bimod";
+    csp = (char*)"rgb";
     while ((opt = getopt(argc, argv, ":bd:f:ik:m:np:q:s:wzh")) != -1)
     {
         switch(opt)

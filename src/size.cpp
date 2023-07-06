@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
     IMTpixel **s_im, **m_im, **x_im;
     FIBITMAP *dib, *dst_dib;
     FREE_IMAGE_FORMAT out_fif;
-    namefilter="gsample";
-    csp = "rgb";
+    namefilter = (char*)"gsample";
+    csp = (char*)"rgb";
     while ((opt = getopt(argc, argv, ":f:p:q:r:w:z:h")) != -1)
     {
         switch(opt)

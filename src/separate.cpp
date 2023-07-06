@@ -32,6 +32,7 @@ void ImthresholdFilterSeparateUsage()
     printf("                    'delta'\n");
     printf("                    'inpaint'\n");
     printf("                    'mscale'\n");
+    printf("                    'mscalec'\n");
     printf("                    'simple (default)'\n");
     printf("          -r      rewrite mask (bool, optional, default = false)\n");
     printf("          -o N.N  overlay (float, optional, default = 0.5)\n");
@@ -57,7 +58,7 @@ int main(int argc, char *argv[])
     bool frewrite = false;
     bool fhelp = false;
     char *namefilter;
-    namefilter="simple";
+    namefilter = (char*)"simple";
     while ((opt = getopt(argc, argv, ":b:c:f:k:l:m:o:rh")) != -1)
     {
         switch(opt)
@@ -187,7 +188,7 @@ int main(int argc, char *argv[])
                                 ImthresholdSetData (bg_dib, g_im);
                                 IMTfree(g_im, height);
                             }
-                            else if (strcmp(namefilter, "mscale") == 0)
+                            else if ((strcmp(namefilter, "mscale") == 0) || (strcmp(namefilter, "mscalec") == 0))
                             {
                                 printf("Filter= %s\n", namefilter);
 
@@ -204,7 +205,14 @@ int main(int argc, char *argv[])
                                 BYTE** fgm_im = BWalloc(heightfg, widthfg);
                                 BYTE** bgm_im = BWalloc(heightbg, widthbg);
 
-                                IMTFilterSeparateBGFGL (p_im, m_im, fg_im, bg_im, height, width, bgs, fgs, level, doverlay);
+                                if (strcmp(namefilter, "mscale") == 0)
+                                {
+                                    IMTFilterSeparateBGFGL (p_im, m_im, fg_im, bg_im, height, width, bgs, fgs, level, doverlay);
+                                }
+                                else
+                                {
+                                    IMTFilterSeparateBGFGC (p_im, m_im, fg_im, bg_im, height, width, bgs, fgs, level, doverlay);
+                                }
                                 IMTReduceBW (m_im, fgm_im, height, width, heightfg, widthfg, bgs * fgs, 0, 255);
                                 IMTReduceBW (m_im, bgm_im, height, width, heightbg, widthbg, bgs, 255, 0);
 

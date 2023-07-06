@@ -1872,7 +1872,7 @@ int IMTFilterTDjVuL (IMTpixel** p_im, BYTE** m_im, IMTpixel** fg_im, IMTpixel** 
     IMTFilterSReduce (fgt_im, fg_im, heightbg, widthbg, fgs);
     if (fposter != 0)
     {
-        float imsh = IMTFilterPosterize(fg_im, heightfg, widthfg, fposter);
+        (void)IMTFilterPosterize(fg_im, heightfg, widthfg, fposter);
     }
     for (y = 0; y < height; y++)
     {

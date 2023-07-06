@@ -438,6 +438,33 @@ void IMTFilterMathPlus (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsig
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterMathScreen (IMTpixel** p_im, IMTpixel** m_im, unsigned int height, unsigned int width, int delta)
+{
+    unsigned int y, x, d;
+    int im, imm, imo;
+
+    for ( y = 0; y < height; y++ )
+    {
+        for ( x = 0; x < width; x++ )
+        {
+            for (d = 0; d < 3; d++)
+            {
+                im = (int)p_im[y][x].c[d];
+                imm = (int)m_im[y][x].c[d];
+                imo = 255 - imm;
+                im *= imo;
+                im /= 255;
+                im += imm;
+                im += delta;
+                p_im[y][x].c[d] = ByteClamp(im);
+            }
+            p_im[y][x] = IMTcalcS (p_im[y][x]);
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 float IMTFilterMathSharpenBadMetric (IMTpixel** p_im, IMTpixel** m_im, unsigned height, unsigned width)
 {
     unsigned y, x, d, y1, x1, y2, x2, yf, xf, n;

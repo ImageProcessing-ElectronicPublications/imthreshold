@@ -611,9 +611,9 @@ void IMTFilterDWGrid (BYTE** p_im, unsigned int height, unsigned int width, unsi
     {
         for (xg = 0; xg < wg; xg++)
         {
-			d_im[yg][xg] = 255;
-		}
-	}
+            d_im[yg][xg] = 255;
+        }
+    }
     for (y = 0; y < height; y++)
     {
         yg = y / Ksize;

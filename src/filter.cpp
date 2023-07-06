@@ -61,7 +61,6 @@ void ImthresholdFilterUsage()
     printf("                    'unsharp'\n");
     printf("                    'whitefill'\n");
     printf("                    'wiener'\n");
-    printf("          -i N    num divide (int, optional, default = 1)\n");
     printf("          -k N    K num (int, optional, default = 2)\n");
     printf("          -l N    lower bound (int, optional, default = 32)\n");
     printf("          -n N.N  noise size (float, optional, default = -1.0[auto])\n");
@@ -92,7 +91,6 @@ int main(int argc, char *argv[])
     float amount = 0.5f;
     float contour = -1.0f;
     int maxdelta = 50;
-    unsigned ndiv = 1;
     int knum = 2;
     int lower_bound = 32;
     float noise = -1.0f;
@@ -104,9 +102,9 @@ int main(int argc, char *argv[])
     bool frf = false;
     bool fhelp = false;
     char *namefilter, *csp, *cspn;
-    namefilter="none";
-    csp = "rgb";
-    while ((opt = getopt(argc, argv, ":a:c:d:f:i:k:l:n:p:q:r:s:t:u:h")) != -1)
+    namefilter = (char*)"none";
+    csp = (char*)"rgb";
+    while ((opt = getopt(argc, argv, ":a:c:d:f:k:l:n:p:q:r:s:t:u:h")) != -1)
     {
         switch(opt)
         {
@@ -121,9 +119,6 @@ int main(int argc, char *argv[])
             break;
         case 'f':
             namefilter = optarg;
-            break;
-        case 'i':
-            ndiv = atof(optarg);
             break;
         case 'k':
             knum = atof(optarg);
