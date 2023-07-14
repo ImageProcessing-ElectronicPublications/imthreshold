@@ -176,6 +176,7 @@ void IMTFilterMathOverlay (IMTpixel**, IMTpixel**, unsigned int, unsigned int, i
 void IMTFilterMathPlus (IMTpixel**, IMTpixel**, unsigned, unsigned, int);
 void IMTFilterMathScreen (IMTpixel**, IMTpixel**, unsigned int, unsigned int, int);
 float IMTFilterMathSharpenBadMetric (IMTpixel**, IMTpixel**, unsigned, unsigned);
+void IMTFilterMathSqr (IMTpixel**, unsigned, unsigned);
 void IMTFilterMathThreshold (IMTpixel**, IMTpixel**, BYTE**, unsigned, unsigned, int);
 float IMTFilterMirror (IMTpixel**, IMTpixel**, unsigned, unsigned);
 float IMTFilterMirrorPart (IMTpixel**, IMTpixel**, unsigned, unsigned, float);
@@ -258,6 +259,7 @@ int IMTFilterTDithBayer (IMTpixel**, BYTE**, unsigned, unsigned, int);
 int IMTFilterTDithDots (IMTpixel**, BYTE**, unsigned, unsigned, int);
 int IMTFilterTDjVuL (IMTpixel**, BYTE**, IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned, unsigned, int, float, float, unsigned);
 int IMTFilterTEdge (IMTpixel**, BYTE**, unsigned int, unsigned int, int, float);
+int IMTFilterTEdgeDiv (IMTpixel**, BYTE**, unsigned int, unsigned int, int, float, float, float);
 int IMTFilterTEdgePlus (IMTpixel**, BYTE**, unsigned int, unsigned int, int, float, float);
 int IMTFilterTEntValue (IMTpixel**, unsigned, unsigned);
 int IMTFilterTEnt (IMTpixel**, BYTE**, unsigned, unsigned);

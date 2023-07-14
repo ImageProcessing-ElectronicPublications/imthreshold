@@ -23,6 +23,7 @@ void ImthresholdFilterTSauvolaUsage()
 {
     printf("Usage : imthreshold-tlocal [options] <input_image> <output_image>(BW)\n\n");
     printf("options:\n");
+    printf("          -2      color sqr (bool, optional, default = false)\n");
     printf("          -b      color correct (bool, optional, default = false)\n");
     printf("          -c N    contrast limit (int, optional, default = 128)\n");
     printf("          -d N.N  delta (float, optional, default = -5.0)\n");
@@ -34,6 +35,7 @@ void ImthresholdFilterTSauvolaUsage()
     printf("                    'chistian'\n");
     printf("                    'dalg'\n");
     printf("                    'edge'\n");
+    printf("                    'edgediv'\n");
     printf("                    'edgeplus'\n");
     printf("                    'gravure'\n");
     printf("                    'mscale'\n");
@@ -76,6 +78,7 @@ int main(int argc, char *argv[])
     int upper_bound = 255;
     float delta = -5.0;
     bool fccor = false;
+    bool fcsqr = false;
     bool finv = false;
     bool fnorm = false;
     bool fmirror = false;
@@ -84,10 +87,13 @@ int main(int argc, char *argv[])
     char *namefilter, *csp, *cspn;
     namefilter = (char*)"sauvola";
     csp = (char*)"rgb";
-    while ((opt = getopt(argc, argv, ":bc:d:f:g:il:no:q:r:s:u:zh")) != -1)
+    while ((opt = getopt(argc, argv, ":2bc:d:f:g:il:no:q:r:s:u:zh")) != -1)
     {
         switch(opt)
         {
+        case '2':
+            fcsqr = true;
+            break;
         case 'b':
             fccor = true;
             break;
@@ -174,6 +180,11 @@ int main(int argc, char *argv[])
             cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
             printf("ColorSpace= %s\n", cspn);
 
+            if (fcsqr)
+            {
+                IMTFilterMathSqr(p_im, height, width);
+                printf("ColorSqr= true\n");
+            }
             if (fccor)
             {
                 IMTFilterSCCor(p_im, height, width);
@@ -212,7 +223,7 @@ int main(int argc, char *argv[])
                 printf("Filter= %s\n", namefilter);
                 printf("Sensitivity= %f\n", sensitivity);
                 printf("Delta= %f\n", delta);
-                threshold = IMTFilterTBlurDiv (p_im, d_im, height, width, radius, sensitivity, delta);
+                threshold = IMTFilterTEdgeDiv (p_im, d_im, height, width, radius, 0.0f, sensitivity, delta);
             }
             else if (strcmp(namefilter, "chistian") == 0)
             {
@@ -237,12 +248,19 @@ int main(int argc, char *argv[])
                 printf("Delta= %f\n", delta);
                 threshold = IMTFilterTEdge (p_im, d_im, height, width, radius, delta);
             }
+            else if (strcmp(namefilter, "edgediv") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                printf("Sensitivity= %f\n", sensitivity);
+                printf("Delta= %f\n", delta);
+                threshold = IMTFilterTEdgeDiv (p_im, d_im, height, width, radius, sensitivity, sensitivity, delta);
+            }
             else if (strcmp(namefilter, "edgeplus") == 0)
             {
                 printf("Filter= %s\n", namefilter);
                 printf("Sensitivity= %f\n", sensitivity);
                 printf("Delta= %f\n", delta);
-                threshold = IMTFilterTEdgePlus (p_im, d_im, height, width, radius, sensitivity, delta);
+                threshold = IMTFilterTEdgeDiv (p_im, d_im, height, width, radius, sensitivity, 0.0f, delta);
             }
             else if (strcmp(namefilter, "gravure") == 0)
             {

@@ -23,6 +23,7 @@ void ImthresholdFilterTSauvolaUsage()
 {
     printf("Usage : imthreshold-tlayer [options] <input_image> <output_image>\n\n");
     printf("options:\n");
+    printf("          -2      color sqr (bool, optional, default = false)\n");
     printf("          -c N    contrast limit (int, optional, default = 128)\n");
     printf("          -d N.N  delta (float, optional, default = -5.0)\n");
     printf("          -f str  name filter:\n");
@@ -68,6 +69,8 @@ int main(int argc, char *argv[])
     int lower_bound = 0;
     int upper_bound = 255;
     float delta = -5.0;
+    bool fccor = false;
+    bool fcsqr = false;
     bool fnorm = false;
     bool fmirror = false;
     bool fhelp = false;
@@ -75,10 +78,16 @@ int main(int argc, char *argv[])
     char *namefilter, *csp, *cspn;
     namefilter = (char*)"bimod";
     csp = (char*)"rgb";
-    while ((opt = getopt(argc, argv, ":c:d:f:g:l:no:q:r:s:u:zh")) != -1)
+    while ((opt = getopt(argc, argv, ":2bc:d:f:g:l:no:q:r:s:u:zh")) != -1)
     {
         switch(opt)
         {
+        case '2':
+            fcsqr = true;
+            break;
+        case 'b':
+            fccor = true;
+            break;
         case 'c':
             contrast_limit = atof(optarg);
             break;
@@ -160,6 +169,16 @@ int main(int argc, char *argv[])
             cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
             printf("ColorSpace= %s\n", cspn);
 
+            if (fcsqr)
+            {
+                IMTFilterMathSqr(p_im, height, width);
+                printf("ColorSqr= true\n");
+            }
+            if (fccor)
+            {
+                IMTFilterSCCor(p_im, height, width);
+                printf("ColorCorrect= true\n");
+            }
             if (fmirror)
             {
                 IMTFilterSMirror(p_im, height, width);

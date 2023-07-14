@@ -570,6 +570,31 @@ float IMTFilterMathSharpenBadMetric (IMTpixel** p_im, IMTpixel** m_im, unsigned 
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterMathSqr (IMTpixel** p_im, unsigned height, unsigned width)
+{
+    unsigned y, x, d;
+    float im;
+
+    for ( y = 0; y < height; y++ )
+    {
+        for ( x = 0; x < width; x++ )
+        {
+            for (d = 0; d < 3; d++)
+            {
+                im = (float)p_im[y][x].c[d];
+                im++;
+                im *= im;
+                im /= 256.0;
+                im -= 0.5;
+                p_im[y][x].c[d] = ByteClamp((int)im);
+            }
+            p_im[y][x] = IMTcalcS (p_im[y][x]);
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterMathThreshold (IMTpixel** p_im, IMTpixel** m_im, BYTE** d_im, unsigned height, unsigned width, int delta)
 {
     unsigned y, x;

@@ -23,6 +23,7 @@ void ImthresholdFilterTGlobalUsage()
 {
     printf("Usage : imthreshold-tglobal [options] <input_image> <output_image>(BW)\n\n");
     printf("options:\n");
+    printf("          -2      color sqr (bool, optional, default = false)\n");
     printf("          -b      color correct (bool, optional, default = false)\n");
     printf("          -d N    delta (int, optional, default = 0)\n");
     printf("          -f str  name filter:\n");
@@ -78,6 +79,7 @@ int main(int argc, char *argv[])
     bool weight = false;
     bool fnorm = false;
     bool fmirror = false;
+    bool fcsqr = false;
     bool fccor = false;
     bool finv = false;
     bool fhelp = false;
@@ -85,10 +87,13 @@ int main(int argc, char *argv[])
     char *namefilter, *csp, *cspn;
     namefilter = (char*)"bimod";
     csp = (char*)"rgb";
-    while ((opt = getopt(argc, argv, ":bd:f:ik:m:np:q:s:wzh")) != -1)
+    while ((opt = getopt(argc, argv, ":2bd:f:ik:m:np:q:s:wzh")) != -1)
     {
         switch(opt)
         {
+        case '2':
+            fcsqr = true;
+            break;
         case 'b':
             fccor = true;
             break;
@@ -168,6 +173,11 @@ int main(int argc, char *argv[])
             cspn = IMTFilterRGBtoCSP(p_im, height, width, csp, 1);
             printf("ColorSpace= %s\n", cspn);
 
+            if (fcsqr)
+            {
+                IMTFilterMathSqr(p_im, height, width);
+                printf("ColorSqr= true\n");
+            }
             if (fccor)
             {
                 IMTFilterSCCor(p_im, height, width);

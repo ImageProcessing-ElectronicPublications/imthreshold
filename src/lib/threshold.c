@@ -817,29 +817,8 @@ int IMTFilterTBiModC (IMTpixel** p_im, BYTE** d_im, unsigned height, unsigned wi
 
 int IMTFilterTBlurDiv (IMTpixel** p_im, BYTE** d_im, unsigned int height, unsigned int width, int radius, float sensitivity, float delta)
 {
-    unsigned int y, x;
-    float origin, blur, edge, edgenorm, retval;
-    int threshold = 0;
-    IMTpixel** b_im = IMTalloc(height, width);
-
-    IMTFilterGaussBlur (p_im, b_im, height, width, radius);
-    for (y = 0; y < height; y++)
-    {
-        for (x = 0; x < width; x++)
-        {
-            origin = p_im[y][x].s;
-            blur = b_im[y][x].s;
-            edge = (blur + 1.0f) / (origin + 1.0f) - 0.5f;
-            edgenorm = sensitivity * edge + (1.0f - sensitivity);
-            retval = (edgenorm > 0.0f) ? (origin / edgenorm) : origin;
-            retval = (retval < 0.0f) ? 0.0f : (retval < 765.0f) ? retval : 765.0f;
-            b_im[y][x].s = (WORD)(retval + 0.5f);
-        }
-    }
-    threshold = IMTFilterTBiMod (b_im, d_im, height, width, delta);
-    IMTfree(b_im, height);
-
-    return threshold;
+    /* DEPRECATED */
+    return IMTFilterTEdgeDiv (p_im, d_im, height, width, radius, 0.0f, sensitivity, delta);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1915,10 +1894,10 @@ int IMTFilterTEdge (IMTpixel** p_im, BYTE** d_im, unsigned int height, unsigned 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int IMTFilterTEdgePlus (IMTpixel** p_im, BYTE** d_im, unsigned int height, unsigned int width, int radius, float sensitivity, float delta)
+int IMTFilterTEdgeDiv (IMTpixel** p_im, BYTE** d_im, unsigned int height, unsigned int width, int radius, float sensitivity, float sensitivityblur, float delta)
 {
     unsigned int y, x;
-    float origin, blur, edge, edgeplus, retval;
+    float origin, blur, edge, edgeplus, edgenorm, retval;
     int threshold = 0;
     IMTpixel** b_im = IMTalloc(height, width);
 
@@ -1929,9 +1908,19 @@ int IMTFilterTEdgePlus (IMTpixel** p_im, BYTE** d_im, unsigned int height, unsig
         {
             origin = p_im[y][x].s;
             blur = b_im[y][x].s;
-            edge = (origin + 1.0f) / (blur + 1.0f) - 0.5f;
-            edgeplus = origin * edge;
-            retval = sensitivity * edgeplus + (1.0f - sensitivity) * origin;
+            retval = origin;
+            if (sensitivity > 0.0f)
+            {
+                edge = (origin + 1.0f) / (blur + 1.0f) - 0.5f;
+                edgeplus = origin * edge;
+                retval = sensitivity * edgeplus + (1.0f - sensitivity) * origin;
+            }
+            if (sensitivityblur > 0.0f)
+            {
+                edge = (blur + 1.0f) / (retval + 1.0f) - 0.5f;
+                edgenorm = sensitivityblur * edge + (1.0f - sensitivityblur);
+                retval = (edgenorm > 0.0f) ? (origin / edgenorm) : origin;
+            }
             retval = (retval < 0.0f) ? 0.0f : (retval < 765.0f) ? retval : 765.0f;
             b_im[y][x].s = (WORD)(retval + 0.5f);
         }
@@ -1940,6 +1929,14 @@ int IMTFilterTEdgePlus (IMTpixel** p_im, BYTE** d_im, unsigned int height, unsig
     IMTfree(b_im, height);
 
     return threshold;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+int IMTFilterTEdgePlus (IMTpixel** p_im, BYTE** d_im, unsigned int height, unsigned int width, int radius, float sensitivity, float delta)
+{
+    /* DEPRECATED */
+    return IMTFilterTEdgeDiv (p_im, d_im, height, width, radius, sensitivity, 0.0f, delta);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
