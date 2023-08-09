@@ -317,6 +317,28 @@ void IMTFilterSBiakima (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsig
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterSCrop (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned width, unsigned new_height, unsigned new_width)
+{
+    unsigned int y, x;
+    int yo, xo, dy, dx;
+
+    dy = ((int) height - (int) new_height) >> 1;
+    dx = ((int) width - (int) new_width) >> 1;
+    for (y = 0; y < new_height; y++)
+    {
+        yo  = (int) y + dy;
+        yo = (yo < 0) ? 0 : ((yo < (int) height) ? yo : (height -1));
+        for (x = 0; x < new_width; x++ )
+        {
+            xo  = (int) x + dx;
+            xo = (xo < 0) ? 0 : ((xo < (int) width) ? xo : (width -1));
+            d_im[y][x] = p_im[yo][xo];
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void IMTFilterSize (IMTpixel** p_im, IMTpixel** d_im, int scaler, unsigned height, unsigned width, unsigned new_height, unsigned new_width)
 {
     switch(scaler)
@@ -335,6 +357,9 @@ void IMTFilterSize (IMTpixel** p_im, IMTpixel** d_im, int scaler, unsigned heigh
         break;
     case SCALER_BIAKIMA:
         IMTFilterSBiakima(p_im, d_im, height, width, new_height, new_width);
+        break;
+    case SCALER_CROP:
+        IMTFilterSCrop(p_im, d_im, height, width, new_height, new_width);
         break;
     case SCALER_GSAMPLE:
         IMTFilterSGsample(p_im, d_im, height, width, new_height, new_width);

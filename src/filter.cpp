@@ -37,6 +37,8 @@ void ImthresholdFilterUsage()
     printf("                    'bwc'\n");
     printf("                    'cluster'\n");
     printf("                    'denoise'\n");
+    printf("                    'despeckle'\n");
+    printf("                    'equalize'\n");
     printf("                    'greynorm'\n");
     printf("                    'greyworld'\n");
     printf("                    'illumc'\n");
@@ -257,6 +259,22 @@ int main(int argc, char *argv[])
                 IMTFilterCopy (p_im, d_im, height, width);
                 kdenoises = IMTFilterDeNoiseDiff (d_im, height, width, radiusint, threshold);
                 printf("KDeNoise= %f\n", kdenoises);
+            }
+            else if (strcmp(namefilter, "despeckle") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                radius = (radius > 0.0f) ? radius : 1.0f;
+                printf("Radius= %f\n", radius);
+                IMTFilterGaussBlur(p_im, d_im, height, width, radius);
+                IMTFilterEqualize(d_im, height, width);
+                IMTFilterMathScreen (p_im, d_im, height, width, 0);
+                IMTFilterCopy (p_im, d_im, height, width);
+            }
+            else if (strcmp(namefilter, "equalize") == 0)
+            {
+                printf("Filter= %s\n", namefilter);
+                IMTFilterCopy (p_im, d_im, height, width);
+                IMTFilterEqualize(d_im, height, width);
             }
             else if (strcmp(namefilter, "greyworld") == 0)
             {

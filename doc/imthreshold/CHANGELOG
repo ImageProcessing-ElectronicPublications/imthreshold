@@ -1,3 +1,8 @@
+0.20230809
+
+    Size: Crop/Extent
+    Filter: Equalize, despeckle (based: blur+equalize+screen)
+
 0.20230714
 
     Threshold: EdgeDiv (combine EdgePlus & BlurDiv)

@@ -77,6 +77,7 @@ enum Scaler
     SCALER_BICUBIC,
     SCALER_BILINE,
     SCALER_BIAKIMA,
+    SCALER_CROP,
     SCALER_GSAMPLE
 };
 
@@ -155,6 +156,7 @@ void IMTFilterSeparate (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, unsi
 void IMTFilterSeparateBGFGL (IMTpixel**, BYTE**, IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned, unsigned, float);
 void IMTFilterSeparateBGFGC (IMTpixel**, BYTE**, IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned, unsigned, float);
 void IMTFilterSeparateDelta (IMTpixel**, BYTE**, IMTpixel**, unsigned, unsigned, int, float);
+void IMTFilterEqualize (IMTpixel**, unsigned, unsigned);
 IMTpixel IMTFilterGreyWorld (IMTpixel**, unsigned, unsigned);
 IMTpixel IMTFilterGreyNorm (IMTpixel**, unsigned, unsigned);
 float IMTFilterLevelMean (IMTpixel**, IMTpixel**, unsigned, unsigned, int, float, float, int, int);
@@ -220,6 +222,7 @@ void IMTFilterSBicub (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsi
 void IMTFilterSBicont (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSBilin (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSBiakima (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
+void IMTFilterSCrop (IMTpixel**, IMTpixel**, unsigned, unsigned, unsigned, unsigned);
 void IMTFilterSize (IMTpixel**, IMTpixel**, int, unsigned, unsigned, unsigned, unsigned);
 int IMTFilterSBWMag2 (BYTE**, BYTE**, unsigned, unsigned, unsigned, unsigned);
 int IMTFilterSBWReduce2 (BYTE**, BYTE**, unsigned, unsigned, unsigned, unsigned);

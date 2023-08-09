@@ -423,6 +423,58 @@ void IMTFilterCopy (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterEqualize (IMTpixel** p_im, unsigned height, unsigned width)
+{
+    unsigned int y, x, d, i, val;
+    unsigned long int histogram[256] = {0}, szi;
+
+    szi = (height * width) >> 8;
+    for (d = 0; d < 3; d++)
+    {
+        for (i = 0; i < 256; i++)
+        {
+            histogram[i] = 0;
+        }
+        for (y = 0; y < height; y++)
+        {
+            for (x = 0; x < width; x++)
+            {
+                val = p_im[y][x].c[d];
+                histogram[val]++;
+            }
+        }
+        for (i = 1; i < 256; i++)
+        {
+            histogram[i] += histogram[i - 1];
+        }
+        for (i = 0; i < 256; i++)
+        {
+            histogram[i] += (szi >> 1);
+            histogram[i] /= szi;
+            histogram[i] = (histogram[i] < 255) ? histogram[i] : 255;
+        }
+        for (y = 0; y < height; y++)
+        {
+            for (x = 0; x < width; x++)
+            {
+                val = p_im[y][x].c[d];
+                val = histogram[val];
+                p_im[y][x].c[d] = val;
+            }
+        }
+    }
+    for ( y = 0; y < height; y++ )
+    {
+        for ( x = 0; x < width; x++ )
+        {
+            p_im[y][x] = IMTcalcS (p_im[y][x]);
+        }
+    }
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 IMTpixel IMTFilterGreyNorm (IMTpixel** p_im, unsigned height, unsigned width)
 {
     unsigned y, x, d, n;
