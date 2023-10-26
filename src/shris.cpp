@@ -26,6 +26,7 @@ void ImthresholdFilterSHRISUsage()
     printf("          -f str  name filter:\n");
     printf("                    'hris' (default)\n");
     printf("                    'gsample'\n");
+    printf("                    'scalenx'\n");
     printf("                    'iris'\n");
     printf("                    'frp' (long!)\n");
     printf("          -m      mode (int, optional, default = 2, {2,3})\n");
@@ -176,6 +177,11 @@ int main(int argc, char *argv[])
                 {
                     printf("Scale= Up %s\n", namefilter);
                     IMTFilterSGSampleUp(p_im, d_im, height, width, smode);
+                }
+                else if (strcmp(namefilter, "scalenx") == 0)
+                {
+                    printf("Scale= Up %s\n", namefilter);
+                    IMTFilterSScaleNX(p_im, d_im, height, width, smode);
                 }
                 else if (strcmp(namefilter, "frp") == 0)
                 {

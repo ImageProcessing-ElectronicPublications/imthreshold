@@ -369,6 +369,128 @@ void IMTFilterSize (IMTpixel** p_im, IMTpixel** d_im, int scaler, unsigned heigh
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void IMTFilterSScaleNX (IMTpixel** p_im, IMTpixel** d_im, unsigned int height, unsigned int width, int smode)
+{
+    unsigned int y, x, y0, x0, y1, x1, y2, x2;
+    IMTpixel pA, pB, pC, pD, pE, pF, pG, pH, pI;
+    IMTpixel pBH, pDF;
+    IMTpixel pEA, pEC, pEG, pEI;
+    IMTpixel rA, rB, rC, rD, rE, rF, rG, rH, rI;
+
+    smode = (smode < 2) ? 2 : (smode > 3) ? 3 : smode;
+
+    if (smode == 2)
+    {
+        for (y = 0; y < height; y++)
+        {
+            y0 = (y > 0) ? (y - 1) : 0;
+            y1 = y + 1;
+            y1 = (y1 < height) ? y1 : (height - 1);
+            y2 = y + y;
+            for (x = 0; x < width; x++)
+            {
+                x0 = (x > 0) ? (x - 1) : 0;
+                x1 = x + 1;
+                x1 = (x1 < width) ? x1 : (width - 1);
+                x2 = x + x;
+
+                pB = p_im[y0][x];
+                pD = p_im[y][x0];
+                pE = p_im[y][x];
+                pF = p_im[y][x1];
+                pH = p_im[y1][x];
+
+                rA = IMTcopy(pE);
+                rB = IMTcopy(pE);
+                rC = IMTcopy(pE);
+                rD = IMTcopy(pE);
+                pBH = IMTnear(pE, pB, pH);
+                pDF = IMTnear(pE, pD, pF);
+                if (IMTequal(pBH, pE) && IMTequal(pDF, pE))
+                {
+                    rA = IMTnear(pE, pB, pD);
+                    rB = IMTnear(pE, pB, pF);
+                    rC = IMTnear(pE, pH, pD);
+                    rD = IMTnear(pE, pH, pF);
+                }
+                d_im[y2 + 0][x2 + 0] = rA;
+                d_im[y2 + 0][x2 + 1] = rB;
+                d_im[y2 + 1][x2 + 0] = rC;
+                d_im[y2 + 1][x2 + 1] = rD;
+            }
+        }
+    }
+    else
+    {
+        for (y = 0; y < height; y++)
+        {
+            y0 = (y > 0) ? (y - 1) : 0;
+            y1 = y + 1;
+            y1 = (y1 < height) ? y1 : (height - 1);
+            y2 = y + y + y;
+            for (x = 0; x < width; x++)
+            {
+                x0 = (x > 0) ? (x - 1) : 0;
+                x1 = x + 1;
+                x1 = (x1 < width) ? x1 : (width - 1);
+                x2 = x + x + x;
+
+                pA = p_im[y0][x0];
+                pB = p_im[y0][x];
+                pC = p_im[y0][x1];
+                pD = p_im[y][x0];
+                pE = p_im[y][x];
+                pF = p_im[y][x1];
+                pG = p_im[y1][x0];
+                pH = p_im[y1][x];
+                pI = p_im[y1][x1];
+
+                rA = IMTcopy(pE);
+                rB = IMTcopy(pE);
+                rC = IMTcopy(pE);
+                rD = IMTcopy(pE);
+                rE = IMTcopy(pE);
+                rF = IMTcopy(pE);
+                rG = IMTcopy(pE);
+                rH = IMTcopy(pE);
+                rI = IMTcopy(pE);
+                pBH = IMTnear(pE, pB, pH);
+                pDF = IMTnear(pE, pD, pF);
+                if (IMTequal(pBH, pE) && IMTequal(pDF, pE))
+                {
+                    rA = IMTnear(pE, pB, pD);
+                    rC = IMTnear(pE, pB, pF);
+                    rG = IMTnear(pE, pD, pH);
+                    rI = IMTnear(pE, pF, pH);
+
+                    pEA = IMTnear(rA, pE, pA);
+                    pEC = IMTnear(rC, pE, pC);
+                    pEG = IMTnear(rG, pE, pG);
+                    pEI = IMTnear(rI, pE, pI);
+
+                    rB = IMTnear(pE, pEA, pEC);
+                    rD = IMTnear(pE, pEA, pEG);
+                    rF = IMTnear(pE, pEC, pEI);
+                    rH = IMTnear(pE, pEG, pEI);
+                }
+
+
+                d_im[y2 + 0][x2 + 0] = rA;
+                d_im[y2 + 0][x2 + 1] = rB;
+                d_im[y2 + 0][x2 + 2] = rC;
+                d_im[y2 + 1][x2 + 0] = rD;
+                d_im[y2 + 1][x2 + 1] = rE;
+                d_im[y2 + 1][x2 + 2] = rF;
+                d_im[y2 + 2][x2 + 0] = rG;
+                d_im[y2 + 2][x2 + 1] = rH;
+                d_im[y2 + 2][x2 + 2] = rI;
+            }
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 int IMTFilterSBWMag2 (BYTE** d_im, BYTE** r_im, unsigned height, unsigned width, unsigned height2, unsigned width2)
 {
     unsigned y, x, y1, x1, y2, x2, n, s, threshold = 0;
@@ -799,14 +921,7 @@ void IMTFilterSHRIS (IMTpixel** p_im, IMTpixel** d_im, unsigned height, unsigned
     float k1[3];
     float k2[3];
 
-    if (smode < 2)
-    {
-        smode = 2;
-    }
-    if (smode > 3)
-    {
-        smode = 3;
-    }
+    smode = (smode < 2) ? 2 : (smode > 3) ? 3 : smode;
 
     if (smode == 2)
     {

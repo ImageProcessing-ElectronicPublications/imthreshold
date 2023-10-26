@@ -95,6 +95,33 @@ bool IMTequal (IMTpixel im, IMTpixel imc)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+IMTpixel IMTcopy (IMTpixel im)
+{
+    return (IMTset(im.c[0], im.c[1], im.c[2]));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+IMTpixel IMTnear (IMTpixel p0, IMTpixel p1, IMTpixel p2)
+{
+    int d0, d1, d2;
+    IMTpixel p;
+
+    d0 = IMTdist (p1, p2);
+    d1 = IMTdist (p0, p1);
+    d2 = IMTdist (p0, p2);
+    if (d2 < d1)
+    {
+        d1 = d2;
+        p1 = p2;
+    }
+    p = (d1 < d0) ? p0 : p1;
+
+    return p;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 IMTpixel IMTRGBtoRYB4 (IMTpixel pim, int direct)
 {
     int R, G, B, r, y, b;
@@ -600,10 +627,7 @@ unsigned IMTdist (IMTpixel IMTim0, IMTpixel IMTim1)
     {
         imd = (int)IMTim0.c[d];
         imd -= (int)IMTim1.c[d];
-        if (imd < 0)
-        {
-            imd = -imd;
-        }
+        imd = (imd < 0) ? -imd : imd;
         imds += imd;
     }
 

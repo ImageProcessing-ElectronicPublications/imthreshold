@@ -5,7 +5,7 @@ CC            = gcc
 CPP           = g++
 CFLAGS        = -DUNIX -I$(SRCS) -Wall -s
 VER           = 0
-VERB          = 20230809
+VERB          = 20231026
 ifeq ($(OS),Windows_NT)
 LIBS          = FreeImage.lib
 PLIBF         = $(PNAME).$(VER).dll
